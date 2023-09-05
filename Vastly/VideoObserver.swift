@@ -10,6 +10,9 @@ import AVKit
 import SwiftUI
 import MediaPlayer
 
+/*
+ This View Model governs all AVPlayers and their states, and controls the starting and stopping of videos. This exists as a child of the VideoViewModel. A given video can be described by its channel and current_index. videos[.foryou][0] describes the first video in the for you channel. Players is a flat array which correlates to videos based on their UUIDs
+ */
 class VideoPlayerManager: ObservableObject {
     @Published var players: [UUID: AVPlayer] = [:]
     @Published var loadingStates: [UUID: Bool] = [:]
@@ -28,31 +31,35 @@ class VideoPlayerManager: ObservableObject {
             channel_videos = videos[activeChannel]
         }
     }
+    // initialize players as well as channel_videos and the command center. The command center must be setup once.
+    // the channel_videos is for ease-of-use.
     
     init(videos: [Channel: [Video]]) {
         self.videos = videos
-        updatePlayers(videos: videos)
+//        updatePlayers(videos: videos)
         channel_videos = videos[activeChannel]
         setupCommandCenter()
 //        current_index = x/UserDefaults.standard.integer(forKey: "current_index")
 
     }
     
-    func updatePlayers(videos: [Channel: [Video]]) {
-        players = [:] // clear previous players
-        self.videos = videos
-        for channel in Channel.allCases {
-            if let vids = videos[channel] {
-                for video in vids {
-//                    let player = AVPlayer()
-//                    player.automaticallyWaitsToMinimizeStalling = false
-//                    player.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-//                    players[video.id] = player
-                }
-            }
-        }
-    }
+    // To limit memory, this function no longer does anything.
+//    func updatePlayers(videos: [Channel: [Video]]) {
+//        players = [:] // clear previous players
+//        self.videos = videos
+//        for channel in Channel.allCases {
+//            if let vids = videos[channel] {
+//                for video in vids {
+////                    let player = AVPlayer()
+////                    player.automaticallyWaitsToMinimizeStalling = false
+////                    player.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+////                    players[video.id] = player
+//                }
+//            }
+//        }
+//    }
     
+    // This function returns the AVPlayer for a given video by matching its UUID to one in the players array. If one does not exist, it is created and returned.
     func getPlayer(for video: Video) -> AVPlayer {
         if let player = players[video.id] {
             if player.currentItem == nil {
@@ -71,6 +78,7 @@ class VideoPlayerManager: ObservableObject {
         }
     }
     
+    // This function loops through the existing players and pauses them except for the one given.
     func pauseAllOthers(except video: Video) {
         DispatchQueue.main.async {
             for player in self.players {
@@ -81,25 +89,30 @@ class VideoPlayerManager: ObservableObject {
         }
     }
 
+    // This function ensures that a player for a given video has been created.
     func prepareToPlay(_ video: Video) {
         let item = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
         getPlayer(for: video).replaceCurrentItem(with: item)
     }
 
+    // This function deletes an AVPlayer, clearing memory after it has been used. AVPlayers are expensive to create and slow down the app.
     func deletePlayer(_ video: Video) {
         getPlayer(for: video).pause()
         self.players[video.id] = nil
     }
 
+    // pauses the video.
     func pause(for video: Video) {
         getPlayer(for: video).pause()
     }
-
+    
+    // plays the video.
     func play(for video: Video) {
         getPlayer(for: video).play()
 
     }
 
+    // this function initializes the physical command center controls.
     func setupCommandCenter() {
         print("SETUP")
         UIApplication.shared.beginReceivingRemoteControlEvents()
@@ -173,28 +186,25 @@ class VideoPlayerManager: ObservableObject {
         self.commandCenter = commandCenter
     }
 
+    // this function updates the command center metadata that is displayed. It must be called any time a change is made to the video or its state.
     func updateNowPlayingInfo(for video: Video) {
         print("UPDATING INFO")
 
 //        DispatchQueue.global(qos: .userInteractive).async {
         
-            var nowPlayingInfo = [String: Any]()
-            nowPlayingInfo[MPMediaItemPropertyTitle] = video.title
-            
-            let player = self.getPlayer(for: video)
-            print("running")
-            nowPlayingInfo = [
-                MPMediaItemPropertyTitle : video.title,
-                MPMediaItemPropertyArtist : video.author.name,
-                MPMediaItemPropertyAlbumTitle : "Vastly",
-                MPMediaItemPropertyPlaybackDuration : NSNumber(value: player.currentItem?.duration.seconds ?? 0.0),
-                MPNowPlayingInfoPropertyElapsedPlaybackTime: NSNumber(value: player.currentTime().seconds),
-                MPNowPlayingInfoPropertyPlaybackRate : player.rate] as [String : Any]
-            
-//            if let image = UIImage(named: "AlbumImage.png") {
-//                nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
-//            }
+        var nowPlayingInfo = [String: Any]()
+        nowPlayingInfo[MPMediaItemPropertyTitle] = video.title
         
+        let player = self.getPlayer(for: video)
+        print("running")
+        nowPlayingInfo = [
+            MPMediaItemPropertyTitle : video.title,
+            MPMediaItemPropertyArtist : video.author.name,
+            MPMediaItemPropertyAlbumTitle : "Vastly",
+            MPMediaItemPropertyPlaybackDuration : NSNumber(value: player.currentItem?.duration.seconds ?? 0.0),
+            MPNowPlayingInfoPropertyElapsedPlaybackTime: NSNumber(value: player.currentTime().seconds),
+            MPNowPlayingInfoPropertyPlaybackRate : player.rate] as [String : Any]
+
         URLSession.shared.dataTask(with: video.author.fileName ?? EMPTY_AUTHOR.fileName!) { (data, response, error) in
             guard let data = data, error == nil else {
                 print("Error downloading image: \(error?.localizedDescription ?? "No error description available")")
@@ -209,12 +219,9 @@ class VideoPlayerManager: ObservableObject {
             }
         }.resume()
         
-        
-        
-//            MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
-//        }
     }
 
+    // This function plays the next video in the currently active channel.
     func nextVideoInChannel() {
         if current_index ?? 0 + 1 < videos[activeChannel]?.count ?? 0 {
             pauseCurrentVideo()
@@ -223,6 +230,7 @@ class VideoPlayerManager: ObservableObject {
         }
     }
     
+    // This function plays the previous video in the currently active channel.
     func previousVideoInChannel() {
         if current_index ?? 0 > 0 {
             pauseCurrentVideo()
@@ -231,6 +239,7 @@ class VideoPlayerManager: ObservableObject {
         }
     }
     
+    // this video changes the current video to a new index in the same active channel.
     func changeToIndex(to index: Int, shouldPlay: Bool) {
         if index >= 0 && index < videos[activeChannel]?.count ?? 0 {
             pauseCurrentVideo()
@@ -241,6 +250,7 @@ class VideoPlayerManager: ObservableObject {
         }
     }
     
+    // this function facilitates a change in channel and current_index.
     func changeToChannel(to channel: Channel, shouldPlay: Bool, newIndex: Int) {
         pauseCurrentVideo()
 //        channel_index = Channel.allCases.firstIndex(of: channel) ?? 0
@@ -252,7 +262,7 @@ class VideoPlayerManager: ObservableObject {
     }
     
     
-    // These are placeholders, replace with your own logic to get the current video
+    // This function plays the current video.
     func playCurrentVideo() {
         guard let currentVideo = getCurrentVideo() else { return }
         play(for: currentVideo)
@@ -265,11 +275,14 @@ class VideoPlayerManager: ObservableObject {
 //        updateNowPlayingInfo(for: currentVideo)
 //    }
 
+    
+    // This function pauses the current video.
     func pauseCurrentVideo() {
         guard let currentVideo = getCurrentVideo() else { return }
         pause(for: currentVideo)
     }
 
+    // This function returns the current video.
     func getCurrentVideo() -> Video? {
         if let videos = channel_videos, current_index >= 0 && current_index < videos.count {
             return videos[current_index]

@@ -16,22 +16,9 @@ struct AuthorInfoView: View {
     var body: some View {
         GeometryReader { geo in
             VStack {
-//                HStack {
-//                    Spacer()
-//                    Image(systemName: "xmark")
-//                        .foregroundColor(.white)
-//                        .font(.system(size: screenSize.width * 0.05, weight: .medium))
-//                        .onTapGesture {
-//                            authorButtonTapped = false
-//                        }
-//                        .padding()
-//                }
                 
                 ScrollView {
                     VStack(alignment: .leading) {
-                        
-                        
-                        
                         //                    HStack {
                         MyText(text: "About this clip:", size: geo.size.width * 0.04, bold: true, alignment: .leading, color: .white)
                         
@@ -48,51 +35,47 @@ struct AuthorInfoView: View {
                         
                     }
                 }
-                        HStack {
-                            Spacer()
-                            if video.author.website != "" {
-                                
-                                Button(action: {
-                                    openURL(video.author.website ?? "")
-                                }) {
-                                    Image(systemName: "link.circle")
-                                        .foregroundColor(.white)
-                                    //                        .frame(width: geo.size.width * 0.075, height: geo.size.width * 0.075)
-                                        .font(.system(size: screenSize.width * 0.09, weight: .medium))
-                                        .padding(.trailing, 10)
-                                }
-                                
-                                
-
-                            }
-                            if video.author.spotify != "" {
-                                
-                                Button(action: {
-                                    openURL(video.author.spotify ?? "")
-                                }) {
-                                    Image("spotify")
-                                        .resizable()
-                                        .frame(width: geo.size.width * 0.09, height: geo.size.width * 0.09)
-                                        .padding(.trailing, 10)
-                                }
-                            }
-                            if video.author.apple != "" {
-                                
-                                Button(action: {
-                                    openURL(video.author.apple ?? "")
-                                }) {
-                                    Image("applePodcasts")
-                                        .resizable()
-                                        .frame(width: geo.size.width * 0.09, height: geo.size.width * 0.09)
-                                        .padding(.trailing, 10)
-                                }
-                            }
-                        }
-                        .padding(.trailing, 20)
+                HStack {
+                    Spacer()
+                    if video.author.website != "" {
                         
-                    
-                
+                        Button(action: {
+                            openURL(video.author.website ?? "")
+                        }) {
+                            Image(systemName: "link.circle")
+                                .foregroundColor(.white)
+                            //                        .frame(width: geo.size.width * 0.075, height: geo.size.width * 0.075)
+                                .font(.system(size: screenSize.width * 0.09, weight: .medium))
+                                .padding(.trailing, 10)
+                        }
+                        
+                        
 
+                    }
+                    if video.author.spotify != "" {
+                        
+                        Button(action: {
+                            openURL(video.author.spotify ?? "")
+                        }) {
+                            Image("spotify")
+                                .resizable()
+                                .frame(width: geo.size.width * 0.09, height: geo.size.width * 0.09)
+                                .padding(.trailing, 10)
+                        }
+                    }
+                    if video.author.apple != "" {
+                        
+                        Button(action: {
+                            openURL(video.author.apple ?? "")
+                        }) {
+                            Image("applePodcasts")
+                                .resizable()
+                                .frame(width: geo.size.width * 0.09, height: geo.size.width * 0.09)
+                                .padding(.trailing, 10)
+                        }
+                    }
+                }
+                .padding(.trailing, 20)
             }
         }
     }

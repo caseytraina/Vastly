@@ -23,7 +23,6 @@ struct LoadingView: View {
     
     let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
-
     var body: some View {
         GeometryReader { geo in
             Group {

@@ -216,11 +216,11 @@ struct NewVideoView: View {
                         impact.impactOccurred()
 
                         channelTapped(for: newChannel, with: authModel.user)
-                        videoWatched(for: getVideo(i: video_indices[channel_index], in: activeChannel), with: authModel.user)
+                        videoWatched(for: getVideo(i: video_indices[channel_index], in: activeChannel), with: authModel.user, profile: authModel.current_user)
                         
                         let duration = viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentTime().seconds
                         
-                        logWatchTime(from: startTime, to: endTime, for: getVideo(i: video_indices[channel_index], in: previous_channel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user)
+                        logWatchTime(from: startTime, to: endTime, for: getVideo(i: video_indices[channel_index], in: previous_channel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user, profile: authModel.current_user)
                         startTime = Date()
                         updateMetadata()
                         
@@ -234,8 +234,8 @@ struct NewVideoView: View {
 
                         updateMetadata()
                         
-                        videoWatched(for: viewModel.videos[activeChannel]?[newIndex] ?? EMPTY_VIDEO, with: authModel.user)
-                        logWatchTime(from: startTime, to: endTime, for: getVideo(i: previous_playing, in: activeChannel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: previous_playing, in: activeChannel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user)
+                        videoWatched(for: viewModel.videos[activeChannel]?[newIndex] ?? EMPTY_VIDEO, with: authModel.user, profile: authModel.current_user)
+                        logWatchTime(from: startTime, to: endTime, for: getVideo(i: previous_playing, in: activeChannel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: previous_playing, in: activeChannel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user, profile: authModel.current_user)
 
                         let impact = UIImpactFeedbackGenerator(style: .light)
                         impact.impactOccurred()

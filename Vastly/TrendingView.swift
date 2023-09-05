@@ -19,11 +19,7 @@ struct TrendingView: View {
     @State var video: Video = EXAMPLE_VIDEO
     @Binding var videoMode: Bool
 
-    @Binding var current_index: Int {
-        didSet {
-            self.video = viewModel.trendingVideos[current_index]
-        }
-    }
+    @Binding var current_index: Int = 0
     
     @State var liked = false
     @State var bioExpanded = false

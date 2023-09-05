@@ -43,21 +43,21 @@ class VideoPlayerManager: ObservableObject {
 
     }
     
-    // To limit memory, this function no longer does anything.
-//    func updatePlayers(videos: [Channel: [Video]]) {
-//        players = [:] // clear previous players
-//        self.videos = videos
-//        for channel in Channel.allCases {
-//            if let vids = videos[channel] {
-//                for video in vids {
-////                    let player = AVPlayer()
-////                    player.automaticallyWaitsToMinimizeStalling = false
-////                    player.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-////                    players[video.id] = player
-//                }
-//            }
-//        }
-//    }
+    // To limit memory, this function no longer does anything except update the value of videos.
+    func updatePlayers(videos: [Channel: [Video]]) {
+        players = [:] // clear previous players
+        self.videos = videos
+        for channel in Channel.allCases {
+            if let vids = videos[channel] {
+                for video in vids {
+//                    let player = AVPlayer()
+//                    player.automaticallyWaitsToMinimizeStalling = false
+//                    player.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+//                    players[video.id] = player
+                }
+            }
+        }
+    }
     
     // This function returns the AVPlayer for a given video by matching its UUID to one in the players array. If one does not exist, it is created and returned.
     func getPlayer(for video: Video) -> AVPlayer {

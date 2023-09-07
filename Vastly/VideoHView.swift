@@ -242,7 +242,7 @@ struct VideoHView: View {
 
                     }
 //                    .id(videoListNum)
-                    .modifier(ScrollingHStackModifier(items: $videoListNum, itemWidth: VIDEO_WIDTH, itemSpacing: 0, current: $current_playing))
+//                    .modifier(ScrollingHStackModifier(items: $videoListNum, itemWidth: VIDEO_WIDTH, itemSpacing: 0, current: $current_playing))
                     .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)) { notification in
                         if channel == activeChannel {
                             handleInterruption(notification: notification)

@@ -26,7 +26,7 @@ struct VerticalVideoView: View {
     @State var isLoaded = false
     @State var videoFailed = false
 
-    @State var videoListNum = 15
+    @State var videoListNum = 1
     
     @Binding var isPlaying: Bool
     
@@ -65,236 +65,231 @@ struct VerticalVideoView: View {
                     ScrollView {
 //                        if abs((Channel.allCases.firstIndex(of: activeChannel) ?? 0) - (Channel.allCases.firstIndex(of: channel) ?? 0)) <= 1 {
                             
+                        LazyVStack {
                             ForEach(0..<min(vids.count, videoListNum), id: \.self) { i in
-                                VStack(alignment: .leading) {
-                                    //                                if i == current_playing {
-                                    HStack {
-                                        
-                                        if !videoMode {
-                                            VStack(alignment: .leading) {
-                                                MyText(text: "Audio autoplay is on", size: geo.size.width * 0.04, bold: false, alignment: .leading, color: .white)
-                                                MyText(text: "Put Vastly in your pocket and go", size: geo.size.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
-                                                
-                                            }
-                                            .padding(.horizontal)
-                                        }
-                                        
-                                        
-                                        Spacer()
-                                        Toggle(isOn: $videoMode) {
-                                            
-                                        }
-                                        .toggleStyle(AudioToggleStyle(color: channel.color))
-                                        .padding(.trailing, 40)
-                                        .padding(.top, 10)
-                                        .padding(.bottom, 10)
-                                        .frame(width: screenSize.width * 0.15)
-                                    }
-                                    //                                }
-                                    
-                                    //                                if (abs(i - current_playing) <= 1 && channel == activeChannel) ||
-                                    //                                    (i == current_playing && abs((Channel.allCases.firstIndex(of: activeChannel) ?? 0) - (Channel.allCases.firstIndex(of: channel) ?? 0)) <= 1) {
-                                    if (abs(i - current_playing) <= 1 && channel == activeChannel) {
-                                        if let manager = viewModel.playerManager {
-
-                                            if videoFailed {
-                                                VideoFailedView()
-                                                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
-                                            } else {
-                                                if isLoaded {
-                                                    
-                                                    VStack (spacing: 0) {
-                                                        
-                                                        ZStack {
-                                                            FullscreenVideoPlayer(videoMode: $videoMode, video: getVideo(i), activeChannel: $activeChannel)
-                                                                .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
-                                                                .padding(0)
-                                                                .environmentObject(viewModel)
-                                                            //                                                            .animation(.easeOut, value: activeChannel)
-                                                            //                                                            .transition(.opacity)
-                                                            if !videoMode {
-                                                                AudioOverlay(author: vids[i].author, video: vids[i], playing: $isPlaying)
-                                                                    .environmentObject(viewModel)
-                                                            }
-                                                            if !isPlaying {
-                                                                Image(systemName: "play.fill")
-                                                                    .foregroundColor(.white)
-                                                                    .font(.system(size: screenSize.width * 0.15, weight: .light))
-                                                                    .shadow(radius: 2.0)
-                                                                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
-                                                            }
-                                                        }
-                                                        .onTapGesture {
-                                                            isPlaying.toggle()
-                                                        }
-                                                        .onTapGesture(count: 2) {
-                                                            DispatchQueue.main.async {
-                                                                toggleLike(i)
-                                                            }
-                                                        }
-                                                        if i == current_playing {
-                                                            
-                                                            ProgressBar(value: $playerProgress, activeChannel: $activeChannel, video: vids[i])
-                                                                .frame(width: screenSize.width, height: PROGRESS_BAR_HEIGHT)
-                                                                .padding(0)
-                                                                .environmentObject(viewModel)
-                                                        }
-                                                    }
-                                                    
-                                                    
-                                                    
-                                                    
-                                                    
-                                                    
-                                                    
-                                                } else if (i == current_playing && channel != activeChannel) {
-                                                    VideoThumbnailView(video: vids[i])
-                                                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
-                                                } else {
-                                                    VideoLoadingView()
-                                                    //                                                VideoThumbnailView(video: vids[i])
-                                                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        VideoLoadingView()
-                                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
-                                    }
-                                    
-                                    
-                                    HStack(alignment: .top) {
-                                        MyText(text: vids[i].date ?? "", size: geo.size.width * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
-                                            .lineLimit(1)
-                                            .padding(.leading)
-                                        
-                                        Spacer()
-                                        MyText(text: "\(playerTime.asString) / \(playerDuration.asString)", size: geo.size.width * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
-                                            .lineLimit(1)
-                                            .padding(.trailing)
-                                    }
-                                    
-                                    
-                                    HStack {
-                                        
-                                        Button(action: {
-                                            withAnimation {
-                                                publisherIsTapped = true
-                                            }
-                                        }, label: {
-                                            
-                                            
-                                            HStack(alignment: .center) {
-                                                if channel == activeChannel || i == current_playing {
-                                                    AsyncImage(url: AuthorURL(i)) { image in
-                                                        image.resizable()
-                                                    } placeholder: {
-                                                        ZStack {
-                                                            Color("BackgroundColor")
-                                                            MyText(text: "?", size: geo.size.width * 0.05, bold: true, alignment: .center, color: .white)
-                                                        }
-                                                    }
-                                                    .frame(width: geo.size.width * 0.125, height: geo.size.width * 0.125)
-                                                    .clipShape(RoundedRectangle(cornerRadius: 5)) // Clips the AsyncImage to a rounded
-                                                    .padding(.leading)
-                                                    //                                        .animation(.easeOut, value: activeChannel)
-                                                    //                                        .transition(.opacity)
-                                                    
-                                                    MyText(text: vids[i].author.name ?? "Unknown Author", size: geo.size.width * 0.04, bold: true, alignment: .leading, color: .white)
-                                                        .padding(0)
-                                                        .lineLimit(2)
-                                                    //                                            .animation(.easeOut, value: activeChannel)
-                                                    //                                            .transition(.opacity)
-                                                    Spacer()
-                                                }
-                                            }
-                                            
-                                        })
-                                        
-                                        .zIndex(1)
-                                        //                                    .padding(.bottom)
-                                        
-                                        Spacer()
-                                        Image(systemName: liked ? "heart.fill" : "heart")
-                                            .foregroundColor(liked ? .red : .white)
-                                            .font(.system(size: screenSize.width * 0.05, weight: .medium))
-                                            .padding(.horizontal)
-                                            .onTapGesture {
-                                                DispatchQueue.main.async {
-                                                    liked.toggle()
-                                                    let impact = UIImpactFeedbackGenerator(style: .light)
-                                                    impact.impactOccurred()
-                                                    toggleLike(i)
-                                                }
-                                            }
-                                            .transition(.opacity)
-                                            .animation(.easeOut, value: liked)
-                                    }
-                                    .padding(.vertical, 5)
-                                    .frame(width: geo.size.width)
                                     VStack(alignment: .leading) {
-                                        
-                                        MyText(text: vids[i].title, size: geo.size.width * 0.05, bold: true, alignment: .leading, color: .white)
-                                            .lineLimit(2)
-                                            .padding(.horizontal, 15)
-                                        
-                                            HStack {
-                                                //                                        VStack {
-                                                MyText(text: vids[i].bio, size: geo.size.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
-                                                    .truncationMode(.tail)
-                                                    .padding(.horizontal, 15)
-                                                    .lineLimit(bioExpanded ? 8 : 4)
-                                                Spacer()
-                                            }
-                                            .onTapGesture {
-                                                bioExpanded.toggle()
-                                            }
-                                        .frame(maxWidth: geo.size.width * 0.9)
-                                        .padding(.bottom, 5)
-                                        
-                                        if let url = vids[i].youtubeURL {
-                                            HStack {
-                                                FullEpisodeButton(video: vids[i], isPlaying: $isPlaying)
-//                                                    .frame(width: geo.size.width * 0.04)
-                                                Spacer()
-                                            }
-                                            .padding(.vertical, 5)
-                                            .padding(.horizontal, 15)
-                                        }
-                                        
-                                        Spacer()
-                                        //                                Spacer()
-                                        if i == current_playing {
-                                            HStack {
-                                                Image(systemName: "arrow.down")
-                                                    .foregroundColor(Color("AccentGray"))
-                                                    .font(.system(size: geo.size.width * 0.05, weight: .light))
-                                                    .padding(.leading)
-                                                MyText(text: i < min(videoListNum, vids.count)  - 1 ? "\(getNext().title)" : "Swipe up for more!", size: geo.size.width * 0.03, bold: true, alignment: .leading, color: Color("AccentGray"))
-                                                Spacer()
-                                                Button(action: {
-                                                    channelGuidePressed = true
-                                                }, label: {
-                                                    Image(systemName: "list.bullet.below.rectangle")
-                                                        .foregroundColor(.white)
-                                                        .font(.system(size: geo.size.width * 0.05, weight: .medium))
-                                                })
+                                        //                                if i == current_playing {
+                                        HStack {
+                                            
+                                            if !videoMode {
+                                                VStack(alignment: .leading) {
+                                                    MyText(text: "Audio autoplay is on", size: geo.size.width * 0.04, bold: false, alignment: .leading, color: .white)
+                                                    MyText(text: "Put Vastly in your pocket and go", size: geo.size.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
+                                                    
+                                                }
                                                 .padding(.horizontal)
                                             }
-                                            .frame(width: geo.size.width)
-                                        }
+                                            
+                                            
+                                            Spacer()
+                                            Toggle(isOn: $videoMode) {
+                                                
+                                            }
+                                            .toggleStyle(AudioToggleStyle(color: channel.color))
+                                            .padding(.trailing, 40)
+                                            .padding(.top, 10)
+                                            .padding(.bottom, 10)
+                                            .frame(width: screenSize.width * 0.15)
+                                        } // end hstack
+                                        //                                }
+                                        
+                                        //                                if (abs(i - current_playing) <= 1 && channel == activeChannel) ||
+                                        //                                    (i == current_playing && abs((Channel.allCases.firstIndex(of: activeChannel) ?? 0) - (Channel.allCases.firstIndex(of: channel) ?? 0)) <= 1) {
+                                        if (abs(i - current_playing) <= 1 && channel == activeChannel) {
+                                            if let manager = viewModel.playerManager {
+
+                                                if videoFailed {
+                                                    VideoFailedView()
+                                                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
+                                                } else {
+                                                    if isLoaded {
+                                                        
+                                                        VStack (spacing: 0) {
+                                                            
+                                                            ZStack {
+                                                                FullscreenVideoPlayer(videoMode: $videoMode, video: getVideo(i), activeChannel: $activeChannel)
+                                                                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                                                                    .padding(0)
+                                                                    .environmentObject(viewModel)
+
+                                                                if !videoMode {
+                                                                    AudioOverlay(author: vids[i].author, video: vids[i], playing: $isPlaying)
+                                                                        .environmentObject(viewModel)
+                                                                }
+                                                                if !isPlaying {
+                                                                    Image(systemName: "play.fill")
+                                                                        .foregroundColor(.white)
+                                                                        .font(.system(size: screenSize.width * 0.15, weight: .light))
+                                                                        .shadow(radius: 2.0)
+                                                                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                                                                }
+                                                            }
+                                                            .onTapGesture {
+                                                                isPlaying.toggle()
+                                                            }
+                                                            .onTapGesture(count: 2) {
+                                                                DispatchQueue.main.async {
+                                                                    toggleLike(i)
+                                                                }
+                                                            }
+                                                            if i == current_playing {
+                                                                
+                                                                ProgressBar(value: $playerProgress, activeChannel: $activeChannel, video: vids[i])
+                                                                    .frame(width: screenSize.width, height: PROGRESS_BAR_HEIGHT)
+                                                                    .padding(0)
+                                                                    .environmentObject(viewModel)
+                                                            }
+                                                        } // end vstack
+                                                    }  else {
+                                                        VideoThumbnailView(video: vids[i])
+                                                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
+//                                                        VideoLoadingView()
+//                                                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
+                                                    }
+                                                } // end if
+                                            }
+                                        } else if (i == current_playing && channel != activeChannel) {
+                                            VideoThumbnailView(video: vids[i])
+                                                .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
+                                        } else {
+                                            VideoLoadingView()
+                                                .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
+                                        } // end abs if
+                                        
+                                        
+                                        HStack(alignment: .top) {
+                                            MyText(text: vids[i].date ?? "", size: geo.size.width * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
+                                                .lineLimit(1)
+                                                .padding(.leading)
+                                            
+                                            Spacer()
+                                            MyText(text: "\(playerTime.asString) / \(playerDuration.asString)", size: geo.size.width * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
+                                                .lineLimit(1)
+                                                .padding(.trailing)
+                                        } // end hstack
+                                        
+                                        
+                                        HStack {
+                                            
+                                            Button(action: {
+                                                withAnimation {
+                                                    publisherIsTapped = true
+                                                }
+                                            }, label: {
+                                                
+                                                
+                                                HStack(alignment: .center) {
+                                                    if channel == activeChannel || i == current_playing {
+                                                        AsyncImage(url: AuthorURL(i)) { image in
+                                                            image.resizable()
+                                                        } placeholder: {
+                                                            ZStack {
+                                                                Color("BackgroundColor")
+                                                                MyText(text: "?", size: geo.size.width * 0.05, bold: true, alignment: .center, color: .white)
+                                                            }
+                                                        }
+                                                        .frame(width: geo.size.width * 0.125, height: geo.size.width * 0.125)
+                                                        .clipShape(RoundedRectangle(cornerRadius: 5)) // Clips the AsyncImage to a rounded
+                                                        .padding(.leading)
+                                                        //                                        .animation(.easeOut, value: activeChannel)
+                                                        //                                        .transition(.opacity)
+                                                        
+                                                        MyText(text: vids[i].author.name ?? "Unknown Author", size: geo.size.width * 0.04, bold: true, alignment: .leading, color: .white)
+                                                            .padding(0)
+                                                            .lineLimit(2)
+                                                        //                                            .animation(.easeOut, value: activeChannel)
+                                                        //                                            .transition(.opacity)
+                                                        Spacer()
+                                                    }
+                                                }
+                                                
+                                            })
+                                            
+                                            .zIndex(1)
+                                            //                                    .padding(.bottom)
+                                            
+                                            Spacer()
+                                            Image(systemName: liked ? "heart.fill" : "heart")
+                                                .foregroundColor(liked ? .red : .white)
+                                                .font(.system(size: screenSize.width * 0.05, weight: .medium))
+                                                .padding(.horizontal)
+                                                .onTapGesture {
+                                                    DispatchQueue.main.async {
+                                                        liked.toggle()
+                                                        let impact = UIImpactFeedbackGenerator(style: .light)
+                                                        impact.impactOccurred()
+                                                        toggleLike(i)
+                                                    }
+                                                }
+                                                .transition(.opacity)
+                                                .animation(.easeOut, value: liked)
+                                        } // end hstack
+                                        .padding(.vertical, 5)
+                                        .frame(width: geo.size.width)
+                                        VStack(alignment: .leading) {
+                                            
+                                            MyText(text: vids[i].title, size: geo.size.width * 0.05, bold: true, alignment: .leading, color: .white)
+                                                .lineLimit(2)
+                                                .padding(.horizontal, 15)
+                                            
+                                                HStack {
+                                                    //                                        VStack {
+                                                    MyText(text: vids[i].bio, size: geo.size.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
+                                                        .truncationMode(.tail)
+                                                        .padding(.horizontal, 15)
+                                                        .lineLimit(bioExpanded ? 8 : 4)
+                                                    Spacer()
+                                                }
+                                                .onTapGesture {
+                                                    bioExpanded.toggle()
+                                                }
+                                            .frame(maxWidth: geo.size.width * 0.9)
+                                            .padding(.bottom, 5)
+                                            
+                                            if let url = vids[i].youtubeURL {
+                                                HStack {
+                                                    FullEpisodeButton(video: vids[i], isPlaying: $isPlaying)
+    //                                                    .frame(width: geo.size.width * 0.04)
+                                                    Spacer()
+                                                }
+                                                .padding(.vertical, 5)
+                                                .padding(.horizontal, 15)
+                                            }
+                                            
+                                            Spacer()
+                                            //                                Spacer()
+                                            if i == current_playing {
+                                                HStack {
+                                                    Image(systemName: "arrow.down")
+                                                        .foregroundColor(Color("AccentGray"))
+                                                        .font(.system(size: geo.size.width * 0.05, weight: .light))
+                                                        .padding(.leading)
+                                                    MyText(text: i < min(videoListNum, vids.count)  - 1 ? "\(getNext().title)" : "Swipe up for more!", size: geo.size.width * 0.03, bold: true, alignment: .leading, color: Color("AccentGray"))
+                                                    Spacer()
+                                                    Button(action: {
+                                                        channelGuidePressed = true
+                                                    }, label: {
+                                                        Image(systemName: "list.bullet.below.rectangle")
+                                                            .foregroundColor(.white)
+                                                            .font(.system(size: geo.size.width * 0.05, weight: .medium))
+                                                    })
+                                                    .padding(.horizontal)
+                                                }
+                                                .frame(width: geo.size.width)
+                                            }
+                                        } // end vstack
+                                        .frame(width: geo.size.width)
+                                        
+                                        
                                     }
-                                    .frame(width: geo.size.width)
-                                    
-                                    
-                                }
-                                .id(i)
-                                .frame(width: geo.size.width, height: geo.size.height)
-                                .clipped()
-                                .offset(y: channel == activeChannel ? dragOffset : 0.0)
+                                    .id(i)
+                                    .frame(width: geo.size.width, height: geo.size.height)
+                                    .clipped()
+                                    .offset(y: channel == activeChannel ? dragOffset : 0.0)
                             }
+                        }
 //                        } // end of if
-                    }
+                    } // end scrollview
                     .frame(width: geo.size.width, height: geo.size.height)
                     .scrollDisabled(true)
 //                    .id(activeChannel)
@@ -309,7 +304,7 @@ struct VerticalVideoView: View {
 
                         if channel == activeChannel {
                             
-                            withAnimation {
+                            withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(current_playing, anchor: .top)
                             }
                             
@@ -330,7 +325,7 @@ struct VerticalVideoView: View {
                                 
                                 trackAVStatus(for: getVideo(newIndex))
                                 
-                                withAnimation {
+                                withAnimation(.easeOut(duration: 0.125)) {
                                     proxy.scrollTo(newIndex, anchor: .top)
                                 }
                                 
@@ -371,7 +366,7 @@ struct VerticalVideoView: View {
                             
                             previous_channel = newChannel
                             
-                            withAnimation {
+                            withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(current_playing, anchor: .top)
                             }
                             
@@ -388,15 +383,10 @@ struct VerticalVideoView: View {
                         }
                     }
                     .frame(width: geo.size.width, height: geo.size.height)
-
-
                 }
-                    .frame(maxHeight: .infinity)
-
-
-//                .id(activeChannel)
+//                .frame(maxHeight: .infinity)
             }
-                .frame(maxHeight: .infinity)
+//            .frame(maxHeight: .infinity)
         }
 
     }

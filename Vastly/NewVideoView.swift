@@ -105,13 +105,13 @@ struct NewVideoView: View {
                                 } //end scrollview
                                 .scrollDisabled(true)
                                 .onAppear {
-                                    withAnimation {
+                                    withAnimation(.easeOut(duration: 0.125)) {
                                         proxy.scrollTo(activeChannel, anchor: .leading)
                                     }
                                 }
                                 .frame(width: screenSize.width, height: screenSize.height * 0.8)
                                 .onChange(of: activeChannel) { newChannel in
-                                    withAnimation {
+                                    withAnimation(.easeOut(duration: 0.125)) {
                                         proxy.scrollTo(newChannel, anchor: .leading)
                                     }
                                 }

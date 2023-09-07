@@ -22,7 +22,7 @@ struct VideoThumbnailView: View {
                 AsyncImage(url: getThumbnail(video: video)) { image in
                     image.resizable()
                         .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
-                        .blur(radius: 5)
+                        .blur(radius: 1)
                 } placeholder: {
                     Color("BackgroundColor")
                         

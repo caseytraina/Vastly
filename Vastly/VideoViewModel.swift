@@ -57,12 +57,9 @@ class VideoViewModel: ObservableObject {
                 print("Error getting videos: \(error)")
                 DispatchQueue.main.async {
                     self.isProcessing = false
-
                 }
             }
-            //            }
         }
-        
     }
     
         // This turns the string representing an author in an UnprocessedVideo into a type Author, which can be used to translate into type Video.

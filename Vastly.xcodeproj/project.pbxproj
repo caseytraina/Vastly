@@ -328,6 +328,7 @@
 				025649A32A11FF4700C442AE /* LoadingView.swift */,
 				02C5CCD22A4A25EC00C7280E /* TutorialView.swift */,
 				02583E1F2A1B462A008CDA59 /* VideoLoadingView.swift */,
+				0294DEA42A7987370073994D /* VideoThumbnailView.swift */,
 				02FC35332A71B2360075C2B6 /* VideoFailedView.swift */,
 				02FC35372A72BE390075C2B6 /* AudioOverlay.swift */,
 				0220D63A2A905C5800A867FB /* AuthorProfileView.swift */,
@@ -358,7 +359,6 @@
 				02611E522AA7797D007029BB /* FullEpisodeButton.swift */,
 				023EE7C42A0B1E96004E09DD /* MyText.swift */,
 				029AEAAC2A852791002A09DF /* Carousel.swift */,
-				0294DEA42A7987370073994D /* VideoThumbnailView.swift */,
 				02583E212A1D736C008CDA59 /* FullscreenVideoPlayer.swift */,
 				02637B322A61571500528A8E /* ProgressBar.swift */,
 				021E5A912A69BB9D00B120CD /* PageIndicator.swift */,
@@ -816,7 +816,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.5;
+				MARKETING_VERSION = 1.2.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.VastlyInc.Vastly;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -857,7 +857,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.5;
+				MARKETING_VERSION = 1.2.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.VastlyInc.Vastly;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

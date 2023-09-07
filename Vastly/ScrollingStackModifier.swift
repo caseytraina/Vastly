@@ -139,6 +139,155 @@ struct ScrollingHStackModifier: ViewModifier {
 }
 
 
+struct HScrollSnapping: ViewModifier {
+    
+    @State private var scrollOffset: CGFloat
+//    @State private var dragOffset: CGFloat
+    
+    @Binding var current: Int
+
+    var count: Int
+    
+    @Binding var dragOffset: CGSize
+
+    
+    var itemWidth: CGFloat
+//    var itemSpacing: CGFloat
+    
+    init(count: Int, itemWidth: CGFloat, current: Binding<Int>, dragOffset: Binding<CGSize>) {
+        self.count = count
+        self.itemWidth = itemWidth
+        
+        // Calculate Total Content Width
+        let contentWidth: CGFloat = CGFloat(count) * itemWidth
+//        let screenWidth = UIScreen.main.bounds.width
+        
+        // Set Initial Offset to first Item
+        let initialOffset = (contentWidth/2) - (itemWidth/2)
+//        let initialOffset = (contentWidth/2.0) - (screenWidth/2.0) + ((screenWidth - itemWidth) / 2.0)
+//        let initialOffset = CGFloat(items/2) * itemWidth //- (screenWidth/2)
+
+        self._scrollOffset = State(initialValue: initialOffset)
+//        self._dragOffset = State(initialValue: 0)
+        self._current = current
+        self._dragOffset = dragOffset
+
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .id(count)
+            .offset(x: scrollOffset + dragOffset.width, y: 0)
+            .onChange(of: current) { newcurrent in
+                
+                DispatchQueue.global(qos: .userInitiated).async {
+                    let contentWidth: CGFloat = CGFloat(count) * itemWidth
+                    let initialOffset = (contentWidth/2) - (itemWidth/2)
+
+                
+                    let newOffset = initialOffset - (CGFloat(newcurrent) * itemWidth)
+                    
+                    DispatchQueue.global(qos: .userInteractive).async {
+
+                        withAnimation(.linear(duration: 0.125)) {
+                            scrollOffset = newOffset
+                        }
+                    }
+//                    let contentWidth: CGFloat = CGFloat(items) * itemWidth
+//
+//                    let index = items - current - 1
+//
+//                    // Set final offset (snapping to item)
+//                    let itemOffset = CGFloat(index) * itemWidth
+//                    let halfContentWidth = contentWidth / 2.0
+//                    let halfScreenWidth = itemWidth / 2.0
+//
+//                    let newOffset = itemOffset - halfContentWidth + halfScreenWidth
+//
+//                    // Animate snapping
+//
+//                    DispatchQueue.global(qos: .userInteractive).async {
+//
+//                        withAnimation(.linear(duration: 0.125)) {
+//                            scrollOffset = newOffset
+//                        }
+//                    }
+                }
+            }
+//            .onChange(of: count) { newItems in
+//                // Calculate Total Content Width
+//                let contentWidth: CGFloat = CGFloat(newItems) * itemWidth
+//                let screenWidth = UIScreen.main.bounds.width
+//
+//                // Set Initial Offset to first Item
+//                let initialOffset = (contentWidth/2.0) - (screenWidth/2.0) + ((screenWidth - itemWidth) / 2.0)
+//
+//                let itemOffset = CGFloat(current) * itemWidth
+////                withAnimation {
+//                    scrollOffset = initialOffset - itemOffset//+ CGFloat(current) * itemWidth
+////                }
+////                }
+//            }
+            .onAppear {
+                let contentWidth: CGFloat = CGFloat(count) * itemWidth
+
+                // Set Initial Offset to first Item
+                let initialOffset = (contentWidth/2) - (itemWidth/2)
+
+                let itemOffset = CGFloat(current) * itemWidth
+                withAnimation {
+                    scrollOffset = initialOffset - itemOffset//+ CGFloat(current) * itemWidth
+                }
+            }
+
+//            .gesture(DragGesture()
+//                .onChanged({ event in
+//                    dragOffset = event.translation.width
+//                })
+//                .onEnded({ event in
+//                    // Calculate new current index
+//
+//                    DispatchQueue.global(qos: .userInitiated).async {
+//
+//
+//                        let vel = event.predictedEndTranslation.width
+//                        let distance = event.translation.width
+//
+//                        if vel <= -itemWidth/2 || distance <= -itemWidth/2 {
+//                            if current+1 <= items {
+//                                current += 1
+//                            }
+//                        } else if vel >= itemWidth/2 || distance >= itemWidth/2 {
+//                            if current > 0 {
+//                                current -= 1
+//                            }
+//                        }
+//
+//                        // Calculate new offset based on updated current
+//                        let contentWidth: CGFloat = CGFloat(items) * itemWidth
+//                        let index = items - current - 1
+//
+//                        // Set final offset (snapping to item)
+//                        let itemOffset = CGFloat(index) * itemWidth
+//                        let halfContentWidth = contentWidth / 2.0
+//                        let halfScreenWidth = itemWidth / 2.0
+//
+//                        let newOffset = itemOffset - halfContentWidth + halfScreenWidth
+//
+//                        // Animate snapping
+//                        withAnimation(.easeOut(duration: 0.125)) {
+//                            scrollOffset = newOffset
+//                            dragOffset = 0
+//                        }
+//                    }
+//                })
+//        )
+        
+    }
+}
+
+
+
 
 
 

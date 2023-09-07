@@ -88,6 +88,9 @@
 		029AEAB12A858649002A09DF /* NewVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029AEAB02A858649002A09DF /* NewVideoView.swift */; };
 		029B70582A9C3C5700ECA74B /* Amplitude in Frameworks */ = {isa = PBXBuildFile; productRef = 029B70572A9C3C5700ECA74B /* Amplitude */; };
 		02B2AF252A745E6400307406 /* AuthorInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B2AF242A745E6400307406 /* AuthorInfoView.swift */; };
+		02B4382F2AA8DC9F001E41A4 /* Blow.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 02B4382E2AA8DC9F001E41A4 /* Blow.aiff */; };
+		02B438302AA8DC9F001E41A4 /* Blow.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 02B4382E2AA8DC9F001E41A4 /* Blow.aiff */; };
+		02B438312AA8DC9F001E41A4 /* Blow.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 02B4382E2AA8DC9F001E41A4 /* Blow.aiff */; };
 		02B6BFF62A68357E005F0357 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 02B6BFF52A68357E005F0357 /* GoogleService-Info.plist */; };
 		02B6BFF72A68357E005F0357 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 02B6BFF52A68357E005F0357 /* GoogleService-Info.plist */; };
 		02B6BFF82A68357E005F0357 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 02B6BFF52A68357E005F0357 /* GoogleService-Info.plist */; };
@@ -178,6 +181,7 @@
 		029AEAAE2A853754002A09DF /* VerticalVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalVideoView.swift; sourceTree = "<group>"; };
 		029AEAB02A858649002A09DF /* NewVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewVideoView.swift; sourceTree = "<group>"; };
 		02B2AF242A745E6400307406 /* AuthorInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorInfoView.swift; sourceTree = "<group>"; };
+		02B4382E2AA8DC9F001E41A4 /* Blow.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Blow.aiff; sourceTree = "<group>"; };
 		02B6BFF52A68357E005F0357 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		02BCA9402A37D3280069E49A /* VideoObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoObserver.swift; sourceTree = "<group>"; };
 		02C5CCD02A4A04C900C7280E /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
@@ -274,6 +278,7 @@
 				023EE77F2A0ADF37004E09DD /* Persistence.swift */,
 				023EE7ED2A0C5DC6004E09DD /* Constants.swift */,
 				02583E042A19AB6C008CDA59 /* DeletedCode.swift */,
+				02B4382E2AA8DC9F001E41A4 /* Blow.aiff */,
 				02B6BFF52A68357E005F0357 /* GoogleService-Info.plist */,
 				02583E1A2A1B193A008CDA59 /* Launch Screen.storyboard */,
 				023EE77A2A0ADF37004E09DD /* Assets.xcassets */,
@@ -540,6 +545,7 @@
 				023EE77E2A0ADF37004E09DD /* Preview Assets.xcassets in Resources */,
 				023EE7B22A0AE218004E09DD /* CircularStd-Light.otf in Resources */,
 				023EE7B12A0AE218004E09DD /* CircularStd-Book.otf in Resources */,
+				02B4382F2AA8DC9F001E41A4 /* Blow.aiff in Resources */,
 				023EE77B2A0ADF37004E09DD /* Assets.xcassets in Resources */,
 				023EE7B52A0AE218004E09DD /* CircularStd-Bold.otf in Resources */,
 			);
@@ -550,6 +556,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				02B6BFF72A68357E005F0357 /* GoogleService-Info.plist in Resources */,
+				02B438302AA8DC9F001E41A4 /* Blow.aiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -558,6 +565,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				02B6BFF82A68357E005F0357 /* GoogleService-Info.plist in Resources */,
+				02B438312AA8DC9F001E41A4 /* Blow.aiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 enum DragType {
     case unknown
@@ -14,7 +15,7 @@ enum DragType {
 }
 
 struct NewVideoView: View {
-    
+        
     @EnvironmentObject var viewModel: VideoViewModel
     @EnvironmentObject var authModel: AuthViewModel
 
@@ -38,7 +39,7 @@ struct NewVideoView: View {
     @State var previous_playing = 0
     @State var previous_channel: Channel = .foryou
 
-    @AppStorage("hasSeenTutorial") private var hasSeenTutorial: Bool = true
+    @AppStorage("hasSeenTutorial") private var hasSeenTutorial: Bool = false
     
     @State var isChannel = true
     @State var isDiscover = false
@@ -66,8 +67,10 @@ struct NewVideoView: View {
                         Carousel(isPlaying: $playing, selected: $activeChannel)
                             .environmentObject(viewModel)
                             .environmentObject(authModel)
-                            .frame(maxHeight: screenSize.height*0.125)
-                            .padding()
+                            .frame(height: screenSize.height*0.075)
+                            .frame(width: screenSize.width)
+                            .ignoresSafeArea()
+                            .padding(.vertical)
                         Spacer()
                         ZStack {
                             
@@ -98,9 +101,6 @@ struct NewVideoView: View {
                                         
                                     } // end HStack
                                     .offset(x: offset.width)
-
-
-    //                                .frame(width: screenSize.width, height: screenSize.height * 0.8)
                                     
                                 } //end scrollview
                                 .scrollDisabled(true)
@@ -186,18 +186,14 @@ struct NewVideoView: View {
                                 
                             }// end scroll view reader
                             
-                            
                             if channelGuidePressed {
                                 ChannelSelectorView(activeChannel: $activeChannel, channel_index: $channel_index, video_indices: $video_indices, channelsExpanded: $channelGuidePressed)
                                     .environmentObject(viewModel)
                                     .frame(height: screenSize.height * 0.8)
-
                             }
-                            
                             
                         } // end zstack
                         .frame(height: screenSize.height * 0.8)
-
 
                     }
                     .onChange(of: channel_index) { newIndex in
@@ -266,7 +262,18 @@ struct NewVideoView: View {
                     }
                 }
             }
+
         }
+        .overlay(
+            Group {
+                if !hasSeenTutorial && !viewModel.isProcessing {
+                    withAnimation {
+                        TutorialView(showTutorial: $hasSeenTutorial)
+                    }
+                }
+            }
+//                .ignoresSafeArea()
+        )
 
     }
     private func updateMetadata() {

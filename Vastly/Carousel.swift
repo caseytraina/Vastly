@@ -23,7 +23,7 @@ struct Carousel: View {
 //                .ignoresSafeArea()
             GeometryReader { geo in
                 HStack(alignment: .center) {
-                    Spacer()
+//                    Spacer()
                     Spacer()
                     ScrollViewReader { proxy in
                         ScrollView(.horizontal, showsIndicators: false) {
@@ -49,7 +49,7 @@ struct Carousel: View {
                                         
                                     })
                                     .id(Channel.allCases[i])
-                                    .padding(0)
+                                    .padding(.top)
                                 }
                             }
                         }
@@ -80,11 +80,12 @@ struct Carousel: View {
                                        isActive: $isNavigationActive,
                                        label: { EmptyView() })
                     )
-                    .padding(.vertical, 10)
+                    .padding(10)
 //                    .frame(maxWidth: screenSize.width * 0.15)
                 }
                 .frame(maxHeight: geo.size.height * 0.1)
                 .frame(width: geo.size.width)
+                .ignoresSafeArea()
 
             }
         }

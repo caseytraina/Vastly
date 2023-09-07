@@ -77,9 +77,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         print("Failed to register for notifications: \(error)")
     }
 
-    
 }
-
 
 @main
 struct VastlyApp: App {
@@ -101,5 +99,4 @@ struct VastlyApp: App {
       }
     }
   }
-
 }

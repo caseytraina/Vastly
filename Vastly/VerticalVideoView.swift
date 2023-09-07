@@ -9,6 +9,8 @@ import SwiftUI
 import Combine
 import CoreMedia
 import AVKit
+import AVFoundation
+import AudioToolbox
 
 struct VerticalVideoView: View {
     
@@ -49,6 +51,7 @@ struct VerticalVideoView: View {
     @Binding var dragOffset: Double
     
     @Binding var channelGuidePressed: Bool
+    @State var audioPlayer: AVAudioPlayer?
 
     var channel: Channel
     
@@ -159,6 +162,7 @@ struct VerticalVideoView: View {
                                             .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
                                     }
                                     
+                                    
                                     HStack(alignment: .top) {
                                         MyText(text: vids[i].date ?? "", size: geo.size.width * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
                                             .lineLimit(1)
@@ -223,35 +227,30 @@ struct VerticalVideoView: View {
                                                     toggleLike(i)
                                                 }
                                             }
-                                        //                                        .frame(maxWidth: geo.size.width * 0.1)
                                             .transition(.opacity)
                                             .animation(.easeOut, value: liked)
                                     }
                                     .padding(.vertical, 5)
                                     .frame(width: geo.size.width)
                                     VStack(alignment: .leading) {
+                                        
                                         MyText(text: vids[i].title, size: geo.size.width * 0.05, bold: true, alignment: .leading, color: .white)
                                             .lineLimit(2)
                                             .padding(.horizontal, 15)
                                         
-                                        //                                        .animation(.easeOut, value: activeChannel)
-                                        //                                        .transition(.opacity)
-                                        HStack {
-                                            //                                        VStack {
-                                            MyText(text: vids[i].bio, size: geo.size.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
-                                                .truncationMode(.tail)
-                                                .padding(.horizontal, 15)
-                                                .lineLimit(bioExpanded ? 8 : 4)
-                                            //                                                .animation(.easeOut, value: activeChannel)
-                                            //                                                .transition(.opacity)
-                                                .onTapGesture {
-                                                    withAnimation {
-                                                        bioExpanded.toggle()
-                                                    }
-                                                }
-                                            Spacer()
-                                        }
+                                            HStack {
+                                                //                                        VStack {
+                                                MyText(text: vids[i].bio, size: geo.size.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
+                                                    .truncationMode(.tail)
+                                                    .padding(.horizontal, 15)
+                                                    .lineLimit(bioExpanded ? 8 : 4)
+                                                Spacer()
+                                            }
+                                            .onTapGesture {
+                                                bioExpanded.toggle()
+                                            }
                                         .frame(maxWidth: geo.size.width * 0.9)
+                                        .padding(.bottom, 5)
                                         
                                         if let url = vids[i].youtubeURL {
                                             HStack {
@@ -259,28 +258,31 @@ struct VerticalVideoView: View {
 //                                                    .frame(width: geo.size.width * 0.04)
                                                 Spacer()
                                             }
+                                            .padding(.vertical, 5)
                                             .padding(.horizontal, 15)
                                         }
                                         
                                         Spacer()
                                         //                                Spacer()
-                                        HStack {
-                                            Image(systemName: "arrow.down")
-                                                .foregroundColor(Color("AccentGray"))
-                                                .font(.system(size: geo.size.width * 0.05, weight: .light))
-                                                .padding(.leading)
-                                            MyText(text: i < min(videoListNum, vids.count)  - 1 ? "\(getNext().title)" : "Swipe up for more!", size: geo.size.width * 0.03, bold: true, alignment: .leading, color: Color("AccentGray"))
-                                            Spacer()
-                                            Button(action: {
-                                                channelGuidePressed = true
-                                            }, label: {
-                                                Image(systemName: "list.bullet.below.rectangle")
-                                                    .foregroundColor(.white)
-                                                    .font(.system(size: geo.size.width * 0.05, weight: .medium))
-                                            })
-                                            .padding(.horizontal)
+                                        if i == current_playing {
+                                            HStack {
+                                                Image(systemName: "arrow.down")
+                                                    .foregroundColor(Color("AccentGray"))
+                                                    .font(.system(size: geo.size.width * 0.05, weight: .light))
+                                                    .padding(.leading)
+                                                MyText(text: i < min(videoListNum, vids.count)  - 1 ? "\(getNext().title)" : "Swipe up for more!", size: geo.size.width * 0.03, bold: true, alignment: .leading, color: Color("AccentGray"))
+                                                Spacer()
+                                                Button(action: {
+                                                    channelGuidePressed = true
+                                                }, label: {
+                                                    Image(systemName: "list.bullet.below.rectangle")
+                                                        .foregroundColor(.white)
+                                                        .font(.system(size: geo.size.width * 0.05, weight: .medium))
+                                                })
+                                                .padding(.horizontal)
+                                            }
+                                            .frame(width: geo.size.width)
                                         }
-                                        .frame(width: geo.size.width)
                                     }
                                     .frame(width: geo.size.width)
                                     
@@ -323,7 +325,6 @@ struct VerticalVideoView: View {
                             if newIndex >= vids.count {
                                 current_playing = newIndex - 1
                             } else {
-                                
                                 recent_change = true
                                 videoListNum = min(vids.count, videoListNum)
                                 
@@ -519,6 +520,19 @@ struct VerticalVideoView: View {
             .store(in: &cancellables)
     }
     
+    private func playSound() {
+
+        if let path = Bundle.main.path(forResource: "Blow", ofType: "aiff") {
+            let soundUrl = URL(fileURLWithPath: path)
+            do {
+                audioPlayer = try AVAudioPlayer(contentsOf: soundUrl)
+                audioPlayer?.play()
+            } catch {
+                print("Error initializing AVAudioPlayer.")
+            }
+        }
+    }
+    
     private func observePlayer(to player: AVPlayer) {
                 
 //        DispatchQueue.global(qos: .userInitiated).async {
@@ -550,7 +564,7 @@ struct VerticalVideoView: View {
             queue: .main
         ) { _ in
             recent_change = true
-            
+            playSound()
             videoCompleted(for: getVideo(current_playing), with: authModel.user, profile: authModel.current_user)
             player.seek(to: CMTime.zero)
 

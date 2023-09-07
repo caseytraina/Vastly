@@ -212,7 +212,6 @@ class VideoViewModel: ObservableObject {
         }
     }
     
-    
     // This function turns a path to a URL of a cached and compressed video, connecting to our CDN imagekit which is a URL-based video and image delivery and transformation company.
     func getAVPlayer(from location: String) async throws -> URL? {
 

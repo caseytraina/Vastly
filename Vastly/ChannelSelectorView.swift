@@ -68,7 +68,6 @@ struct ChannelSelectorView: View {
                                     .scaledToFill()
                                     .overlay(
                                         LinearGradient(gradient: Gradient(colors: [.black, .clear]), startPoint: .bottomLeading, endPoint: .top)
-                                            
                                     )
                             )
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.white, lineWidth: i == channel_index ? 2 : 0))

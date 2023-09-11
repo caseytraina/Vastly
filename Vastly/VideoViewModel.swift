@@ -22,17 +22,18 @@ import FirebaseFirestoreSwift
 
 
 class VideoViewModel: ObservableObject {
+    // This probably breaks the MVC of the app, need to talk to Casey for recommended approach with current architecture
+    @EnvironmentObject var authModel: AuthViewModel
     
     @Published var videos: [Channel: [Video]] = [:]
-        
+    @Published var recommendedVideos: [Video] = []
+    
     @Published var isProcessing: Bool = true {
         didSet {
             self.playerManager = VideoPlayerManager(videos: self.videos)
         }
     }
-    
-//    @Published var trendingVideos: [Video] = []
-    
+        
     var authors: [Author] = []
     
     var playerManager: VideoPlayerManager?
@@ -190,7 +191,9 @@ class VideoViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self.videos = processedVideos
                     self.videos[Channel.foryou] = self.getRandomVideos(maxCount: 40)
-//                    self.trendingVideos = self.getRandomVideos(maxCount: 40)
+                    if let profile = self.authModel.current_user {
+                        self.recommendedVideos = self.getRecommendedVideos(for: profile, maxCount: 40)
+                    }
                     self.playerManager?.updatePlayers(videos: self.videos)
                     self.isProcessing = false
                     //                    }
@@ -268,6 +271,34 @@ class VideoViewModel: ObservableObject {
         
         return processedVideos
     }
+    
+    func getRecommendedVideos(for profile: Profile, maxCount: Int) -> [Video] {
+        var recommendedVideos: [Video] = []
+        
+        if let interests = profile.interests {
+            if interests.count == 0 {
+                return recommendedVideos
+            }
+            
+            let allVideos = Array(videos.values.flatMap { $0 })
+            
+            for video in allVideos {
+                // Check if any of their interests are related to this video
+                for interest in interests {
+                    // This is really rudamentary for now, probably not going to match much. Search would be nice, or interests which map better
+                    // to channel names
+                    if video.title.contains(interest) || video.channels.contains(interest) || video.bio.contains(interest) {
+                        recommendedVideos.append(video)
+                        if recommendedVideos.count == maxCount {
+                            return recommendedVideos
+                        }
+                    }
+                }
+            }
+        }
+        return recommendedVideos
+    }
+    
     // This function accepts an integer n and returns a random array consistent of n videos.
     func getRandomVideos(maxCount: Int) -> [Video] {
         // Convert the dictionary to a flat array
@@ -294,12 +325,7 @@ class VideoViewModel: ObservableObject {
                                  channels: ["For You"],
                                  url: video.url,
                                  youtubeURL: video.youtubeURL)
-//            newVideo.channels.append("For You")
-            
-            //            if !video.channels.contains("For You") {
-            //                video.channels.append("")
-            //            }
-            
+
             if !randomVideos.contains(where: { $0.id == newVideo.id }) {
                 randomVideos.append(newVideo)
             }
@@ -307,20 +333,5 @@ class VideoViewModel: ObservableObject {
         
         return randomVideos.shuffled().shuffled()
     }
-    
-//    func getTrendingVideos() {
-//        DispatchQueue.main.async {
-//        }
-//    }
-    
-//    func addTrendingVideos() {
-//        for video in self.getRandomVideos(maxCount: 40) {
-//            
-//            if !trendingVideos.contains(where: {$0.id == video.id}) {
-//                trendingVideos.append(video)
-//            }
-//        }
-//    }
-    
 }
 

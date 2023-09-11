@@ -212,30 +212,47 @@ struct NewVideoView: View {
                         impact.impactOccurred()
 
                         channelTapped(for: newChannel, with: authModel.user)
-                        videoWatched(for: getVideo(i: video_indices[channel_index], in: activeChannel), with: authModel.user, profile: authModel.current_user)
+                        videoWatched(for: getVideo(i: video_indices[channel_index], in: activeChannel),
+                                     with: authModel.user,
+                                     profile: authModel.current_user)
+                            
+                        let previousVideo = getVideo(i: video_indices[channel_index], in: previous_channel)
+                        let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
                         
-                        let duration = viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentTime().seconds
-                        
-                        logWatchTime(from: startTime, to: endTime, for: getVideo(i: video_indices[channel_index], in: previous_channel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user, profile: authModel.current_user)
-                        startTime = Date()
+                        logWatchTime(from: startTime,
+                                     to: endTime,
+                                     for: previousVideo,
+                                     time: (viewModel.playerManager?.getPlayer(for: previousVideo).currentItem!.duration.seconds) ?? 0.0,
+                                     watched: duration,
+                                     with: authModel.user,
+                                     profile: authModel.current_user)
                         updateMetadata()
-                        
                         previous_channel = newChannel
-                        
+                        startTime = Date()
                     }
                     .onChange(of: video_indices[channel_index]) { newIndex in
                         endTime = Date()
 
-                        let duration = viewModel.playerManager?.getPlayer(for: getVideo(i: previous_playing, in: activeChannel)).currentTime().seconds
-
                         updateMetadata()
                         
-                        videoWatched(for: viewModel.videos[activeChannel]?[newIndex] ?? EMPTY_VIDEO, with: authModel.user, profile: authModel.current_user)
-                        logWatchTime(from: startTime, to: endTime, for: getVideo(i: previous_playing, in: activeChannel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: previous_playing, in: activeChannel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user, profile: authModel.current_user)
+                        let previousVideo = getVideo(i: previous_playing, in: activeChannel)
+                        let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
+                        
+                        videoWatched(for: viewModel.videos[activeChannel]?[newIndex] ?? EMPTY_VIDEO,
+                                     with: authModel.user,
+                                     profile: authModel.current_user)
+                        logWatchTime(from: startTime,
+                                     to: endTime,
+                                     for: previousVideo,
+                                     time: (viewModel.playerManager?.getPlayer(for: previousVideo).currentItem!.duration.seconds) ?? 0.0,
+                                     watched: duration,
+                                     with: authModel.user,
+                                     profile: authModel.current_user)
 
                         let impact = UIImpactFeedbackGenerator(style: .light)
                         impact.impactOccurred()
                         
+                        previous_playing = newIndex
                         startTime = Date()
                     }
                     .onAppear {

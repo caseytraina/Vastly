@@ -59,6 +59,9 @@ struct VerticalVideoView: View {
 
     var body: some View {
         if let vids = viewModel.videos[channel] {
+            // hijack the .foryou channel to show recommendations
+            vids[Channel.foryou] = viewModel.recommendedVideos
+            
             ScrollViewReader { proxy in
                 GeometryReader { geo in
 

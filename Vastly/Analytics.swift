@@ -139,3 +139,12 @@ func videoCompleted(for video: Video, with user: User?, profile: Profile?) {
         ])
     
 }
+
+// Recommendation events for Algolia
+//
+// Clicked Object ID after search
+// Converted Object ID after search
+// Clicked Object ID
+// Converted Object ID
+//
+// Converted in this case would be watched video to some length of time

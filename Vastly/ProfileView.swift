@@ -15,10 +15,7 @@ struct ProfileView: View {
     @State var isAnimating = false
     
     @Binding var isPlaying: Bool
-    
-//    @Binding var channel: Channel
-//    @Binding var current: Int
-    
+
     var body: some View {
 
         GeometryReader { geo in

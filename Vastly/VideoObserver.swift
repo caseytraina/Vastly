@@ -14,8 +14,8 @@ import MediaPlayer
  This View Model governs all AVPlayers and their states, and controls the starting and stopping of videos. This exists as a child of the VideoViewModel. A given video can be described by its channel and current_index. videos[.foryou][0] describes the first video in the for you channel. Players is a flat array which correlates to videos based on their UUIDs
  */
 class VideoPlayerManager: ObservableObject {
-    @Published var players: [UUID: AVPlayer] = [:]
-    @Published var loadingStates: [UUID: Bool] = [:]
+    @Published var players: [String: AVPlayer] = [:]
+    @Published var loadingStates: [String: Bool] = [:]
     var current_index: Int = 0
     var activeChannel: Channel = Channel.allCases[0] {
         didSet {
@@ -259,6 +259,8 @@ class VideoPlayerManager: ObservableObject {
         if shouldPlay {
             playCurrentVideo()
         }
+        
+
     }
     
     

@@ -10,11 +10,15 @@ import AVKit
 
 struct HomeView: View {
 //    @EnvironmentObject var viewModel: VideoViewModel
-    @StateObject var viewModel = VideoViewModel()
+    @StateObject var viewModel: VideoViewModel
 
     @EnvironmentObject var authModel: AuthViewModel
 
     @State var channel_index = 0
+    
+    init(authModel: AuthViewModel) {
+        _viewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
+    }
     
     var body: some View {
         
@@ -36,13 +40,13 @@ struct HomeView: View {
                     .animation(.easeInOut(duration: 0.75), value: channel_index)
             }
             
-            
             VStack {
                 NewVideoView(channel_index: $channel_index)
                     .environmentObject(viewModel)
                     .environmentObject(authModel)
             }
         }
+        
     }
     // Creates Gradient
     private func myGradient(channel_index: Int) -> [Color] {

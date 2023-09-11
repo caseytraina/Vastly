@@ -36,6 +36,8 @@ class AuthViewModel: ObservableObject {
     @Published var current_user: Profile? = nil
     @Published var liked_videos: [String] = []
     
+    var viewModel: VideoViewModel?
+    
     init() {
         listenToAuthState()
     }
@@ -52,6 +54,7 @@ class AuthViewModel: ObservableObject {
 
                     Task { [self] in
                         await self?.configureUser(self?.user?.phoneNumber ?? self?.user?.email ?? "")
+                        self?.viewModel = VideoViewModel(authModel: self ?? AuthViewModel())
                     }
 
                     var AMP_Array: [AnyHashable] = []
@@ -217,7 +220,7 @@ class AuthViewModel: ObservableObject {
             }
             
             // Merging data in case you want to add or update more fields in future
-            var data: [String: Any] = [typeOfUser == .Email ? "email" : "phoneNumber" : credential, "firstName": firstName, "lastName": lastName, "liked_videos" : [], "interests" : interests]
+            var data: [String: Any] = [typeOfUser == .Email ? "email" : "phoneNumber" : credential, "firstName": firstName, "lastName": lastName, "liked_videos" : [], "interests" : interests, "viewed_videos" : []]
             additionalInfo.forEach { data[$0] = $1 }
 
             // Upload data
@@ -251,7 +254,7 @@ class AuthViewModel: ObservableObject {
             
             let data = documentSnapshot.data()
             
-            let profile = Profile(firstName: data?["firstName"] as? String ?? "", lastName: data?["lastName"] as? String ?? "", email: data?["email"] as? String ?? "", phoneNumber: data?["phoneNumber"] as? String ?? "", liked_videos: data?["liked_videos"] as? [String] ?? nil, interests: data?["interests"] as? [String] ?? nil)
+            let profile = Profile(firstName: data?["firstName"] as? String ?? "", lastName: data?["lastName"] as? String ?? "", email: data?["email"] as? String ?? "", phoneNumber: data?["phoneNumber"] as? String ?? "", liked_videos: data?["liked_videos"] as? [String] ?? nil, interests: data?["interests"] as? [String] ?? nil, viewed_videos: data?["viewed_videos"] as? [String] ?? nil)
             DispatchQueue.main.async { [data] in
                 self.liked_videos = data?["liked_videos"] as? [String] ?? []
             }

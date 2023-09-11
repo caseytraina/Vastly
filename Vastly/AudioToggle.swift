@@ -28,12 +28,7 @@ struct AudioToggleStyle: ToggleStyle {
                             Circle()
                                 .frame(width: screenSize.width * 0.055)
                                 .foregroundColor(.white)
-    //                        Image(systemName: configuration.isOn ? onImage : offImage)
-    //                            .foregroundColor(configuration.isOn ? .white : .white)
-    //    //                        .resizable()
-    //    //                        .scaledToFill()
-    //                            .padding()
-    //                            .rotationEffect(.degrees(configuration.isOn ? 0 : -360))
+
                                 .offset(x: configuration.isOn ? -screenSize.width * 0.0375 : screenSize.width * 0.0375)
                         }
                         .frame(width: screenSize.width * 0.15, height: 32)

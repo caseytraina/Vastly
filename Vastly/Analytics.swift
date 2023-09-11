@@ -10,27 +10,33 @@ import Firebase
 import FirebaseCore
 import FirebaseAuth
 import FirebaseAnalytics
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 
 import Amplitude
 
 import CoreMedia
 
 func videoWatched(for video: Video, with user: User?, profile: Profile?) {
-//    Analytics.logEvent(AnalyticsEventSelectItem, parameters: [
-//        AnalyticsParameterItemID: video.id.uuidString as NSObject,
-//        AnalyticsParameterItemName: video.title as NSObject,
-//        AnalyticsParameterItemCategory: video.channels[0] as NSObject,
-//        AnalyticsParameterAffiliation: video.author.name ?? "" as NSObject,
-//        "list_id": video.channels[0] as NSObject,
-//        "list_name": video.channels[0].capitalized as NSObject,
-//        "user_id": user?.uid
-//    ])
     
+    let db = Firestore.firestore()
+    let userRef = {
+        if (profile?.phoneNumber != "") {
+            return db.collection("users").document((profile?.phoneNumber)!);
+        } else if (profile?.email != nil) {
+            return db.collection("users").document((profile?.email)!);
+        }
+        return db.collection("users").document("");
+    }
+    
+    userRef().updateData([
+        "viewed_videos": FieldValue.arrayUnion([video.id])
+    ])
     
     Amplitude.instance().logEvent(
         "Video Watched",
         withEventProperties: [
-            "Video ID": video.id.uuidString as NSObject,
+            "Video ID": video.id as NSObject,
             "Video Title": video.title as NSObject,
             "Video Channels": video.channels as NSObject,
             "Author": video.author.name ?? "" as NSObject,
@@ -86,7 +92,7 @@ func logWatchTime(from start: Date, to end: Date, for video: Video, time: Double
     Amplitude.instance().logEvent(
         "Video Watch Time",
         withEventProperties: [
-            "Video ID"      : video.id.uuidString as NSObject,
+            "Video ID"      : video.id as NSObject,
             "Video Title"   : video.title as NSObject,
             "Author"    : video.author.name ?? "" as NSObject,
             "Video Channels" : video.channels as NSObject,
@@ -98,7 +104,7 @@ func logWatchTime(from start: Date, to end: Date, for video: Video, time: Double
     Amplitude.instance().logEvent(
         "Video Percentage Watched",
         withEventProperties: [
-            "Video ID"      : video.id.uuidString as NSObject,
+            "Video ID"      : video.id as NSObject,
             "Video Title"   : video.title as NSObject,
             "Author"    : video.author.name ?? "" as NSObject,
             "Video Channels" : video.channels as NSObject,
@@ -130,7 +136,7 @@ func videoCompleted(for video: Video, with user: User?, profile: Profile?) {
     Amplitude.instance().logEvent(
         "Video Completed",
         withEventProperties: [
-            "Video ID"      : video.id.uuidString as NSObject,
+            "Video ID"      : video.id as NSObject,
             "Video Title"   : video.title as NSObject,
             "Author"    : video.author.name ?? "" as NSObject,
             "Video Channels" : video.channels as NSObject,

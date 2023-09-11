@@ -20,8 +20,7 @@ struct ContentView: View {
         
         Group {
             if authModel.user != nil {
-                HomeView()
-//                    .environmentObject(viewModel)
+                HomeView(authModel: authModel)
                     .environmentObject(authModel)
 //                    .environmentObject(authModel)
             } else {

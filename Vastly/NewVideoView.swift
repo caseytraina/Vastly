@@ -56,15 +56,14 @@ struct NewVideoView: View {
     
     var body: some View {
         
-        
-        
+
         Group {
             if viewModel.isProcessing {
                 LoadingView()
             } else {
                 ZStack {
                     VStack {
-                        Carousel(isPlaying: $playing, selected: $activeChannel)
+                        Carousel(isPlaying: $playing, selected: $activeChannel, channel_index: $channel_index)
                             .environmentObject(viewModel)
                             .environmentObject(authModel)
                             .frame(height: screenSize.height*0.075)
@@ -83,12 +82,20 @@ struct NewVideoView: View {
                                                 
                                                 
                                                 //                                        if abs(channel_index - Channel.allCases.first(where: {$0 == channel})) <= 1 {
-                                                VerticalVideoView(activeChannel: $activeChannel, current_playing: $video_indices[channel_index], isPlaying: $playing, dragOffset: $dragOffset, channelGuidePressed: $channelGuidePressed, channel: channel, publisherIsTapped: $publisherIsTapped)
-                                                    .environmentObject(viewModel)
-                                                    .environmentObject(authModel)
+                                                if (viewModel.videos[channel] ?? []).isEmpty {
+                                                    ZStack {
+                                                        Color("BackgroundColor")
+                                                        MyText(text: "It seems you've seen all these videos. Try a new channel!", size: screenSize.width * 0.05, bold: true, alignment: .center, color: .white)
+                                                    }
                                                     .frame(width: screenSize.width, height: screenSize.height * 0.8)
-//                                                    .blur(radius: channel == activeChannel ? 0 : 3)
-                                                    .id(channel)
+                                                } else {
+                                                    VerticalVideoView(activeChannel: $activeChannel, current_playing: $video_indices[channel_index], isPlaying: $playing, dragOffset: $dragOffset, channelGuidePressed: $channelGuidePressed, channel: channel, publisherIsTapped: $publisherIsTapped)
+                                                        .environmentObject(viewModel)
+                                                        .environmentObject(authModel)
+                                                        .frame(width: screenSize.width, height: screenSize.height * 0.8)
+                                                    //                                                    .blur(radius: channel == activeChannel ? 0 : 3)
+                                                        .id(channel)
+                                                }
                                                 
                                             } else {
                                                 Color("BackgroundColor")
@@ -109,12 +116,31 @@ struct NewVideoView: View {
                                         proxy.scrollTo(activeChannel, anchor: .leading)
                                     }
                                 }
-                                .frame(width: screenSize.width, height: screenSize.height * 0.8)
                                 .onChange(of: activeChannel) { newChannel in
+                                    if channel_index != Channel.allCases.firstIndex(where: {$0 == newChannel}) ?? 0 {
+                                        channel_index = Channel.allCases.firstIndex(where: {$0 == newChannel}) ?? 0
+                                    }
+                                    endTime = Date()
+                                    
+                                    let impact = UIImpactFeedbackGenerator(style: .medium)
+                                    impact.impactOccurred()
+
+                                    channelTapped(for: newChannel, with: authModel.user)
+                                    videoWatched(for: getVideo(i: video_indices[channel_index], in: activeChannel), with: authModel.user, profile: authModel.current_user)
+                                    
+                                    let duration = viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentTime().seconds
+                                    
+                                    logWatchTime(from: startTime, to: endTime, for: getVideo(i: video_indices[channel_index], in: previous_channel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user, profile: authModel.current_user)
+                                    startTime = Date()
+                                    updateMetadata()
+                                    
+                                    previous_channel = newChannel
                                     withAnimation(.easeOut(duration: 0.125)) {
                                         proxy.scrollTo(newChannel, anchor: .leading)
                                     }
+                                    
                                 }
+                                .frame(width: screenSize.width, height: screenSize.height * 0.8)
                                 .gesture(DragGesture()
                                     .onChanged({ event in
                                         if dragType == .unknown {
@@ -200,29 +226,10 @@ struct NewVideoView: View {
                         if activeChannel != Channel.allCases[newIndex] {
                             activeChannel = Channel.allCases[newIndex]
                         }
+                        print(newIndex)
                         updateMetadata()
                     }
-                    .onChange(of: activeChannel) { newChannel in
-                        if channel_index != Channel.allCases.firstIndex(where: {$0 == newChannel}) ?? 0 {
-                            channel_index = Channel.allCases.firstIndex(where: {$0 == newChannel}) ?? 0
-                        }
-                        endTime = Date()
-                        
-                        let impact = UIImpactFeedbackGenerator(style: .medium)
-                        impact.impactOccurred()
 
-                        channelTapped(for: newChannel, with: authModel.user)
-                        videoWatched(for: getVideo(i: video_indices[channel_index], in: activeChannel), with: authModel.user, profile: authModel.current_user)
-                        
-                        let duration = viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentTime().seconds
-                        
-                        logWatchTime(from: startTime, to: endTime, for: getVideo(i: video_indices[channel_index], in: previous_channel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user, profile: authModel.current_user)
-                        startTime = Date()
-                        updateMetadata()
-                        
-                        previous_channel = newChannel
-                        
-                    }
                     .onChange(of: video_indices[channel_index]) { newIndex in
                         endTime = Date()
 
@@ -231,6 +238,7 @@ struct NewVideoView: View {
                         updateMetadata()
                         
                         videoWatched(for: viewModel.videos[activeChannel]?[newIndex] ?? EMPTY_VIDEO, with: authModel.user, profile: authModel.current_user)
+                        
                         logWatchTime(from: startTime, to: endTime, for: getVideo(i: previous_playing, in: activeChannel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: previous_playing, in: activeChannel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user, profile: authModel.current_user)
 
                         let impact = UIImpactFeedbackGenerator(style: .light)
@@ -240,6 +248,8 @@ struct NewVideoView: View {
                     }
                     .onAppear {
                         startTime = Date()
+                        
+                        videoWatched(for: viewModel.videos[activeChannel]?[video_indices[channel_index]] ?? EMPTY_VIDEO, with: authModel.user, profile: authModel.current_user)
                     }
                     .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataWillBecomeUnavailableNotification)) { _ in
                         DispatchQueue.main.async {

@@ -127,11 +127,7 @@ struct VerticalVideoView: View {
                                                             .onTapGesture {
                                                                 isPlaying.toggle()
                                                             }
-                                                            .onTapGesture(count: 2) {
-                                                                DispatchQueue.main.async {
-                                                                    toggleLike(i)
-                                                                }
-                                                            }
+
                                                             if i == current_playing {
                                                                 
                                                                 ProgressBar(value: $playerProgress, activeChannel: $activeChannel, video: vids[i])
@@ -307,19 +303,30 @@ struct VerticalVideoView: View {
                             withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(current_playing, anchor: .top)
                             }
-                            
                             previous = current_playing
                             trackAVStatus(for: getVideo(current_playing))
                             play(current_playing)
+                            viewModel.playerManager?.pauseAllOthers(except: getVideo(current_playing))
                         }
 
                     }
+//                    .onDisappear {
+//                        Task {
+//                            if let vids = viewModel.videos[channel] {
+//                                for video in vids {
+//                                    viewModel.playerManager?.pause(for: video)
+//                                    //                                viewModel.playerManager?.deletePlayer(video)
+//                                }
+//                            }
+//                        }
+//                    }
                     .onChange(of: current_playing) { newIndex in
                         if channel == activeChannel {
                             
                             if newIndex >= vids.count {
                                 current_playing = newIndex - 1
                             } else {
+                                
                                 recent_change = true
                                 videoListNum = min(vids.count, videoListNum)
                                 
@@ -350,10 +357,13 @@ struct VerticalVideoView: View {
                         }
                     }
                     .onChange(of: activeChannel) { newChannel in
-                        
+
                         if abs((Channel.allCases.firstIndex(of: activeChannel) ?? 0) - (Channel.allCases.firstIndex(of: channel) ?? 0)) <= 1 {
                             videoListNum = videoListNum < 15 ? min(vids.count, 15) : videoListNum
                         }
+                        
+                        viewModel.playerManager?.changeToChannel(to: newChannel, shouldPlay: isPlaying, newIndex: current_playing)
+
                         
                         if channel == newChannel {
                             
@@ -361,16 +371,18 @@ struct VerticalVideoView: View {
                             recent_change = true
                             videoListNum = min(vids.count, videoListNum)
                             trackAVStatus(for: getVideo(current_playing) ?? EMPTY_VIDEO)
-                            viewModel.playerManager?.changeToChannel(to: newChannel, shouldPlay: isPlaying, newIndex: current_playing)
                             //                        viewModel.playerManager?.pause(for: viewModel.videos[previous_channel]?[previous] ?? EMPTY_VIDEO)
                             
-                            previous_channel = newChannel
                             
                             withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(current_playing, anchor: .top)
                             }
-                            
+                            previous_channel = newChannel
+
                         }
+                        
+
+
                         
                     }
                     .onChange(of: isPlaying) { newPlaying in

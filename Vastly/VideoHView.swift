@@ -121,10 +121,10 @@ struct VideoHView: View {
                                                     }
                                                     if i == current_playing {
                                                         
-                                                        ProgressBar(value: $playerProgress, activeChannel: $activeChannel, video: getVideo(i: i, in: activeChannel))
-                                                            .frame(width: screenSize.width, height: PROGRESS_BAR_HEIGHT)
-                                                            .padding(0)
-                                                            .environmentObject(viewModel)
+//                                                        ProgressBar(value: $playerProgress, activeChannel: $activeChannel, video: getVideo(i: i, in: activeChannel))
+//                                                            .frame(width: screenSize.width, height: PROGRESS_BAR_HEIGHT)
+//                                                            .padding(0)
+//                                                            .environmentObject(viewModel)
                                                     }
                                                 }
                                                 

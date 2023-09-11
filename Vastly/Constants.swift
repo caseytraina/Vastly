@@ -19,7 +19,7 @@ let IMAGEKIT_ENDPOINT = "https://ik.imagekit.io/4ni2tyc01/Firebase/"
 let PUBLIC_KEY = "public_t9txC8byE5HU/lmM06QRbNpw7CU="
 
 let EMPTY_VIDEO = Video(
-    id: UUID(),
+    id: UUID().uuidString,
     title: "Unknown Source",
     author: EMPTY_AUTHOR,
     bio: "Oops — there's an issue on our end!",
@@ -31,7 +31,7 @@ let EMPTY_VIDEO = Video(
 //    player: AVPlayerItem(url: URL(string: "https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/dash/ForBiggerMeltdownsVideo.mp4")!))
 
 let EXAMPLE_VIDEO = Video(
-    id: UUID(),
+    id: UUID().uuidString,
     title: "3 Reasons AI Would Turn Against Humans",
     author: EXAMPLE_AUTHOR,
     bio: "Artificial intelligence safety expert Eliezer Yudkowsky discusses the dangers that come with future technology advancements.",
@@ -47,6 +47,7 @@ let EXAMPLE_VIDEO = Video(
 
 
 let EMPTY_UNPROCESSED_VIDEO = UnprocessedVideo(
+    id: UUID().uuidString,
     title: "Unknown Source",
     author: "Missing Video!",
     bio: "Oops — there's an issue on our end!",

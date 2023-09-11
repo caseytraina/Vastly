@@ -20,7 +20,6 @@ import FirebaseFirestoreSwift
  VideoViewModel is responsible for the querying and handling of video data in-app. VideoViewModel handles all video operations, except for the actual playing of the videos. That is controlled in VideoObserver.
  */
 
-
 class VideoViewModel: ObservableObject {
     
     @Published var videos: [Channel: [Video]] = [:]
@@ -37,9 +36,11 @@ class VideoViewModel: ObservableObject {
     
     var playerManager: VideoPlayerManager?
     
-    init() {
+    var authModel: AuthViewModel
+    
+    init(authModel: AuthViewModel) {
         // Initialize player manager here.
-        
+        self.authModel = authModel
         Task {
             var myVideos: [Channel: [UnprocessedVideo]] = [:]
             //            for channel in Channel.allCases {
@@ -74,43 +75,51 @@ class VideoViewModel: ObservableObject {
     
     // This function queries and returns all videos. Videos are organized by channels, hence the 2D array and getChannels name.
     func getChannels() async throws -> [Channel: [UnprocessedVideo]] {
-        var videosDict: [Channel : [UnprocessedVideo]] = [:]
         
+        var videosDict: [Channel : [UnprocessedVideo]] = [:]
+
+
         let db = Firestore.firestore()
         let storageRef = db.collection("videos")
-        
+
         let documents = try await fetchDocuments(in: storageRef)
         do {
             for document in documents {
                 let unfilteredVideo = try document.data(as: FirebaseData.self)
+                let id = document.documentID
                 let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
-                
-                if var loc = unfilteredVideo.location {
-                    loc.removeAll(where: { punctuation.contains($0) })
-                    let video = UnprocessedVideo(
-                        title: unfilteredVideo.title ?? "Unknown Title",
-                        author: unfilteredVideo.author ?? "The author for this video cannot be found.",
-                        bio: unfilteredVideo.bio ?? "The bio for this video cannot be found. Please look online for more information.",
-                        date: unfilteredVideo.date,
-                        channels: unfilteredVideo.channels ?? ["none"],
-                        location: "\(loc)",
-                        youtubeURL: unfilteredVideo.youtubeURL)
-                    print(loc)
-                    
-                    for channelItem in video.channels {
-                        if let channel = Channel(rawValue: channelItem) {
-                            if videosDict[channel] != nil {
-                                videosDict[channel]!.append(video)
-                            } else {
-                                videosDict[channel] = [video]
+                if !(authModel.current_user?.viewed_videos?.contains(where: {$0 == id}) ?? false) {
+                    if var loc = unfilteredVideo.location {
+                        loc.removeAll(where: { punctuation.contains($0) })
+                        let video = UnprocessedVideo(
+                            id: id,
+                            title: unfilteredVideo.title ?? "Unknown Title",
+                            author: unfilteredVideo.author ?? "The author for this video cannot be found.",
+                            bio: unfilteredVideo.bio ?? "The bio for this video cannot be found. Please look online for more information.",
+                            date: unfilteredVideo.date,
+                            channels: unfilteredVideo.channels ?? ["none"],
+                            location: "\(loc)",
+                            youtubeURL: unfilteredVideo.youtubeURL)
+                        print(loc)
+                        
+                        for channelItem in video.channels {
+                            if let channel = Channel(rawValue: channelItem) {
+                                if videosDict[channel] != nil {
+                                    videosDict[channel]!.append(video)
+                                } else {
+                                    videosDict[channel] = [video]
+                                }
                             }
                         }
                     }
+                    
                 }
             }
         } catch {
             print("error with video: \(error)")
         }
+//        }
+
         
         return videosDict
     }
@@ -242,7 +251,7 @@ class VideoViewModel: ObservableObject {
             do {
                 // await used since getAVPlayer returns async.
                 let player = try await getAVPlayer(from: video.location)
-                let processedVideo = Video(id: UUID(), title: video.title, author: findAuthor(video), bio: video.bio, date: video.date, channels: video.channels, url: player, youtubeURL: video.youtubeURL)
+                let processedVideo = Video(id: video.id, title: video.title, author: findAuthor(video), bio: video.bio, date: video.date, channels: video.channels, url: player, youtubeURL: video.youtubeURL)
                 count += 1
                 
                 for channelItem in processedVideo.channels {

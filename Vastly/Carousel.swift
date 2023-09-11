@@ -16,7 +16,7 @@ struct Carousel: View {
     
     @Binding var isPlaying: Bool
     @Binding var selected: Channel
-    
+    @Binding var channel_index: Int
     var body: some View {
         ZStack {
 //            Color(.black)
@@ -30,9 +30,11 @@ struct Carousel: View {
                             HStack {
                                 ForEach(Channel.allCases.indices) { i in
                                     Button(action: {
-                                        selected = Channel.allCases[i]
+//                                        selected = Channel.allCases[i]
+                                        viewModel.playerManager?.pauseCurrentVideo()
+                                        channel_index = i
                                         withAnimation {
-                                            proxy.scrollTo(Channel.allCases[i], anchor: .center)
+                                            proxy.scrollTo(i, anchor: .center)
                                         }
                                     }, label: {
                                         MyText(text: Channel.allCases[i].title, size: screenSize.width * 0.04, bold: true, alignment: .center, color: selected == Channel.allCases[i] ? .white : Color("AccentGray"))
@@ -48,14 +50,14 @@ struct Carousel: View {
                                             .transition(.opacity)
                                         
                                     })
-                                    .id(Channel.allCases[i])
+                                    .id(i)
                                     .padding(.top)
                                 }
                             }
                         }
-                        .onChange(of: selected) { newChannel in
+                        .onChange(of: channel_index) { newIndex in
                             withAnimation {
-                                proxy.scrollTo(Channel.allCases.first(where: { $0 == newChannel }), anchor: .center)
+                                proxy.scrollTo(newIndex, anchor: .center)
                             }
                         }
 //                        .frame(maxWidth: geo.size.width * 0.65)

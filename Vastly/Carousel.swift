@@ -28,7 +28,7 @@ struct Carousel: View {
                     ScrollViewReader { proxy in
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                ForEach(Channel.allCases.indices) { i in
+                                ForEach(viewModel.channels.indices) { i in
                                     Button(action: {
 //                                        selected = Channel.allCases[i]
                                         viewModel.playerManager?.pauseCurrentVideo()
@@ -37,15 +37,15 @@ struct Carousel: View {
                                             proxy.scrollTo(i, anchor: .center)
                                         }
                                     }, label: {
-                                        MyText(text: Channel.allCases[i].title, size: screenSize.width * 0.04, bold: true, alignment: .center, color: selected == Channel.allCases[i] ? .white : Color("AccentGray"))
+                                        MyText(text: viewModel.channels[i].title, size: screenSize.width * 0.04, bold: true, alignment: .center, color: selected == viewModel.channels[i] ? .white : Color("AccentGray"))
                                             .padding(.horizontal, 15)
                                             .lineLimit(1)
                                             .background(Capsule()
-                                                .fill(LinearGradient(gradient: Gradient(colors: [selected == Channel.allCases[i] ? selected.color.opacity(0.75) : .white.opacity(0.1), .white.opacity(0.1)]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                .fill(LinearGradient(gradient: Gradient(colors: [selected == viewModel.channels[i] ? selected.color.opacity(0.75) : .white.opacity(0.1), .white.opacity(0.1)]), startPoint: .topLeading, endPoint: .bottomTrailing))
                                                 )
                                             .overlay(Capsule()
                                                 .stroke(Color.black, lineWidth: 1)
-                                                .shadow(color: Color.black.opacity(selected == Channel.allCases[i] ? 1.0 : 0.0), radius: 5, x: 0, y: 5))
+                                                .shadow(color: Color.black.opacity(selected == viewModel.channels[i] ? 1.0 : 0.0), radius: 5, x: 0, y: 5))
                                             .animation(.easeOut, value: selected)
                                             .transition(.opacity)
                                         

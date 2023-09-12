@@ -324,7 +324,6 @@
 				023EE7A52A0ADF6D004E09DD /* HomeView.swift */,
 				029AEAB02A858649002A09DF /* NewVideoView.swift */,
 				029AEAAE2A853754002A09DF /* VerticalVideoView.swift */,
-				02313CBA2A2167AE00C02CC4 /* ChannelSelectorView.swift */,
 				025649A32A11FF4700C442AE /* LoadingView.swift */,
 				02C5CCD22A4A25EC00C7280E /* TutorialView.swift */,
 				02583E1F2A1B462A008CDA59 /* VideoLoadingView.swift */,
@@ -370,6 +369,7 @@
 		02611E5A2AA7B572007029BB /* Not In Use */ = {
 			isa = PBXGroup;
 			children = (
+				02313CBA2A2167AE00C02CC4 /* ChannelSelectorView.swift */,
 				02B2AF242A745E6400307406 /* AuthorInfoView.swift */,
 				02583E062A19ADB5008CDA59 /* TextOverlayView.swift */,
 				023EE7F52A0DAB02004E09DD /* VideoView.swift */,

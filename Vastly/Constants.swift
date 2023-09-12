@@ -9,6 +9,13 @@ import Foundation
 import SwiftUI
 import AVKit
 
+let FOR_YOU_CHANNEL = Channel(
+    id: "For You",
+    order: 0,
+    title: "For You",
+    color: Color(red: 0.45, green: 0.31, blue: 1),
+    isActive: true)
+
 let screenSize: CGRect = UIScreen.main.bounds
 
 let VIDEO_WIDTH = screenSize.width

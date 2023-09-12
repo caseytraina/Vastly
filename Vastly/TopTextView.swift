@@ -95,7 +95,7 @@ struct TopTextView: View {
 
                 Spacer()
                 HStack {
-                    MyText(text: isDiscover ? "For You" : activeChannel.rawValue, size: geo.size.width * 0.06, bold: true, alignment: .leading, color: .white)
+                    MyText(text: isDiscover ? "For You" : activeChannel.title, size: geo.size.width * 0.06, bold: true, alignment: .leading, color: .white)
                         .lineLimit(2)
 
                     Spacer()

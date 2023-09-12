@@ -38,7 +38,7 @@ struct VerticalVideoView: View {
     @State private var playerTime: CMTime = CMTime()
     
     @State var previous = 0
-    @State var previous_channel: Channel = Channel.allCases[0]
+    @State var previous_channel: Channel = FOR_YOU_CHANNEL
 
     @State private var recent_change = false
 
@@ -67,7 +67,11 @@ struct VerticalVideoView: View {
                             
                         LazyVStack {
                             ForEach(0..<min(vids.count, videoListNum), id: \.self) { i in
-                                renderVStackVideo(geoWidth: geo.size.width, vids: vids, i: i)
+                                renderVStackVideo(
+                                    geoWidth: geo.size.width,
+                                    video: vids[i],
+                                    next: i+1 < vids.count ? vids[i+1] : nil,
+                                    i: i)
                                     .id(i)
                                     .frame(width: geo.size.width, height: geo.size.height)
                                     .clipped()
@@ -82,7 +86,7 @@ struct VerticalVideoView: View {
                     .clipped()
                     .onAppear {
 
-                        if abs((Channel.allCases.firstIndex(of: activeChannel) ?? 0) - (Channel.allCases.firstIndex(of: channel) ?? 0)) <= 1 {
+                        if abs((viewModel.channels.firstIndex(of: activeChannel) ?? 0) - (viewModel.channels.firstIndex(of: channel) ?? 0)) <= 1 {
                             videoListNum = 15
                         } else {
                             videoListNum = 1
@@ -93,6 +97,7 @@ struct VerticalVideoView: View {
                             withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(current_playing, anchor: .top)
                             }
+                            
                             previous = current_playing
                             trackAVStatus(for: getVideo(current_playing))
                             play(current_playing)
@@ -126,8 +131,6 @@ struct VerticalVideoView: View {
                                     proxy.scrollTo(newIndex, anchor: .top)
                                 }
                                 
-                                viewModel.playerManager?.changeToIndex(to: newIndex, shouldPlay: isPlaying)
-                                viewModel.playerManager?.playCurrentVideo()
                                 
                                 DispatchQueue.main.async {
                                     liked = false
@@ -148,40 +151,23 @@ struct VerticalVideoView: View {
                     }
                     .onChange(of: activeChannel) { newChannel in
 
-                        if abs((Channel.allCases.firstIndex(of: activeChannel) ?? 0) - (Channel.allCases.firstIndex(of: channel) ?? 0)) <= 1 {
+                        if abs((viewModel.channels.firstIndex(of: newChannel) ?? 0) - (viewModel.channels.firstIndex(of: channel) ?? 0)) <= 1 {
                             videoListNum = videoListNum < 15 ? min(vids.count, 15) : videoListNum
                         }
-                        
-                        viewModel.playerManager?.changeToChannel(to: newChannel, shouldPlay: isPlaying, newIndex: current_playing)
-
                         
                         if channel == newChannel {
                             
 //                            isPlaying = true
                             recent_change = true
                             videoListNum = min(vids.count, videoListNum)
-                            trackAVStatus(for: getVideo(current_playing) ?? EMPTY_VIDEO)
+                            trackAVStatus(for: getVideo(current_playing))
                             //                        viewModel.playerManager?.pause(for: viewModel.videos[previous_channel]?[previous] ?? EMPTY_VIDEO)
-                            
                             
                             withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(current_playing, anchor: .top)
                             }
                             previous_channel = newChannel
 
-                        }
-                        
-
-
-                        
-                    }
-                    .onChange(of: isPlaying) { newPlaying in
-                        if channel == activeChannel {
-                            if newPlaying {
-                                play(current_playing)
-                            } else {
-                                pause(current_playing)
-                            }
                         }
                     }
                     .frame(width: geo.size.width, height: geo.size.height)
@@ -193,7 +179,7 @@ struct VerticalVideoView: View {
 
     }
     
-    private func renderVStackVideo(geoWidth: CGFloat, vids: [Video], i: Int) -> some View {
+    private func renderVStackVideo(geoWidth: CGFloat, video: Video, next: Video?, i: Int) -> some View {
         VStack(alignment: .leading) {
             //                                if i == current_playing {
             HStack {
@@ -202,7 +188,6 @@ struct VerticalVideoView: View {
                     VStack(alignment: .leading) {
                         MyText(text: "Audio autoplay is on", size: geoWidth * 0.04, bold: false, alignment: .leading, color: .white)
                         MyText(text: "Put Vastly in your pocket and go", size: geoWidth * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
-                        
                     }
                     .padding(.horizontal)
                 }
@@ -234,13 +219,13 @@ struct VerticalVideoView: View {
                             VStack (spacing: 0) {
                                 
                                 ZStack {
-                                    FullscreenVideoPlayer(videoMode: $videoMode, video: getVideo(i), activeChannel: $activeChannel)
+                                    FullscreenVideoPlayer(videoMode: $videoMode, video: video, activeChannel: $activeChannel)
                                         .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                         .padding(0)
                                         .environmentObject(viewModel)
 
                                     if !videoMode {
-                                        AudioOverlay(author: vids[i].author, video: vids[0], playing: $isPlaying)
+                                        AudioOverlay(author: video.author, video: video, playing: $isPlaying)
                                             .environmentObject(viewModel)
                                     }
                                     if !isPlaying {
@@ -257,14 +242,14 @@ struct VerticalVideoView: View {
 
                                 if i == current_playing {
                                     
-                                    ProgressBar(value: $playerProgress, activeChannel: $activeChannel, video: vids[0])
+                                    ProgressBar(value: $playerProgress, activeChannel: $activeChannel, video: video)
                                         .frame(width: screenSize.width, height: PROGRESS_BAR_HEIGHT)
                                         .padding(0)
                                         .environmentObject(viewModel)
                                 }
                             } // end vstack
                         }  else {
-                            VideoThumbnailView(video: vids[0])
+                            VideoThumbnailView(video: video)
                                 .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
 //                                                        VideoLoadingView()
 //                                                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
@@ -272,7 +257,7 @@ struct VerticalVideoView: View {
                     } // end if
                 }
             } else if (i == current_playing && channel != activeChannel) {
-                VideoThumbnailView(video: vids[0])
+                VideoThumbnailView(video: video)
                     .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
             } else {
                 VideoLoadingView()
@@ -281,7 +266,7 @@ struct VerticalVideoView: View {
             
             
             HStack(alignment: .top) {
-                MyText(text: vids[0].date ?? "", size: geoWidth * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
+                MyText(text: video.date ?? "", size: geoWidth * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
                     .lineLimit(1)
                     .padding(.leading)
                 
@@ -317,7 +302,7 @@ struct VerticalVideoView: View {
                             //                                        .animation(.easeOut, value: activeChannel)
                             //                                        .transition(.opacity)
                             
-                            MyText(text: vids[0].author.name ?? "Unknown Author", size: geoWidth * 0.04, bold: true, alignment: .leading, color: .white)
+                            MyText(text: video.author.name ?? "Unknown Author", size: geoWidth * 0.04, bold: true, alignment: .leading, color: .white)
                                 .padding(0)
                                 .lineLimit(2)
                             //                                            .animation(.easeOut, value: activeChannel)
@@ -351,13 +336,13 @@ struct VerticalVideoView: View {
             .frame(width: geoWidth)
             VStack(alignment: .leading) {
                 
-                MyText(text: vids[0].title, size: geoWidth * 0.05, bold: true, alignment: .leading, color: .white)
+                MyText(text: video.title, size: geoWidth * 0.05, bold: true, alignment: .leading, color: .white)
                     .lineLimit(2)
                     .padding(.horizontal, 15)
                 
                     HStack {
                         //                                        VStack {
-                        MyText(text: vids[0].bio, size: geoWidth * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
+                        MyText(text: video.bio, size: geoWidth * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
                             .truncationMode(.tail)
                             .padding(.horizontal, 15)
                             .lineLimit(bioExpanded ? 8 : 4)
@@ -369,9 +354,9 @@ struct VerticalVideoView: View {
                 .frame(maxWidth: geoWidth * 0.9)
                 .padding(.bottom, 5)
                 
-                if let url = vids[0].youtubeURL {
+                if let url = video.youtubeURL {
                     HStack {
-                        FullEpisodeButton(video: vids[0], isPlaying: $isPlaying)
+                        FullEpisodeButton(video: video, isPlaying: $isPlaying)
 //                                                    .frame(width: geo.size.width * 0.04)
                         Spacer()
                     }
@@ -387,7 +372,7 @@ struct VerticalVideoView: View {
                             .foregroundColor(Color("AccentGray"))
                             .font(.system(size: geoWidth * 0.05, weight: .light))
                             .padding(.leading)
-                        MyText(text: i < min(videoListNum, vids.count)  - 1 ? "\(getNext().title)" : "Swipe up for more!", size: geoWidth * 0.03, bold: true, alignment: .leading, color: Color("AccentGray"))
+                        MyText(text: next != nil ? "\(next!.title)" : "Swipe up for more!", size: geoWidth * 0.03, bold: true, alignment: .leading, color: Color("AccentGray"))
                         Spacer()
                         Button(action: {
                             channelGuidePressed = true

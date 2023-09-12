@@ -17,7 +17,7 @@ class VideoPlayerManager: ObservableObject {
     @Published var players: [String: AVPlayer] = [:]
     @Published var loadingStates: [String: Bool] = [:]
     var current_index: Int = 0
-    var activeChannel: Channel = Channel.allCases[0] {
+    var activeChannel: Channel = FOR_YOU_CHANNEL {
         didSet {
             channel_videos = videos[activeChannel]
         }
@@ -47,7 +47,7 @@ class VideoPlayerManager: ObservableObject {
     func updatePlayers(videos: [Channel: [Video]]) {
         players = [:] // clear previous players
         self.videos = videos
-        for channel in Channel.allCases {
+        for channel in videos.keys {
             if let vids = videos[channel] {
                 for video in vids {
 //                    let player = AVPlayer()
@@ -286,7 +286,7 @@ class VideoPlayerManager: ObservableObject {
 
     // This function returns the current video.
     func getCurrentVideo() -> Video? {
-        if let videos = channel_videos, current_index >= 0 && current_index < videos.count {
+        if let videos = videos[activeChannel], current_index >= 0 && current_index < videos.count {
             return videos[current_index]
         }
         return nil

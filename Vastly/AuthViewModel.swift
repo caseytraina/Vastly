@@ -60,7 +60,7 @@ class AuthViewModel: ObservableObject {
                     var AMP_Array: [AnyHashable] = []
                     
                     var id = AMPIdentify()
-                        .set((self?.user?.phoneNumber != "") ? "phone_number" : "email", value: (self?.user?.phoneNumber ?? self?.user?.email ?? "unknown") as NSObject)
+                        .set((self?.user?.phoneNumber != nil) ? "phone_number" : "email", value: (self?.user?.phoneNumber ?? self?.user?.email ?? "unknown") as NSObject)
                         .set("user_id", value: user.uid as NSObject)
                         .set("name", value: "\(self?.current_user?.firstName) \(self?.current_user?.lastName)" as NSObject)
                         .set("liked_video_count", value: (self?.current_user?.liked_videos?.count ?? 0) as NSObject)
@@ -254,7 +254,7 @@ class AuthViewModel: ObservableObject {
             
             let data = documentSnapshot.data()
             
-            let profile = Profile(firstName: data?["firstName"] as? String ?? "", lastName: data?["lastName"] as? String ?? "", email: data?["email"] as? String ?? "", phoneNumber: data?["phoneNumber"] as? String ?? "", liked_videos: data?["liked_videos"] as? [String] ?? nil, interests: data?["interests"] as? [String] ?? nil, viewed_videos: data?["viewed_videos"] as? [String] ?? nil)
+            let profile = Profile(firstName: data?["firstName"] as? String ?? nil, lastName: data?["lastName"] as? String ?? nil, email: data?["email"] as? String ?? nil, phoneNumber: data?["phoneNumber"] as? String ?? nil, liked_videos: data?["liked_videos"] as? [String] ?? nil, interests: data?["interests"] as? [String] ?? nil, viewed_videos: data?["viewed_videos"] as? [String] ?? nil)
             DispatchQueue.main.async { [data] in
                 self.liked_videos = data?["liked_videos"] as? [String] ?? []
             }

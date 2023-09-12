@@ -34,7 +34,7 @@ struct VideoHView: View {
     
     @State var shouldSkip = true
     @State var previous_playing = 0
-    @State var previous_channel: Channel = .foryou
+    @State var previous_channel: Channel = FOR_YOU_CHANNEL
     
     @State private var cancellables = Set<AnyCancellable>()
     @State private var statusObserver: AnyCancellable?
@@ -390,7 +390,7 @@ struct VideoHView: View {
             let video = channelVideos[i]
             switch field {
             case .channel:
-                return channel.rawValue
+                return channel.title
             case .title:
                 return video.title
             case .author:

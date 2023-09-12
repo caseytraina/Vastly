@@ -33,17 +33,23 @@ struct HomeView: View {
             Color("BackgroundColor")
                 .ignoresSafeArea()
             
-            ForEach(0..<Channel.allCases.count) { index in
-                LinearGradient(gradient: Gradient(colors: myGradient(channel_index: index)), startPoint: .topLeading, endPoint: .bottom)
-                    .ignoresSafeArea()
-                    .opacity(channel_index == index ? 1 : 0)
-                    .animation(.easeInOut(duration: 0.75), value: channel_index)
-            }
-            
-            VStack {
-                NewVideoView(channel_index: $channel_index)
-                    .environmentObject(viewModel)
-                    .environmentObject(authModel)
+            if viewModel.isProcessing {
+                LoadingView()
+            } else {
+                ForEach(0..<viewModel.channels.count) { index in
+                    LinearGradient(gradient: Gradient(colors: myGradient(channel_index: index)), startPoint: .topLeading, endPoint: .bottom)
+                        .ignoresSafeArea()
+                        .opacity(channel_index == index ? 1 : 0)
+                        .animation(.easeInOut(duration: 0.75), value: channel_index)
+                }
+                
+                VStack {
+                    
+                    NewVideoView(channel_index: $channel_index, viewModel: viewModel)
+                        .environmentObject(viewModel)
+                        .environmentObject(authModel)
+                    
+                }
             }
         }
         
@@ -55,7 +61,7 @@ struct HomeView: View {
 //        let background = Color("BackgroundColor")
         let background = Color.black
 
-        let channel_color = Channel.allCases[channel_index].color.opacity(0.8)
+        let channel_color = viewModel.channels[channel_index].color.opacity(0.8)
 
 //        let purple = Color(red: 0.3803921568627451, green: 0.058823529411764705, blue: 0.4980392156862745)
         var gradient: [Color] = [channel_color]

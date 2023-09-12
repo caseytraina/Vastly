@@ -21,7 +21,7 @@ func videoWatched(for video: Video, with user: User?, profile: Profile?) {
     
     let db = Firestore.firestore()
     let userRef = {
-        if (profile?.phoneNumber != "") {
+        if (profile?.phoneNumber != nil) {
             return db.collection("users").document((profile?.phoneNumber)!);
         } else if (profile?.email != nil) {
             return db.collection("users").document((profile?.email)!);
@@ -29,9 +29,11 @@ func videoWatched(for video: Video, with user: User?, profile: Profile?) {
         return db.collection("users").document("");
     }
     
+    // Update Firebase viewed videos
     userRef().updateData([
         "viewed_videos": FieldValue.arrayUnion([video.id])
     ])
+    
     
     Amplitude.instance().logEvent(
         "Video Watched",
@@ -53,7 +55,7 @@ func channelTapped(for channel: Channel, with user: User?) {
     Amplitude.instance().logEvent(
         "Channel Tapped",
         withEventProperties: [
-            "Channel": channel.rawValue.capitalized as NSObject
+            "Channel": channel.id as NSObject
         ])
     
     print("Video Selection Logged")

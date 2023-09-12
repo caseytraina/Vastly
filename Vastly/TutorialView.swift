@@ -74,7 +74,7 @@ struct TutorialView: View {
                                 .padding(.horizontal, 15)
                                 .lineLimit(1)
                                 .background(Capsule()
-                                    .fill(LinearGradient(gradient: Gradient(colors: [Channel.foryou.color.opacity(0.75)]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                                    .fill(LinearGradient(gradient: Gradient(colors: [FOR_YOU_CHANNEL.color.opacity(0.75)]), startPoint: .topLeading, endPoint: .bottomTrailing))
                                 )
                                 .overlay(Capsule()
                                     .stroke(Color.black, lineWidth: 1)

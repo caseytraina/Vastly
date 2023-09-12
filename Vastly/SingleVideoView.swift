@@ -13,7 +13,7 @@ struct SingleVideoView: View {
     @EnvironmentObject private var authModel: AuthViewModel
     @EnvironmentObject var viewModel: VideoViewModel
     
-    @State var channel: Channel = .foryou
+    @State var channel: Channel = FOR_YOU_CHANNEL
     
     var video: Video
     
@@ -23,7 +23,7 @@ struct SingleVideoView: View {
     
     @State private var timeObserverToken: Any?
 
-    @State var active: Channel = .foryou
+    @State var active: Channel = FOR_YOU_CHANNEL
     
     @State var videoMode = true
     ///ik-thumbnail.jpg
@@ -175,7 +175,7 @@ struct SingleVideoView: View {
 //        let background = Color(red: 18.0/255, green: 18.0/255, blue: 18.0/255)
         let background = Color(red: 5/255, green: 5/255, blue: 5/255)
 
-        let channel_color = Channel.allCases[channel_index].color.opacity(0.8)
+        let channel_color = viewModel.channels[channel_index].color.opacity(0.8)
 
 //        let purple = Color(red: 0.3803921568627451, green: 0.058823529411764705, blue: 0.4980392156862745)
         var gradient: [Color] = [channel_color]

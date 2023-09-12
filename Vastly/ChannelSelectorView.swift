@@ -40,7 +40,7 @@ struct ChannelSelectorView: View {
                         
                     }
                 ScrollView {
-                    ForEach(Channel.allCases.indices) { i in
+                    ForEach(viewModel.channels.indices) { i in
                             Button(action: {
                                 print("HERE'S I: \(i)")
                                 switchChannel(i: i)
@@ -49,7 +49,7 @@ struct ChannelSelectorView: View {
                                 VStack {
                                     Spacer()
                                     HStack{
-                                        Text(Channel.allCases[i].title)
+                                        Text(viewModel.channels[i].title)
                                             .foregroundColor(.white)
                                             .font(Font.custom("CircularStd-Bold", size: screenSize.width * 0.05))
                                             .frame(maxWidth: .infinity,alignment: .leading)
@@ -62,14 +62,14 @@ struct ChannelSelectorView: View {
                             }
                             .padding()
                             .frame(width: screenSize.width*0.95)
-                            .background(
-                                Image("\(Channel.allCases[i].imageName)")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .overlay(
-                                        LinearGradient(gradient: Gradient(colors: [.black, .clear]), startPoint: .bottomLeading, endPoint: .top)
-                                    )
-                            )
+//                            .background(
+//                                Image("\(viewModel.channels[i].imageName)")
+//                                    .resizable()
+//                                    .scaledToFill()
+//                                    .overlay(
+//                                        LinearGradient(gradient: Gradient(colors: [.black, .clear]), startPoint: .bottomLeading, endPoint: .top)
+//                                    )
+//                            )
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.white, lineWidth: i == channel_index ? 2 : 0))
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.white.opacity(0.7), lineWidth: i == channel_index ? 4 : 0))
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.white.opacity(0.4), lineWidth: i == channel_index ? 6 : 0))
@@ -119,7 +119,7 @@ struct ChannelSelectorView: View {
         viewModel.playerManager?.pauseCurrentVideo()
 
         channel_index = i;
-        activeChannel = Channel.allCases[channel_index]
+        activeChannel = viewModel.channels[channel_index]
         
         let impact = UIImpactFeedbackGenerator(style: .medium)
         impact.impactOccurred()

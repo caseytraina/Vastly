@@ -34,6 +34,7 @@ struct FirebaseData: Codable {
 }
 
 struct UnprocessedVideo {
+    let id: String
     let title: String
     let author: String
     let bio: String
@@ -44,7 +45,7 @@ struct UnprocessedVideo {
 }
 
 struct Video: Identifiable {
-    let id: UUID
+    let id: String
     let title: String
     let author: Author
     let bio: String
@@ -72,6 +73,7 @@ struct Profile {
     let phoneNumber: String?
     let liked_videos: [String]?
     let interests: [String]?
+    let viewed_videos: [String]?
     
     enum CodingKeys: String, CodingKey {
         case firstName
@@ -80,6 +82,7 @@ struct Profile {
         case phoneNumber
         case liked_videos
         case interests
+        case viewed_videos
     }
 }
 
@@ -95,6 +98,7 @@ enum Channel: String, CaseIterable {
     case leadership = "Leadership"
     case stanford = "View From The Top"
     case global = "World Economic Forum"
+    case space = "Space"
     
     var title: String {
         switch self {
@@ -108,6 +112,7 @@ enum Channel: String, CaseIterable {
         case .leadership: return "Leadership"
         case .stanford: return "Stanford"
         case .global: return "Global"
+        case .space: return "Space"
         }
     }
     
@@ -133,6 +138,8 @@ enum Channel: String, CaseIterable {
             return "bigTech"
         case .leadership:
             return "leadership"
+        default:
+            return ""
         }
     }
     
@@ -158,6 +165,8 @@ enum Channel: String, CaseIterable {
             return Color(red: 0, green: 0.61, blue: 0.46);
         case .ai:
             return Color(red: 0.71, green: 0.34, blue: 0);
+        case .space:
+            return Color(red: 0.45, green: 0.31, blue: 1);
         }
         
         

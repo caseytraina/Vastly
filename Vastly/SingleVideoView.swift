@@ -26,6 +26,8 @@ struct SingleVideoView: View {
     @State var active: Channel = FOR_YOU_CHANNEL
     
     @State var videoMode = true
+    
+    @Binding var isPlaying: Bool
     ///ik-thumbnail.jpg
     ///
     ///
@@ -117,6 +119,9 @@ struct SingleVideoView: View {
                 .position(x: screenSize.width/2, y: screenSize.height/3)
             }
             
+        }
+        .onAppear {
+            isPlaying = false
         }
     }
     

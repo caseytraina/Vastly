@@ -79,26 +79,13 @@ struct ProfileView: View {
                         }, label: {
                             HStack {
 
-                            
-                                AsyncImage(url: EMPTY_AUTHOR.fileName) { image in
-                                    image.resizable()
-                                        .frame(width: screenSize.width * 0.2, height: screenSize.width * 0.2)
-                                } placeholder: {
-                                    ZStack {
-                                        Color("BackgroundColor")
-                                        ProgressView()
-                                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                            .scaleEffect(2, anchor: .center)
-                                            .rotationEffect(.degrees(isAnimating ? 360 : 0))
-                                            .animation(Animation.linear(duration: 2).repeatForever(autoreverses: false))
-                                            .onAppear {
-                                                isAnimating = true
-                                            }
-                                            .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
-
-                                        
-                                    }
+                                ZStack {
+                                    Color("BackgroundColor")
+                                    Image(systemName: "heart")
+                                        .font(.system(size: screenSize.width * 0.075, weight: .light))
+                                        .foregroundColor(.white)
                                 }
+                                .frame(width: screenSize.width * 0.2, height: screenSize.width * 0.2)
                                 
                                 VStack(alignment: .leading) {
                                     MyText(text: "Likes", size: screenSize.width * 0.04, bold: true, alignment: .leading, color: .white)
@@ -127,14 +114,15 @@ struct ProfileView: View {
                                 ZStack {
                                     Color("BackgroundColor")
                                     Image(systemName: "clock.arrow.circlepath")
-                                        .font(.system(size: screenSize.width * 0.05, weight: .light))
+                                        .font(.system(size: screenSize.width * 0.075, weight: .light))
+                                        .foregroundColor(.white)
                                 }
                                 .frame(width: screenSize.width * 0.2, height: screenSize.width * 0.2)
 
             
                                 VStack(alignment: .leading) {
                                     MyText(text: "Viewing History", size: screenSize.width * 0.04, bold: true, alignment: .leading, color: .white)
-                                    MyText(text: "\(authModel.current_user?.viewed_videos?.count ?? 0) Videos", size: screenSize.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
+                                    MyText(text: "\(viewModel.viewed_videos.count) Videos", size: screenSize.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
                                 }
                                 .padding()
                                 Spacer()

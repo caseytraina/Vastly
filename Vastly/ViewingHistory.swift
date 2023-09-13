@@ -42,7 +42,7 @@ struct ViewingHistory: View {
                     ForEach(viewModel.viewed_videos.reversed()) { video in
                         
                         NavigationLink(destination: {
-                            SingleVideoView(video: video)
+                            SingleVideoView(video: video, isPlaying: $isPlaying)
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
 

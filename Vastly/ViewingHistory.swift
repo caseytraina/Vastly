@@ -1,22 +1,25 @@
 //
-//  LikesListView.swift
+//  ViewingHistory.swift
 //  Vastly
 //
-//  Created by Casey Traina on 7/31/23.
+//  Created by Casey Traina on 9/12/23.
 //
 
+import Foundation
 import SwiftUI
+import FirebaseFirestore
+import Firebase
 
-struct LikesListView: View {
+
+struct ViewingHistory: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
     @EnvironmentObject var viewModel: VideoViewModel
     
-    @State var isAnimating = false
     @State var processed = false
-
     
     @Binding var isPlaying: Bool
+    @State var isAnimating = true
     
     var body: some View {
         ZStack {
@@ -26,31 +29,31 @@ struct LikesListView: View {
                 .ignoresSafeArea()
             VStack {
                 HStack {
-                    Image(systemName: "heart")
+                    Image(systemName: "clock.arrow.circlepath")
                         .font(.system(size: screenSize.width * 0.06, weight: .light))
                         .foregroundColor(.white)
                         .padding(.leading)
-                    MyText(text: "My Likes", size: screenSize.width * 0.06, bold: true, alignment: .leading, color: .white)
+                    MyText(text: "Viewing History", size: screenSize.width * 0.06, bold: true, alignment: .leading, color: .white)
                         .padding()
                     Spacer()
                 }
 
                 ScrollView {
-                    ForEach(viewModel.authModel.liked_videos.indices) { i in
+                    ForEach(viewModel.viewed_videos.indices) { i in
                         
                         NavigationLink(destination: {
-                            SingleVideoView(video: viewModel.authModel.liked_videos[i])
+                            SingleVideoView(video: viewModel.viewed_videos[i])
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
 
                         }, label: {
                             HStack {
-                                AsyncImage(url: getThumbnail(video: viewModel.authModel.liked_videos[i])) { mainImage in
+                                AsyncImage(url: getThumbnail(video: viewModel.viewed_videos[i])) { mainImage in
                                     mainImage.resizable()
                                         .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
                                 } placeholder: {
                                     
-                                    AsyncImage(url: viewModel.authModel.liked_videos[i].author.fileName) { image in
+                                    AsyncImage(url: viewModel.viewed_videos[i].author.fileName) { image in
                                         image.resizable()
                                             .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
                                     } placeholder: {
@@ -71,9 +74,9 @@ struct LikesListView: View {
                                 }
                                 
                                 VStack(alignment: .leading) {
-                                    MyText(text: "\(viewModel.authModel.liked_videos[i].title)", size: screenSize.width * 0.035, bold: true, alignment: .leading, color: .white)
+                                    MyText(text: "\(viewModel.viewed_videos[i].title)", size: screenSize.width * 0.035, bold: true, alignment: .leading, color: .white)
                                         .lineLimit(2)
-                                    MyText(text: "\(viewModel.authModel.liked_videos[i].author.name ?? "")", size: screenSize.width * 0.035, bold: false, alignment: .leading, color: Color("AccentGray"))
+                                    MyText(text: "\(viewModel.viewed_videos[i].author.name ?? "")", size: screenSize.width * 0.035, bold: false, alignment: .leading, color: Color("AccentGray"))
                                         .lineLimit(1)
                                 }
                                 Spacer()
@@ -82,13 +85,20 @@ struct LikesListView: View {
                                     .foregroundColor(.white)
                                     .font(.system(size: screenSize.width * 0.05, weight: .light))
                                     .padding()
+                                
+                                
                             }
                         })
                     }
                 }
                 .frame(maxWidth: screenSize.width * 0.95, maxHeight: screenSize.height * 0.65)
+            
+                
+            
+                
             }
         }
+        
     }
     
     private func getThumbnail(video: Video) -> URL? {

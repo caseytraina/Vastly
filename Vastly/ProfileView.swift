@@ -116,6 +116,38 @@ struct ProfileView: View {
                             }
                             
                         })
+                        
+                        NavigationLink(destination: {
+                            ViewingHistory(isPlaying: $isPlaying)
+                                .environmentObject(authModel)
+                                .environmentObject(viewModel)
+                        }, label: {
+                            HStack {
+
+                                ZStack {
+                                    Color("BackgroundColor")
+                                    Image(systemName: "clock.arrow.circlepath")
+                                        .font(.system(size: screenSize.width * 0.05, weight: .light))
+                                }
+                                .frame(width: screenSize.width * 0.2, height: screenSize.width * 0.2)
+
+            
+                                VStack(alignment: .leading) {
+                                    MyText(text: "Viewing History", size: screenSize.width * 0.04, bold: true, alignment: .leading, color: .white)
+                                    MyText(text: "\(authModel.current_user?.viewed_videos?.count ?? 0) Videos", size: screenSize.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
+                                }
+                                .padding()
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: geo.size.width * 0.05, weight: .light))
+                                    .padding()
+                                
+                            
+                            }
+                            
+                        })
 
 //                        .frame(width: geo.size.width*0.75)
 

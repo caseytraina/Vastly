@@ -85,6 +85,9 @@
 		02637B332A61571500528A8E /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02637B322A61571500528A8E /* ProgressBar.swift */; };
 		028381742A9886F300FE25C0 /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 028381732A9886F300FE25C0 /* iPhoneNumberField */; };
 		028381762A98873200FE25C0 /* PhoneLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028381752A98873200FE25C0 /* PhoneLogin.swift */; };
+		0291700D2AB14D8000ADF426 /* ViewingHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0291700C2AB14D8000ADF426 /* ViewingHistory.swift */; };
+		0291700E2AB14D8000ADF426 /* ViewingHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0291700C2AB14D8000ADF426 /* ViewingHistory.swift */; };
+		0291700F2AB14D8000ADF426 /* ViewingHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0291700C2AB14D8000ADF426 /* ViewingHistory.swift */; };
 		0294DEA52A7987370073994D /* VideoThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0294DEA42A7987370073994D /* VideoThumbnailView.swift */; };
 		029AEAAD2A852791002A09DF /* Carousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029AEAAC2A852791002A09DF /* Carousel.swift */; };
 		029AEAAF2A853755002A09DF /* VerticalVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029AEAAE2A853754002A09DF /* VerticalVideoView.swift */; };
@@ -176,6 +179,7 @@
 		02611E582AA77CEA007029BB /* FullEpisodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullEpisodeView.swift; sourceTree = "<group>"; };
 		02637B322A61571500528A8E /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		028381752A98873200FE25C0 /* PhoneLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneLogin.swift; sourceTree = "<group>"; };
+		0291700C2AB14D8000ADF426 /* ViewingHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewingHistory.swift; sourceTree = "<group>"; };
 		029295332A27B231001EE121 /* Vastly.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Vastly.entitlements; sourceTree = "<group>"; };
 		0294DEA42A7987370073994D /* VideoThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoThumbnailView.swift; sourceTree = "<group>"; };
 		029AEAAC2A852791002A09DF /* Carousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel.swift; sourceTree = "<group>"; };
@@ -333,6 +337,7 @@
 				0220D63A2A905C5800A867FB /* AuthorProfileView.swift */,
 				02583E182A1B0F56008CDA59 /* ProfileView.swift */,
 				02CB38782A7839810065F626 /* LikesListView.swift */,
+				0291700C2AB14D8000ADF426 /* ViewingHistory.swift */,
 				02CB387A2A783DF00065F626 /* SingleVideoView.swift */,
 				02611E582AA77CEA007029BB /* FullEpisodeView.swift */,
 			);
@@ -614,6 +619,7 @@
 				02FC35342A71B2360075C2B6 /* VideoFailedView.swift in Sources */,
 				02CB38792A7839810065F626 /* LikesListView.swift in Sources */,
 				02583E132A1AF5F3008CDA59 /* PasswordPromptView.swift in Sources */,
+				0291700D2AB14D8000ADF426 /* ViewingHistory.swift in Sources */,
 				02CB387B2A783DF00065F626 /* SingleVideoView.swift in Sources */,
 				023EE7AA2A0ADFDF004E09DD /* ScrollingStackModifier.swift in Sources */,
 				023EE7A62A0ADF6D004E09DD /* HomeView.swift in Sources */,
@@ -634,6 +640,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0291700E2AB14D8000ADF426 /* ViewingHistory.swift in Sources */,
 				023EE7F72A0DAB02004E09DD /* VideoView.swift in Sources */,
 				023EE78D2A0ADF37004E09DD /* VastlyTests.swift in Sources */,
 				023EE7EF2A0C5DC6004E09DD /* Constants.swift in Sources */,
@@ -650,6 +657,7 @@
 				02611E5C2AA7B59F007029BB /* TopTextView.swift in Sources */,
 				023EE7F82A0DAB02004E09DD /* VideoView.swift in Sources */,
 				023EE7F42A0C5EF8004E09DD /* VideoViewModel.swift in Sources */,
+				0291700F2AB14D8000ADF426 /* ViewingHistory.swift in Sources */,
 				023EE7992A0ADF37004E09DD /* VastlyUITestsLaunchTests.swift in Sources */,
 				023EE7F02A0C5DC6004E09DD /* Constants.swift in Sources */,
 			);

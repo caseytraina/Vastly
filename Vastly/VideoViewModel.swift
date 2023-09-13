@@ -36,6 +36,8 @@ class VideoViewModel: ObservableObject {
         }
     }
     
+    @Published var viewed_videos: [Video] = []
+    
     var playerManager: VideoPlayerManager?
     
     var authModel: AuthViewModel
@@ -66,6 +68,10 @@ class VideoViewModel: ObservableObject {
                     self.isProcessing = false
                 }
                 
+                await fetchViewedVideos()
+                await fetchLikedVideos()
+                
+//                await fetchLikedVideos()
             } catch {
                 print("Error getting videos: \(error)")
                 DispatchQueue.main.async {
@@ -458,5 +464,102 @@ class VideoViewModel: ObservableObject {
         await processUnprocessedVideos(unprocessedVideos: videosDict, foryou: true)
         
     }
+    
+    func fetchViewedVideos() async {
+        if let viewed_videos = self.authModel.current_user?.viewed_videos {
+            
+            let db = Firestore.firestore()
+            let ref = db.collection("videos")
+            
+            for title in viewed_videos {
+                do {
+                    let doc = try await ref.document(title).getDocument()
+                    if doc.exists {
+                        
+                        print("Doc Found for \(title)")
+                        
+                        let data = try doc.data()
+                        
+                        let vid = UnprocessedVideo(
+                            id: doc.documentID,
+                            title: data?["title"] as? String ?? "",
+                            author: data?["author"] as? String ?? "",
+                            bio: data?["bio"] as? String ?? "",
+                            date: data?["date"] as? String ?? "",
+                            channels: data?["channels"] as? [String] ?? [],
+                            location: data?["fileName"] as? String ?? "",
+                            youtubeURL: data?["youtubeURL"] as? String ?? "")
+                        
+                        let video = Video(
+                            id: vid.id,
+                            title: vid.title,
+                            author: self.findAuthor(vid),
+                            bio: vid.bio,
+                            date: vid.date,
+                            channels: vid.channels,
+                            url: self.getVideoURL(from: vid.location),
+                            youtubeURL: vid.youtubeURL)
+                        
+                        self.viewed_videos.append(video)
+                    } else {
+                        print("Doc not found for \(title)")
+                    }
+                    
+                } catch {
+                    print("Error getting viewing history: \(error)")
+                }
+            }
+        }
+    }
+    
+    
+    func fetchLikedVideos() async {
+        if let liked_videos = self.authModel.current_user?.liked_videos {
+            
+            let db = Firestore.firestore()
+            let ref = db.collection("videos")
+            
+            for title in liked_videos {
+                do {
+                    let doc = try await ref.document(title).getDocument()
+                    if doc.exists {
+                        
+                        print("Doc Found for \(title)")
+                        
+                        let data = try doc.data()
+                        
+                        let vid = UnprocessedVideo(
+                            id: doc.documentID,
+                            title: data?["title"] as? String ?? "",
+                            author: data?["author"] as? String ?? "",
+                            bio: data?["bio"] as? String ?? "",
+                            date: data?["date"] as? String ?? "",
+                            channels: data?["channels"] as? [String] ?? [],
+                            location: data?["fileName"] as? String ?? "",
+                            youtubeURL: data?["youtubeURL"] as? String ?? "")
+                        
+                        let video = Video(
+                            id: vid.id,
+                            title: vid.title,
+                            author: self.findAuthor(vid),
+                            bio: vid.bio,
+                            date: vid.date,
+                            channels: vid.channels,
+                            url: self.getVideoURL(from: vid.location),
+                            youtubeURL: vid.youtubeURL)
+                        
+                        self.authModel.liked_videos.append(video)
+                    } else {
+                        print("Doc not found for \(title)")
+                    }
+                    
+                } catch {
+                    print("Error getting viewing history: \(error)")
+                }
+            }
+        }
+    }
+    
+    
 }
 

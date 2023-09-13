@@ -34,7 +34,7 @@ class AuthViewModel: ObservableObject {
     @Published var error: Error?
     
     @Published var current_user: Profile? = nil
-    @Published var liked_videos: [String] = []
+    @Published var liked_videos: [Video] = []
     
     var viewModel: VideoViewModel?
     
@@ -150,14 +150,14 @@ class AuthViewModel: ObservableObject {
         let db = Firestore.firestore()
         
         DispatchQueue.main.async {
-            self.liked_videos.removeAll(where: { $0 == video.title })
+            self.liked_videos.removeAll(where: { $0.id == video.id })
         }
         
         let ref = db.collection("users").document(current_user?.phoneNumber ?? current_user?.email ?? "")
         
         do {
             try await ref.updateData([
-                "liked_videos" : FieldValue.arrayRemove([video.title])
+                "liked_videos" : FieldValue.arrayRemove([video.id])
             ])
         } catch {
             print("Error updating liked videos: \(error)")
@@ -169,18 +169,17 @@ class AuthViewModel: ObservableObject {
     // Likes are tracked in Firebase database. This adds a like from the local copy, and then updates firebase to match.
     func addLikeTo(_ video: Video) async {
 
-                
         let db = Firestore.firestore()
 
         let ref = db.collection("users").document(current_user?.phoneNumber ?? current_user?.email ?? "")
         
         DispatchQueue.main.async {
-            self.liked_videos.append(video.title)
+            self.liked_videos.append(video)
         }
         
         do {
             try await ref.updateData([
-                "liked_videos" : FieldValue.arrayUnion([video.title])
+                "liked_videos" : FieldValue.arrayUnion([video.id])
             ])
         } catch {
             print("Error updating liked videos: \(error)")
@@ -255,9 +254,9 @@ class AuthViewModel: ObservableObject {
             let data = documentSnapshot.data()
             
             let profile = Profile(firstName: data?["firstName"] as? String ?? nil, lastName: data?["lastName"] as? String ?? nil, email: data?["email"] as? String ?? nil, phoneNumber: data?["phoneNumber"] as? String ?? nil, liked_videos: data?["liked_videos"] as? [String] ?? nil, interests: data?["interests"] as? [String] ?? nil, viewed_videos: data?["viewed_videos"] as? [String] ?? nil)
-            DispatchQueue.main.async { [data] in
-                self.liked_videos = data?["liked_videos"] as? [String] ?? []
-            }
+//            DispatchQueue.main.async { [data] in
+//                self.liked_videos = data?["liked_videos"] as? [String] ?? []
+//            }
 
             print(profile)
             return profile

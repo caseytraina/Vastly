@@ -30,9 +30,7 @@ func videoWatched(for video: Video, with user: User?, profile: Profile?) {
     }
     
     // Update Firebase viewed videos
-    userRef().updateData([
-        "viewed_videos": FieldValue.arrayUnion([video.id])
-    ])
+
     
     
     Amplitude.instance().logEvent(
@@ -84,12 +82,28 @@ func logScreenSwitch(to screen: String) {
 }
 
 func logWatchTime(from start: Date, to end: Date, for video: Video, time: Double, watched: Double?, with user: User?, profile: Profile?) {
+    
+    let db = Firestore.firestore()
+    let userRef = {
+        if (profile?.phoneNumber != nil) {
+            return db.collection("users").document((profile?.phoneNumber)!);
+        } else if (profile?.email != nil) {
+            return db.collection("users").document((profile?.email)!);
+        }
+        return db.collection("users").document("");
+    }
+    
 //    let watchTime = end.timeIntervalSince(start)
     let watchTime = min(watched ?? 10000.0, end.timeIntervalSince(start).magnitude)
-    
     let realTime = watchTime >= time ? time : watchTime
-    
     let percentage = ceil((realTime/time) * 100)
+    
+    if realTime > 3 {
+        userRef().updateData([
+            "viewed_videos": FieldValue.arrayUnion([video.id])
+        ])
+    }
+    
     
     Amplitude.instance().logEvent(
         "Video Watch Time",

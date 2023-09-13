@@ -71,6 +71,8 @@ class VideoViewModel: ObservableObject {
                 await fetchViewedVideos()
                 await fetchLikedVideos()
                 
+
+                
 //                await fetchLikedVideos()
             } catch {
                 print("Error getting videos: \(error)")

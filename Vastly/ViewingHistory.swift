@@ -39,21 +39,21 @@ struct ViewingHistory: View {
                 }
 
                 ScrollView {
-                    ForEach(viewModel.viewed_videos.indices) { i in
+                    ForEach(viewModel.viewed_videos.reversed()) { video in
                         
                         NavigationLink(destination: {
-                            SingleVideoView(video: viewModel.viewed_videos[i])
+                            SingleVideoView(video: video)
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
 
                         }, label: {
                             HStack {
-                                AsyncImage(url: getThumbnail(video: viewModel.viewed_videos[i])) { mainImage in
+                                AsyncImage(url: getThumbnail(video: video)) { mainImage in
                                     mainImage.resizable()
                                         .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
                                 } placeholder: {
                                     
-                                    AsyncImage(url: viewModel.viewed_videos[i].author.fileName) { image in
+                                    AsyncImage(url: video.author.fileName) { image in
                                         image.resizable()
                                             .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
                                     } placeholder: {
@@ -74,9 +74,9 @@ struct ViewingHistory: View {
                                 }
                                 
                                 VStack(alignment: .leading) {
-                                    MyText(text: "\(viewModel.viewed_videos[i].title)", size: screenSize.width * 0.035, bold: true, alignment: .leading, color: .white)
+                                    MyText(text: "\(video.title)", size: screenSize.width * 0.035, bold: true, alignment: .leading, color: .white)
                                         .lineLimit(2)
-                                    MyText(text: "\(viewModel.viewed_videos[i].author.name ?? "")", size: screenSize.width * 0.035, bold: false, alignment: .leading, color: Color("AccentGray"))
+                                    MyText(text: "\(video.author.name ?? "")", size: screenSize.width * 0.035, bold: false, alignment: .leading, color: Color("AccentGray"))
                                         .lineLimit(1)
                                 }
                                 Spacer()

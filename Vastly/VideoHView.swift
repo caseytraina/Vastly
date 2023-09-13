@@ -271,7 +271,7 @@ struct VideoHView: View {
                             
                             let duration = viewModel.playerManager?.getPlayer(for: getVideo(i: previous_playing, in: activeChannel)).currentTime().seconds
                             
-                            logWatchTime(from: startTime, to: endTime, for: getVideo(i: previous_playing, in: activeChannel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: previous_playing, in: activeChannel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user, profile: authModel.current_user)
+//                            logWatchTime(from: startTime, to: endTime, for: getVideo(i: previous_playing, in: activeChannel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: previous_playing, in: activeChannel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user, profile: authModel.current_user)
                             recent_change = true
                             trackAVStatus(for: getVideo(i: newIndex, in: activeChannel))
                             print("Checking", newIndex, activeChannel)
@@ -307,7 +307,7 @@ struct VideoHView: View {
                             
                             let duration = viewModel.playerManager?.getPlayer(for: getVideo(i: current_playing, in: previous_channel)).currentTime().seconds
                             
-                            logWatchTime(from: startTime, to: endTime, for: getVideo(i: current_playing, in: previous_channel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: current_playing, in: previous_channel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user, profile: authModel.current_user)
+//                            logWatchTime(from: startTime, to: endTime, for: getVideo(i: current_playing, in: previous_channel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: current_playing, in: previous_channel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user, profile: authModel.current_user)
                             
                             recent_change = true
                         

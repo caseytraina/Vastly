@@ -81,7 +81,7 @@ func logScreenSwitch(to screen: String) {
     
 }
 
-func logWatchTime(from start: Date, to end: Date, for video: Video, time: Double, watched: Double?, with user: User?, profile: Profile?) {
+func logWatchTime(from start: Date, to end: Date, for video: Video, time: Double, watched: Double?, with user: User?, profile: Profile?, viewModel: VideoViewModel) {
     
     let db = Firestore.firestore()
     let userRef = {
@@ -102,6 +102,7 @@ func logWatchTime(from start: Date, to end: Date, for video: Video, time: Double
         userRef().updateData([
             "viewed_videos": FieldValue.arrayUnion([video.id])
         ])
+        viewModel.viewed_videos.append(video)
     }
     
     

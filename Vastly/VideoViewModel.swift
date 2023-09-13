@@ -500,7 +500,10 @@ class VideoViewModel: ObservableObject {
                             url: self.getVideoURL(from: vid.location),
                             youtubeURL: vid.youtubeURL)
                         
-                        self.viewed_videos.append(video)
+                        if !self.viewed_videos.contains(where: {$0.id == video.id}) {
+                            self.viewed_videos.append(video)
+                        }
+                        
                     } else {
                         print("Doc not found for \(title)")
                     }
@@ -548,7 +551,10 @@ class VideoViewModel: ObservableObject {
                             url: self.getVideoURL(from: vid.location),
                             youtubeURL: vid.youtubeURL)
                         
-                        self.authModel.liked_videos.append(video)
+                        if !self.authModel.liked_videos.contains(where: {$0.id == video.id}) {
+                            self.authModel.liked_videos.append(video)
+                        }
+                        
                     } else {
                         print("Doc not found for \(title)")
                     }

@@ -172,9 +172,6 @@ struct ProfileView: View {
                     }
                 }
                 .onAppear {
-//                    Task {
-//                        await authModel.configureUser(authModel.user?.phoneNumber ?? authModel.user?.email ?? "")
-//                    }
                     logScreenSwitch(to: "Profile Screen")
                 }
         }

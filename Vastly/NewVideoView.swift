@@ -135,7 +135,15 @@ struct NewVideoView: View {
                                 
                                 viewModel.playerManager?.changeToChannel(to: newChannel, shouldPlay: playing, newIndex: video_indices[channel_index])
                                 
-                                logWatchTime(from: startTime, to: endTime, for: getVideo(i: video_indices[channel_index], in: previous_channel), time: (viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentItem!.duration.seconds) ?? 0.0, watched: duration, with: authModel.user, profile: authModel.current_user)
+                                logWatchTime(
+                                    from: startTime,
+                                    to: endTime,
+                                    for: getVideo(i: video_indices[channel_index], in: previous_channel),
+                                    time: (viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentItem!.duration.seconds) ?? 0.0,
+                                    watched: duration,
+                                    with: authModel.user,
+                                    profile: authModel.current_user,
+                                    viewModel: viewModel)
                                 
                                 startTime = Date()
                                 updateMetadata()
@@ -144,7 +152,7 @@ struct NewVideoView: View {
                                 withAnimation(.easeOut(duration: 0.125)) {
                                     proxy.scrollTo(newChannel, anchor: .leading)
                                 }
-                                
+
                             }
                             .frame(width: screenSize.width, height: screenSize.height * 0.8)
                             .gesture(DragGesture()
@@ -257,8 +265,8 @@ struct NewVideoView: View {
                                      time: (viewModel.playerManager?.getPlayer(for: previousVideo).currentItem!.duration.seconds) ?? 0.0,
                                      watched: duration,
                                      with: authModel.user,
-                                     profile: authModel.current_user)
-                        
+                                     profile: authModel.current_user,
+                                     viewModel: viewModel)
                         
                     }
                     

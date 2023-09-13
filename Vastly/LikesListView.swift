@@ -36,7 +36,7 @@ struct LikesListView: View {
                 }
 
                 ScrollView {
-                    ForEach(viewModel.authModel.liked_videos.indices) { i in
+                    ForEach(viewModel.authModel.liked_videos.reversed().indices) { i in
                         
                         NavigationLink(destination: {
                             SingleVideoView(video: viewModel.authModel.liked_videos[i])

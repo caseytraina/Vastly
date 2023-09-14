@@ -352,13 +352,13 @@ class VideoViewModel: ObservableObject {
     }
     
     // Approaches
-    // 1) Generate a list of users top channels (based on likes and listens), return new / top videos in those categories
+    // 1) Generate a list of users top channels (based on likes and listens), return videos in those channels
+    //      This could be further enhanced to show new / top videos in the top channels
     // 2) Get some videos that match their interests (3 of them, from list)
     // 3) Random
+    
+    // This implements approach 1 for now
     func generateForYou(max: Int) async {
-        // self.viewed_videos
-        // self.authModel.liked_videos
-        
         // Score each channel (2 points if comes from a liked video, 1 if from a view)
         var videosDict: [Channel : [UnprocessedVideo]] = [:]
         
@@ -376,16 +376,12 @@ class VideoViewModel: ObservableObject {
         for viewedVideo in self.viewed_videos {
             for viewedVideoChannel in viewedVideo.channels {
                 if topChannels[viewedVideoChannel] != nil {
-                    topChannels[viewedVideoChannel]! += 2
+                    topChannels[viewedVideoChannel]! += 1
                 } else {
-                    topChannels[viewedVideoChannel] = 2
+                    topChannels[viewedVideoChannel] = 1
                 }
             }
         }
-        
-        topChannels[self.channels[0].id] = 5
-        topChannels[self.channels[2].id] = 3
-        topChannels[self.channels[5].id] = 10
             
         if topChannels.count == 0 {
             return await generateRandomForYou(max: max)

@@ -374,14 +374,19 @@ struct VerticalVideoView: View {
                             .padding(.leading)
                         MyText(text: next != nil ? "\(next!.title)" : "Swipe up for more!", size: geoWidth * 0.03, bold: true, alignment: .leading, color: Color("AccentGray"))
                         Spacer()
-                        Button(action: {
-                            channelGuidePressed = true
-                        }, label: {
-                            Image(systemName: "list.bullet.below.rectangle")
+                        
+                
+                        NavigationLink(destination: NewSearchBar(viewModel: viewModel)
+    //                        .environmentObject(viewModel)
+                        ) {
+                            Image(systemName: "magnifyingglass")
                                 .foregroundColor(.white)
                                 .font(.system(size: geoWidth * 0.05, weight: .medium))
-                        })
+                        }
                         .padding(.horizontal)
+
+                        
+                        
                     }
                     .frame(width: geoWidth)
                 }

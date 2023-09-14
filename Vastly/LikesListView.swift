@@ -45,7 +45,7 @@ struct LikesListView: View {
 
                         }, label: {
                             HStack {
-                                AsyncImage(url: getThumbnail(video: viewModel.authModel.liked_videos[i])) { mainImage in
+                                AsyncImage(url: viewModel.getThumbnail(video: viewModel.authModel.liked_videos[i])) { mainImage in
                                     mainImage.resizable()
                                         .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
                                 } placeholder: {
@@ -91,14 +91,7 @@ struct LikesListView: View {
         }
     }
     
-    private func getThumbnail(video: Video) -> URL? {
-        
-        var urlString = video.url?.absoluteString
-        
-        urlString = urlString?.replacingOccurrences(of: "?tr=f-auto", with: "/tr:w-200,h-200,fo-center/ik-thumbnail.jpg")
-        
-        return URL(string: urlString ?? "")
-    }
+
     
     private func myGradient(channel_index: Int) -> [Color] {
         

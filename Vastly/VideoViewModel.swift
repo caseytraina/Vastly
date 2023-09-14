@@ -47,40 +47,24 @@ class VideoViewModel: ObservableObject {
         self.authModel = authModel
         
         Task {
-            var myVideos: [Channel: [UnprocessedVideo]] = [:]
-
-            do {
-                
-                await getChannels()
-                print("Got channels.")
-                
-                await getAuthors()
-                print("Got authors.")
-                
-//                await getVideos(in: FOR_YOU_CHANNEL)
-                await generateForYou(max: 40)
-                print("Processed videos.")
-                
-                await getVideos()
-//                self.playerManager = VideoPlayerManager(videos: self.videos)
-                
-                DispatchQueue.main.async {
-                    self.isProcessing = false
-                }
-                
-                await fetchViewedVideos()
-                await fetchLikedVideos()
-                
-
-                
-//                await fetchLikedVideos()
-            } catch {
-                print("Error getting videos: \(error)")
-                DispatchQueue.main.async {
-//                    self.playerManager = VideoPlayerManager(videos: self.videos)
-                    self.isProcessing = false
-                }
+            await getChannels()
+            print("Got channels.")
+            
+            await getAuthors()
+            print("Got authors.")
+            
+            await getVideos()
+            DispatchQueue.main.async {
+                self.isProcessing = false
             }
+            
+            await fetchViewedVideos()
+            await fetchLikedVideos()
+            
+            // We do this at the end so we can analyze the liked and viewed videos
+            await generateForYou(max: 40)
+            
+            print("Processed videos.")
         }
     }
     
@@ -298,18 +282,7 @@ class VideoViewModel: ObservableObject {
                 }
             } catch {
                 // handle error
-                print("Error processing videos: \(error)")
-                DispatchQueue.main.async {
-//                    if (self.videos.keys.count == Channel.allCases.count) {
-//                        self.videos[Channel.foryou] = self.getRandomVideos(maxCount: 40)
-//                        self.generateForYou();
-//                    if self.videos.keys.count == self.channels.count {
-//                        self.playerManager?.updatePlayers(videos: self.videos)
-//                        self.isProcessing = false
-//                    }
-//                    }
-                }
-            }
+                print("Error processing videos: \(error)")            }
 //        }
     }
     
@@ -325,7 +298,7 @@ class VideoViewModel: ObservableObject {
         let urlStringUnkept: String = IMAGEKIT_ENDPOINT + fixedPath + "?tr=f-auto"
         var urlString = urlStringUnkept
         
-        print(urlString)
+//        print(urlString)
         if let url = URL(string: urlString ?? "") {
             return url
         } else {
@@ -377,43 +350,96 @@ class VideoViewModel: ObservableObject {
         
         return processedVideos
     }
-    // This function accepts an integer n and returns a random array consistent of n videos.
-    func getRandomVideos(maxCount: Int) -> [Video] {
-        // Convert the dictionary to a flat array
-        let allVideos = Array(videos.values.flatMap { $0 })
+    
+    // Approaches
+    // 1) Generate a list of users top channels (based on likes and listens), return new / top videos in those categories
+    // 2) Get some videos that match their interests (3 of them, from list)
+    // 3) Random
+    func generateForYou(max: Int) async {
+        // self.viewed_videos
+        // self.authModel.liked_videos
         
-        // If allVideos is empty or maxCount is 0, return an empty array
-        guard !allVideos.isEmpty, maxCount > 0 else {
-            return []
-        }
+        // Score each channel (2 points if comes from a liked video, 1 if from a view)
+        var videosDict: [Channel : [UnprocessedVideo]] = [:]
         
-        var randomVideos: [Video] = []
-        for _ in 0..<min(maxCount, allVideos.count) {
-            let randomIndex = Int.random(in: 0..<allVideos.count)
-            
-            // Get a random video
-            let video = allVideos[randomIndex]
-                        
-            // Create a new video with the same properties, but with "For You" as the channel
-            let newVideo = Video(id: video.id,
-                                 title: video.title,
-                                 author: video.author,
-                                 bio: video.bio,
-                                 date: video.date,
-                                 channels: ["For You"],
-                                 url: video.url,
-                                 youtubeURL: video.youtubeURL)
-            
-            if !randomVideos.contains(where: { $0.id == newVideo.id }) {
-                randomVideos.append(newVideo)
+        var topChannels: [String: Int] = [:]
+        for likedVideo in self.authModel.liked_videos {
+            for likedVideoChannel in likedVideo.channels {
+                if topChannels[likedVideoChannel] != nil {
+                    topChannels[likedVideoChannel]! += 2
+                } else {
+                    topChannels[likedVideoChannel] = 2
+                }
             }
         }
         
-        return randomVideos.shuffled().shuffled()
+        for viewedVideo in self.viewed_videos {
+            for viewedVideoChannel in viewedVideo.channels {
+                if topChannels[viewedVideoChannel] != nil {
+                    topChannels[viewedVideoChannel]! += 2
+                } else {
+                    topChannels[viewedVideoChannel] = 2
+                }
+            }
+        }
+        
+        topChannels[self.channels[0].id] = 5
+        topChannels[self.channels[2].id] = 3
+        topChannels[self.channels[5].id] = 10
+            
+        if topChannels.count == 0 {
+            return await generateRandomForYou(max: max)
+        }
+        
+        let documentsPerChannel = (max / topChannels.count)
+        // topChannels is now { channelString: 2, channelString: 4... }
+        let sortedTopChannels = topChannels.sorted { $0.value > $1.value }
+        print("Top Channels", sortedTopChannels)
+        print("Fetching", documentsPerChannel, "videos in each of the", topChannels.count, "channels")
+        let db = Firestore.firestore()
+        let storageRef = db.collection("videos")
+        // return videos in each of the top channels
+        for (channel, _) in sortedTopChannels {
+            do {
+                // The channel in the video, is a string, which is the ID
+                let snapshot = try await storageRef.whereField("channels", arrayContains: channel).limit(to: documentsPerChannel).getDocuments()
+                for document in snapshot.documents {
+                    let unfilteredVideo = try document.data(as: FirebaseData.self)
+                    let id = document.documentID
+                    let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
+                    
+                    if !(authModel.current_user?.viewed_videos?.contains(where: {$0 == id}) ?? false) {
+                        if var loc = unfilteredVideo.location {
+                            
+                            loc.removeAll(where: { punctuation.contains($0) })
+                            let video = UnprocessedVideo(
+                                id: id,
+                                title: unfilteredVideo.title ?? "Unknown Title",
+                                author: unfilteredVideo.author ?? "The author for this video cannot be found.",
+                                bio: unfilteredVideo.bio ?? "The bio for this video cannot be found. Please look online for more information.",
+                                date: unfilteredVideo.date,
+                                channels: unfilteredVideo.channels ?? ["none"],
+                                location: "\(loc)",
+                                youtubeURL: unfilteredVideo.youtubeURL)
+                            print(loc)
+                            if videosDict[FOR_YOU_CHANNEL] != nil {
+                                videosDict[FOR_YOU_CHANNEL]!.append(video)
+                            } else {
+                                videosDict[FOR_YOU_CHANNEL] = [video]
+                            }
+                        }
+                        
+                    }
+                }
+            } catch {
+                print("Error getting for you videos.")
+            }
+        }
+        // backfill with random
+        await processUnprocessedVideos(unprocessedVideos: videosDict, foryou: true)
     }
     
-    func generateForYou(max: Int) async {
-                
+    func generateRandomForYou(max: Int) async {
         var videosDict: [Channel : [UnprocessedVideo]] = [:]
         
         let db = Firestore.firestore()

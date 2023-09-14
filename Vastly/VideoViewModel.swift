@@ -382,25 +382,26 @@ class VideoViewModel: ObservableObject {
                 }
             }
         }
-            
+        
         if topChannels.count == 0 {
             // If there is no user activity then we just return random for now
             // TODO: fix the cold start problem, switch to approach 2 above
             return await generateRandomForYou(max: max)
         }
         
-        let documentsPerChannel = (max / topChannels.count)
+        let videosPerChannel = (max / topChannels.count)
         // topChannels is now { channelString: 2, channelString: 4... }
         let sortedTopChannels = topChannels.sorted { $0.value > $1.value }
-        print("Top Channels", sortedTopChannels)
-        print("Fetching", documentsPerChannel, "videos in each of the", topChannels.count, "channels")
+        print("FOR YOU: Top Channels", sortedTopChannels)
+        print("FOR YOU: Fetching", videosPerChannel, "videos in each of the", topChannels.count, "channels")
         let db = Firestore.firestore()
         let storageRef = db.collection("videos")
         // return videos in each of the top channels
         for (channel, _) in sortedTopChannels {
             do {
                 // The channel in the video, is a string, which is the ID
-                let snapshot = try await storageRef.whereField("channels", arrayContains: channel).limit(to: documentsPerChannel).getDocuments()
+                print("FOR YOU: Fetching videos from", channel)
+                let snapshot = try await storageRef.whereField("channels", arrayContains: channel).limit(to: videosPerChannel).getDocuments()
                 for document in snapshot.documents {
                     let unfilteredVideo = try document.data(as: FirebaseData.self)
                     let id = document.documentID

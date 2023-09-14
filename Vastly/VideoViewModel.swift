@@ -384,6 +384,8 @@ class VideoViewModel: ObservableObject {
         }
             
         if topChannels.count == 0 {
+            // If there is no user activity then we just return random for now
+            // TODO: fix the cold start problem, switch to approach 2 above
             return await generateRandomForYou(max: max)
         }
         
@@ -431,7 +433,6 @@ class VideoViewModel: ObservableObject {
                 print("Error getting for you videos.")
             }
         }
-        // backfill with random
         await processUnprocessedVideos(unprocessedVideos: videosDict, foryou: true)
     }
     

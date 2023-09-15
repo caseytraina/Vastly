@@ -128,14 +128,14 @@ struct NewVideoView: View {
                                 let impact = UIImpactFeedbackGenerator(style: .medium)
                                 impact.impactOccurred()
 
-                                channelTapped(for: newChannel, with: authModel.user)
-                                videoWatched(for: getVideo(i: video_indices[channel_index], in: activeChannel), with: authModel.user, profile: authModel.current_user)
+                                channelClicked(for: newChannel, with: authModel.user)
+                                videoClicked(for: getVideo(i: video_indices[channel_index], in: activeChannel), with: authModel.user, profile: authModel.current_user)
                                 
                                 let duration = viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentTime().seconds
                                 
                                 viewModel.playerManager?.changeToChannel(to: newChannel, shouldPlay: playing, newIndex: video_indices[channel_index])
                                 
-                                logWatchTime(
+                                videoWatched(
                                     from: startTime,
                                     to: endTime,
                                     for: getVideo(i: video_indices[channel_index], in: previous_channel),
@@ -144,7 +144,6 @@ struct NewVideoView: View {
                                     with: authModel.user,
                                     profile: authModel.current_user,
                                     viewModel: viewModel)
-                                
                                 startTime = Date()
                                 updateMetadata()
                                 
@@ -256,10 +255,10 @@ struct NewVideoView: View {
                         let previousVideo = getVideo(i: previous_playing, in: activeChannel)
                         let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
 
-                        videoWatched(for: viewModel.videos[activeChannel]?[newIndex] ?? EMPTY_VIDEO,
+                        videoClicked(for: viewModel.videos[activeChannel]?[newIndex] ?? EMPTY_VIDEO,
                                      with: authModel.user,
                                      profile: authModel.current_user)
-                        logWatchTime(from: startTime,
+                        videoWatched(from: startTime,
                                      to: endTime,
                                      for: previousVideo,
                                      time: (viewModel.playerManager?.getPlayer(for: previousVideo).currentItem!.duration.seconds) ?? 0.0,
@@ -283,7 +282,7 @@ struct NewVideoView: View {
                 .onAppear {
                     startTime = Date()
                     
-                    videoWatched(for: viewModel.videos[activeChannel]?[video_indices[channel_index]] ?? EMPTY_VIDEO, with: authModel.user, profile: authModel.current_user)
+                    videoClicked(for: viewModel.videos[activeChannel]?[video_indices[channel_index]] ?? EMPTY_VIDEO, with: authModel.user, profile: authModel.current_user)
                     addVideos(at: 0)
 
                 }
@@ -328,6 +327,7 @@ struct NewVideoView: View {
         )
 
     }
+    
     private func updateMetadata() {
         if let video = viewModel.playerManager?.getCurrentVideo() {
             viewModel.playerManager?.updateNowPlayingInfo(for: video)

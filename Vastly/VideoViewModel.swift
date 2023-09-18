@@ -47,22 +47,23 @@ class VideoViewModel: ObservableObject {
         self.authModel = authModel
         
         Task {
+            await getVideos()
+            
             await getChannels()
             print("Got channels.")
-            
-            await getAuthors()
-            print("Got authors.")
-            
-            await getVideos()
-            DispatchQueue.main.async {
-                self.isProcessing = false
-            }
-            
+
             await fetchViewedVideos()
             await fetchLikedVideos()
             
+            await getAuthors()
+            print("Got authors.")
+                
             // We do this at the end so we can analyze the liked and viewed videos
             await generateForYou(max: 40)
+            
+            DispatchQueue.main.async {
+                self.isProcessing = false
+            }
             
             print("Processed videos.")
         }

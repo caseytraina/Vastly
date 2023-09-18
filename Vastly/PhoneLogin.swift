@@ -8,6 +8,11 @@
 import SwiftUI
 import iPhoneNumberField
 
+enum Flow {
+    case signUp
+    case logIn
+}
+
 struct PhoneLogin: View {
     
     @Binding var phone: String
@@ -22,6 +27,8 @@ struct PhoneLogin: View {
 
     @Binding var name: String
     @Binding var selected: [String]
+    
+    @State var flow: Flow = .logIn
     
     @State var email = ""
     @State var password = ""
@@ -118,16 +125,18 @@ struct PhoneLogin: View {
                                                EmptyView()
                     })
                     
-                    NavigationLink(destination: LogInView(email: $email, password: $password)
-                        .environmentObject(authModel)
-//                        .environmentObject(viewModel)
-                    ) {
-                        MyText(text: "Sign in with Email Instead", size: geo.size.width * 0.04, bold: true, alignment: .center, color: .white)
-                            .lineLimit(2)
+                    if (flow == .logIn) {
+                        NavigationLink(destination: LogInView(email: $email, password: $password)
+                            .environmentObject(authModel)
+                                       //                        .environmentObject(viewModel)
+                        ) {
+                            MyText(text: "Sign in with Email Instead", size: geo.size.width * 0.04, bold: true, alignment: .center, color: .white)
+                                .lineLimit(2)
+                        }
+                        //                    .navigationTitle("Title")
+                        //                    .navigationBarTitleDisplayMode(.large)
+                        .padding()
                     }
-//                    .navigationTitle("Title")
-//                    .navigationBarTitleDisplayMode(.large)
-                    .padding()
                     
                         Button(action: {
     //                        phone = "+1\(phone)"

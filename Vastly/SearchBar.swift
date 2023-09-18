@@ -116,7 +116,7 @@ struct NewSearchBar: View {
                                             
                                             VStack(alignment: .leading) {
                                                 MyText(text: video.title, size: geo.size.width * 0.04, bold: true, alignment: .leading, color: .white)
-                                                    .lineLimit(3)
+                                                    .lineLimit(2)
                                                 MyText(text: video.author.name ?? "", size: geo.size.width * 0.03, bold: false, alignment: .leading, color: .white)
                                                     .lineLimit(1)
                                                 
@@ -134,69 +134,73 @@ struct NewSearchBar: View {
                                     
                                 } // end foreach
                             } // end scrollview
-                            .frame(maxHeight: geo.size.height * 0.4)
+//                            .frame(maxHeight: geo.size.height * 0.4)
                         }
                     }
                     
 //                    if !controller.videos.isEmpty {
-                    if !text.isEmpty {
-                        HStack {
-                            MyText(text: "Podcasts", size: geo.size.width * 0.06, bold: true, alignment: .leading, color: .white)
-                                .padding()
-                            Spacer()
-                        }
+//                    if !text.isEmpty {
+//                        HStack {
+//                            MyText(text: "Podcasts", size: geo.size.width * 0.06, bold: true, alignment: .leading, color: .white)
+//                                .padding()
+//                            Spacer()
+//                        }
+//
+//                        if controller.authors.isEmpty {
+//                            MyText(text: "No results.", size: geo.size.width * 0.04, bold: true, alignment: .center, color: .white)
+//                                .padding()
+//                        } else {
+//
+//                            ScrollView(.horizontal, showsIndicators: false) {
+//                                HStack {
+//                                    ForEach(controller.authors) { author in
+//
+//
+//                                        Button(action: {
+//                                            self.author = author
+//                                            publisherIsTapped = true
+//                                        }, label: {
+//
+//
+//
+//
+//                                            VStack(alignment: .center) {
+//                                                AsyncImage(url: author.fileName, content: { image in
+//                                                    image
+//                                                        .resizable()
+//                                                        .frame(maxWidth: geo.size.width * 0.25, maxHeight: geo.size.width * 0.25)
+//                                                        .padding(.horizontal)
+//                                                }, placeholder: {
+//                                                    Color("BackgroundColor")
+//                                                        .frame(width: geo.size.width * 0.15, height: geo.size.width * 0.15)
+//                                                        .padding(.horizontal)
+//                                                })
+//                                                //                                VStack(alignment: .leading) {
+//                                                MyText(text: author.name ?? "", size: geo.size.width * 0.04, bold: true, alignment: .leading, color: .white)
+//                                                    .frame(maxWidth: geo.size.width * 0.4)
+//                                                    .lineLimit(2)
+//
+//                                                //                                }
+//                                            }
+//                                            .frame(width: geo.size.width * 0.35, height: geo.size.height * 0.3)
+//                                            .background(
+//                                                RoundedRectangle(cornerRadius: 10)
+//                                                    .foregroundColor(color)
+//                                            )
+//
+//                                        })
+//
+//                                    }
+//                                } // end foreach
+//                            } // end scrollview
+//                            .frame(maxHeight: geo.size.height * 0.3)
+//                        }
+//
+//                    }
                     
-                        if controller.authors.isEmpty {
-                            MyText(text: "No results.", size: geo.size.width * 0.04, bold: true, alignment: .center, color: .white)
-                                .padding()
-                        } else {
-                            
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack {
-                                    ForEach(controller.authors) { author in
-                                        
-                                        
-                                        Button(action: {
-                                            self.author = author
-                                            publisherIsTapped = true
-                                        }, label: {
-                                            
-                                            
-                                            
-                                            
-                                            VStack(alignment: .center) {
-                                                AsyncImage(url: author.fileName, content: { image in
-                                                    image
-                                                        .resizable()
-                                                        .frame(maxWidth: geo.size.width * 0.25, maxHeight: geo.size.width * 0.25)
-                                                        .padding(.horizontal)
-                                                }, placeholder: {
-                                                    Color("BackgroundColor")
-                                                        .frame(width: geo.size.width * 0.15, height: geo.size.width * 0.15)
-                                                        .padding(.horizontal)
-                                                })
-                                                //                                VStack(alignment: .leading) {
-                                                MyText(text: author.name ?? "", size: geo.size.width * 0.04, bold: true, alignment: .leading, color: .white)
-                                                    .frame(maxWidth: geo.size.width * 0.4)
-                                                    .lineLimit(2)
-                                                
-                                                //                                }
-                                            }
-                                            .frame(width: geo.size.width * 0.35, height: geo.size.height * 0.3)
-                                            .background(
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .foregroundColor(color)
-                                            )
-                                            
-                                        })
-                                        
-                                    }
-                                } // end foreach
-                            } // end scrollview
-                            .frame(maxHeight: geo.size.height * 0.3)
-                        }
-                        
-                    }
+                    
+                    
+                    
                     Spacer()
 
                 }

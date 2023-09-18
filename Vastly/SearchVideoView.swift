@@ -90,6 +90,7 @@ struct SearchVideoView: View {
                             withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(current_playing, anchor: .top)
                             }
+                            viewModel.playerManager?.updateNowPlayingInfo(for: getVideo(current_playing))
                             previous = current_playing
                             trackAVStatus(for: getVideo(current_playing))
                             play(current_playing)
@@ -111,8 +112,8 @@ struct SearchVideoView: View {
                                 
                                 trackAVStatus(for: getVideo(newIndex))
                                 
-                                
-                                
+                                viewModel.playerManager?.updateNowPlayingInfo(for: getVideo(newIndex))
+
                                 pause(previous)
                                 play(newIndex)
                                 

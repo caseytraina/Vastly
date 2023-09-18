@@ -102,7 +102,6 @@ struct ViewingHistory: View {
     }
     
     private func getThumbnail(video: Video) -> URL? {
-        
         var urlString = video.url?.absoluteString
         
         urlString = urlString?.replacingOccurrences(of: "?tr=f-auto", with: "/tr:w-200,h-200,fo-center/ik-thumbnail.jpg")
@@ -111,7 +110,6 @@ struct ViewingHistory: View {
     }
     
     private func myGradient(channel_index: Int) -> [Color] {
-        
 //        let background = Color(red: 18.0/255, green: 18.0/255, blue: 18.0/255)
         let background = Color(red: 5/255, green: 5/255, blue: 5/255)
 

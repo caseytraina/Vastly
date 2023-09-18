@@ -382,7 +382,7 @@ class VideoViewModel: ObservableObject {
         
         var urlString = video.url?.absoluteString
         
-        urlString = urlString?.replacingOccurrences(of: "?tr=f-auto", with: "/tr:w-200,h-200,fo-center/ik-thumbnail.jpg")
+        urlString = urlString?.replacingOccurrences(of: "?tr=f-auto", with: "/ik-thumbnail.jpg")
         
         return URL(string: urlString ?? "")
     }

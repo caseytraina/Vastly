@@ -91,11 +91,10 @@ struct NewVideoView: View {
                                                 }
                                                 .frame(width: screenSize.width, height: screenSize.height * 0.8)
                                             } else {
-                                                VerticalVideoView(activeChannel: $activeChannel, current_playing: $video_indices[channel_index], isPlaying: $playing, dragOffset: $dragOffset, channelGuidePressed: $channelGuidePressed, channel: channel, publisherIsTapped: $publisherIsTapped)
+                                                VerticalVideoView(activeChannel: $activeChannel, current_playing: $video_indices[channel_index], isPlaying: $playing, dragOffset: $dragOffset, channel: channel, publisherIsTapped: $publisherIsTapped)
                                                     .environmentObject(viewModel)
                                                     .environmentObject(authModel)
                                                     .frame(width: screenSize.width, height: screenSize.height * 0.8)
-                                                //                                                    .blur(radius: channel == activeChannel ? 0 : 3)
                                                     .id(channel)
                                             }
                                             

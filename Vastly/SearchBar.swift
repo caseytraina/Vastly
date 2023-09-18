@@ -10,21 +10,45 @@ import AlgoliaSearchClient
 
 struct NewSearchBar: View {
     
-//    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var authModel: AuthViewModel
+    @EnvironmentObject var viewModel: VideoViewModel
+
+    var all_authors: [Author]
     
 //    @StateObject var controller: NewAlgoliaController
 //
     let color = Color(red: 18.0/255, green: 18.0/255, blue: 18.0/255)
 
 //    @State var text = ""
-//
-    var viewModel: VideoViewModel
+    
+    @State var author = EXAMPLE_AUTHOR
+    
+    @State var current = 0
+    @State var isPlaying = true
+    @State var publisherIsTapped = false
+    @State var dummyPubTapped = false // dummy variable
+
+    @State var isLinkActive = false
+
+    
+//    var viewModel: VideoViewModel
+    
     @StateObject var controller: NewAlgoliaController
     @State var text = ""
+    
+    @Binding var oldPlaying: Bool
 
-    init(viewModel: VideoViewModel) {
-        self.viewModel = viewModel
-        _controller = StateObject(wrappedValue: NewAlgoliaController(viewModel: viewModel))
+    init(all_authors: [Author], oldPlaying: Binding<Bool>) {
+        self.all_authors = all_authors
+        _controller = StateObject(wrappedValue: NewAlgoliaController(all_authors: all_authors))
+        self._oldPlaying = oldPlaying
+//        _controller.wrappedValue.viewModel = viewModel
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .black
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
     
     var body: some View {
@@ -36,110 +60,165 @@ struct NewSearchBar: View {
                     TextField("Search...",text: $text)
                         .textFieldStyle(GradientTextFieldBackground(systemImageString: "magnifyingglass"))
                         .frame(width: geo.size.width * 0.9)
+                        .padding(.top)
                     //                    List(controller.videos) { video in
-                    if !controller.videos.isEmpty {
+                    if text.isEmpty {
+                        MyText(text: "Search your favorite topics, shows, interests, or episodes above!", size: geo.size.width * 0.04, bold: true, alignment: .center, color: .white)
+                            .padding()
+                    } else {
                         HStack {
                             MyText(text: "Clips", size: geo.size.width * 0.06, bold: true, alignment: .leading, color: .white)
                                 .padding()
                             Spacer()
                         }
-                        ScrollView(showsIndicators: false) {
-                            ForEach(controller.videos) { video in
-                                HStack(alignment: .center) {
-                                    
-                                    AsyncImage(url: viewModel.getThumbnail(video: video), content: { image in
-                                        image
-                                            .resizable()
-                                            .frame(maxWidth: geo.size.width * 0.2, maxHeight: geo.size.width * 0.2)
-                                            .padding(.horizontal)
-                                            .scaledToFit()
-                                    }, placeholder: {
-                                        AsyncImage(url: video.author.fileName, content: { image in
-                                            image
-                                                .resizable()
-                                                .frame(maxWidth: geo.size.width * 0.15, maxHeight: geo.size.width * 0.15)
-                                                .padding(.horizontal)
-                                        }, placeholder: {
-                                            Color("BackgroundColor")
-                                                .frame(width: geo.size.width * 0.15, height: geo.size.width * 0.15)
-                                                .padding(.horizontal)
-                                        })
-                                    })
-
-                                    VStack(alignment: .leading) {
-                                        MyText(text: video.title, size: geo.size.width * 0.04, bold: true, alignment: .leading, color: .white)
-                                            .lineLimit(2)
-                                        MyText(text: video.author.name ?? "", size: geo.size.width * 0.03, bold: false, alignment: .leading, color: .white)
-                                            .lineLimit(1)
-                                        
+                        if controller.videos.isEmpty {
+                            MyText(text: "No results.", size: geo.size.width * 0.04, bold: true, alignment: .center, color: .white)
+                                .padding()
+                        } else {
+                            
+                            ScrollView(showsIndicators: false) {
+                                ForEach(controller.videos) { video in
+                                    NavigationLink(destination: SearchVideoView(query: text, vids: $controller.videos, current_playing: $current, isPlaying: $isPlaying, publisherIsTapped: $dummyPubTapped)
+                                        .environmentObject(authModel)
+                                        .environmentObject(viewModel)
+                                        .background(Color("BackgroundColor")
+                                                   ),
+                                                   isActive: $isLinkActive) {
+                                        EmptyView()
                                     }
-                                    Spacer()
-                                }
-                                .frame(height: geo.size.width * 0.15)
-                                .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .foregroundColor(color)
-                                )
-                            } // end foreach
-                        } // end scrollview
-                        .frame(maxHeight: geo.size.height * 0.4)
+                                    
+                                    //                                NavigationLink(destination: , isActive: $isLinkActive, label: {
+                                    
+                                    Button(action: {
+                                        current = controller.videos.firstIndex(where:  { $0.id == video.id}) ?? 0
+                                        
+                                        isLinkActive = true
+                                        
+                                    }, label: {
+                                        
+                                        //                                   })
+                                        HStack(alignment: .center) {
+                                            
+                                            AsyncImage(url: viewModel.getThumbnail(video: video), content: { image in
+                                                image
+                                                    .resizable()
+                                                    .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
+                                                    .frame(height: geo.size.width * 0.15)
+                                                    .scaledToFit()
+                                                    .padding(.horizontal)
+                                            }, placeholder: {
+                                                Color("BackgroundColor")
+                                                    .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
+                                                    .frame(height: geo.size.width * 0.15)
+                                                    .scaledToFit()
+                                                    .padding(.horizontal)
+                                            })
+                                            
+                                            VStack(alignment: .leading) {
+                                                MyText(text: video.title, size: geo.size.width * 0.04, bold: true, alignment: .leading, color: .white)
+                                                    .lineLimit(3)
+                                                MyText(text: video.author.name ?? "", size: geo.size.width * 0.03, bold: false, alignment: .leading, color: .white)
+                                                    .lineLimit(1)
+                                                
+                                            }
+                                            Spacer()
+                                        }
+                                        .frame(width: geo.size.width, height: geo.size.width * 0.25)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .foregroundColor(color)
+                                        )
+                                        
+                                    })
+                                    .padding(.top)
+                                    
+                                } // end foreach
+                            } // end scrollview
+                            .frame(maxHeight: geo.size.height * 0.4)
+                        }
                     }
                     
-                    if !controller.videos.isEmpty {
+//                    if !controller.videos.isEmpty {
+                    if !text.isEmpty {
                         HStack {
                             MyText(text: "Podcasts", size: geo.size.width * 0.06, bold: true, alignment: .leading, color: .white)
                                 .padding()
                             Spacer()
                         }
-                        
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack {
-                                ForEach(controller.authors) { author in
-                                    VStack(alignment: .center) {
-                                        AsyncImage(url: author.fileName, content: { image in
-                                            image
-                                                .resizable()
-                                                .frame(maxWidth: geo.size.width * 0.25, maxHeight: geo.size.width * 0.25)
-                                                .padding(.horizontal)
-                                        }, placeholder: {
-                                            Color("BackgroundColor")
-                                                .frame(width: geo.size.width * 0.15, height: geo.size.width * 0.15)
-                                                .padding(.horizontal)
-                                        })
-                                        //                                VStack(alignment: .leading) {
-                                        MyText(text: author.name ?? "", size: geo.size.width * 0.04, bold: true, alignment: .leading, color: .white)
-                                            .frame(maxWidth: geo.size.width * 0.4)
-                                            .lineLimit(2)
+                    
+                        if controller.authors.isEmpty {
+                            MyText(text: "No results.", size: geo.size.width * 0.04, bold: true, alignment: .center, color: .white)
+                                .padding()
+                        } else {
+                            
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack {
+                                    ForEach(controller.authors) { author in
                                         
-                                        //                                }
+                                        
+                                        Button(action: {
+                                            self.author = author
+                                            publisherIsTapped = true
+                                        }, label: {
+                                            
+                                            
+                                            
+                                            
+                                            VStack(alignment: .center) {
+                                                AsyncImage(url: author.fileName, content: { image in
+                                                    image
+                                                        .resizable()
+                                                        .frame(maxWidth: geo.size.width * 0.25, maxHeight: geo.size.width * 0.25)
+                                                        .padding(.horizontal)
+                                                }, placeholder: {
+                                                    Color("BackgroundColor")
+                                                        .frame(width: geo.size.width * 0.15, height: geo.size.width * 0.15)
+                                                        .padding(.horizontal)
+                                                })
+                                                //                                VStack(alignment: .leading) {
+                                                MyText(text: author.name ?? "", size: geo.size.width * 0.04, bold: true, alignment: .leading, color: .white)
+                                                    .frame(maxWidth: geo.size.width * 0.4)
+                                                    .lineLimit(2)
+                                                
+                                                //                                }
+                                            }
+                                            .frame(width: geo.size.width * 0.35, height: geo.size.height * 0.3)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .foregroundColor(color)
+                                            )
+                                            
+                                        })
+                                        
                                     }
-                                    .frame(width: geo.size.width * 0.35, height: geo.size.height * 0.3)
-                                    .background(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .foregroundColor(color)
-                                    )
-                                }
-                            } // end foreach
-                        } // end scrollview
-                        .frame(maxHeight: geo.size.height * 0.3)
+                                } // end foreach
+                            } // end scrollview
+                            .frame(maxHeight: geo.size.height * 0.3)
+                        }
                         
                     }
                     Spacer()
-                    
-                    
-                    //                    }
-                    //                    .colorInvert()
+
                 }
-            }
+
+                if publisherIsTapped {
+                    AuthorProfileView(author: author, publisherIsTapped: $publisherIsTapped)
+                }
+                
+            } //end ZStack
             
-        }
+        } //end geo reader
+
         .onChange(of: text) { newText in
             controller.search(for: newText)
         }
-    }
+        .onAppear {
+            oldPlaying = false
+        }
+    } // end body
     
     
-}
+}// end class
 
 
 class NewAlgoliaController: ObservableObject {
@@ -147,7 +226,7 @@ class NewAlgoliaController: ObservableObject {
     let client: SearchClient
     let index: Index
     
-    let viewModel: VideoViewModel
+//    let viewModel: VideoViewModel
     
 //    @Published var text: String = "" {
 //        didSet {
@@ -155,15 +234,38 @@ class NewAlgoliaController: ObservableObject {
 //        }
 //    }
     
+    var all_authors: [Author]
+    
     @Published var videos: [Video] = []
     @Published var authors: [Author] = []
 
     
-    init(viewModel: VideoViewModel) {
+    init(all_authors: [Author]) {
         
         self.client = SearchClient(appID: "JDJU8ZVIM4", apiKey: "6eb916eda40c8a7b7f2c116b80e72a27")
         self.index = client.index(withName: "ios_app_videos")
-        self.viewModel = viewModel
+        self.all_authors = all_authors
+    }
+    
+    // This function turns a path to a URL of a cached and compressed video, connecting to our CDN imagekit which is a URL-based video and image delivery and transformation company.
+    func getVideoURL(from location: String) -> URL? {
+
+        var allowedCharacters = CharacterSet.urlQueryAllowed
+        allowedCharacters.insert("/")
+        
+        var fixedPath = location.addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? ""
+        fixedPath = fixedPath.replacingOccurrences(of: "’", with: "%E2%80%99")
+        
+        let urlStringUnkept: String = IMAGEKIT_ENDPOINT + fixedPath + "?tr=f-auto"
+        var urlString = urlStringUnkept
+        
+        print(urlString)
+        if let url = URL(string: urlString ?? "") {
+            return url
+        } else {
+            return EMPTY_VIDEO.url
+            print("URL is invalid")
+        }
     }
     
     
@@ -196,11 +298,11 @@ class NewAlgoliaController: ObservableObject {
                                 let video = Video(
                                     id: hit.objectID.rawValue,
                                     title: decoded.title ?? "",
-                                    author: self.viewModel.authors.first(where: { $0.name == decoded.author}) ?? EXAMPLE_AUTHOR,
+                                    author: self.all_authors.first(where: { $0.name == decoded.author}) ?? EXAMPLE_AUTHOR,
                                     bio: decoded.bio ?? "",
                                     date: decoded.date,
                                     channels: decoded.channels ?? [],
-                                    url: self.viewModel.getVideoURL(from: decoded.url ?? "") ?? EMPTY_VIDEO.url,
+                                    url: self.getVideoURL(from: decoded.url ?? "") ?? EMPTY_VIDEO.url,
                                     youtubeURL: decoded.youtubeURL ?? "")
                                 
                                 
@@ -222,7 +324,7 @@ class NewAlgoliaController: ObservableObject {
 //                                    apple: decoded.apple,
 //                                    spotify: decoded.spotify)
                                 
-                                let author = self.viewModel.authors.first(where:  { $0.name == decoded.name})
+                                let author = self.all_authors.first(where:  { $0.name == decoded.name})
                                 if let author {
                                     DispatchQueue.main.async {
                                         self.authors.append(author)

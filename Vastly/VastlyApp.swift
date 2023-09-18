@@ -88,6 +88,8 @@ struct VastlyApp: App {
 
 //    @StateObject var playerManager = VideoPlayerManager(videos: VideoViewMode)
     
+    
+    
   var body: some Scene {
     WindowGroup {
       NavigationView {

@@ -350,6 +350,15 @@ class VideoViewModel: ObservableObject {
         
         return processedVideos
     }
+  
+      func getThumbnail(video: Video) -> URL? {
+        
+        var urlString = video.url?.absoluteString
+        
+        urlString = urlString?.replacingOccurrences(of: "?tr=f-auto", with: "/ik-thumbnail.jpg")
+        
+        return URL(string: urlString ?? "")
+    }
     
     // Approaches
     // 1) Generate a list of users top channels (based on likes and listens), return videos in those channels
@@ -361,7 +370,6 @@ class VideoViewModel: ObservableObject {
     func generateForYou(max: Int) async {
         // Score each channel (2 points if comes from a liked video, 1 if from a view)
         var videosDict: [Channel : [UnprocessedVideo]] = [:]
-        
         var topChannels: [String: Int] = [:]
         for likedVideo in self.authModel.liked_videos {
             for likedVideoChannel in likedVideo.channels {

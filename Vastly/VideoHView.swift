@@ -234,8 +234,8 @@ struct VideoHView: View {
                                 }
                                 .store(in: &cancellables)
                             
-                            videoWatched(for: getVideo(i: current_playing, in: activeChannel), with: authModel.user, profile: authModel.current_user)
-                            channelTapped(for: activeChannel, with: authModel.user)
+                            videoClicked(for: getVideo(i: current_playing, in: activeChannel), with: authModel.user, profile: authModel.current_user)
+                            channelClicked(for: activeChannel, with: authModel.user)
                             viewModel.playerManager?.updateNowPlayingInfo(for: getVideo(i: current_playing, in: activeChannel))
                             
                         }
@@ -285,7 +285,7 @@ struct VideoHView: View {
                             
                             
                             previous_playing = newIndex
-                            videoWatched(for: getVideo(i: newIndex, in: activeChannel), with: authModel.user, profile: authModel.current_user)
+                            videoClicked(for: getVideo(i: newIndex, in: activeChannel), with: authModel.user, profile: authModel.current_user)
                             switchToNewPlayer(getVideo(i: newIndex, in: activeChannel))
                             recent_change = false
                             liked = videoIsLiked(newIndex)
@@ -315,7 +315,7 @@ struct VideoHView: View {
                             viewModel.playerManager?.changeToChannel(to: newChannel, shouldPlay: isPlaying, newIndex: current_playing)
                             
                             startTime = Date()
-                            channelTapped(for: newChannel, with: authModel.user)
+                            channelClicked(for: newChannel, with: authModel.user)
                             
                             trackAVStatus(for: getVideo(i: current_playing, in: newChannel))
                             switchToNewPlayer(getVideo(i: current_playing, in: newChannel))

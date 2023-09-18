@@ -33,7 +33,7 @@ struct FirebaseData: Codable {
     }
 }
 
-struct UnprocessedVideo {
+struct UnprocessedVideo: Codable {
     let id: String
     let title: String
     let author: String
@@ -42,6 +42,18 @@ struct UnprocessedVideo {
     let channels: [String]
     let location: String
     let youtubeURL: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case author
+        case bio
+        case location = "fileName"
+        case date
+        case channels = "channels"
+        case youtubeURL
+    }
+    
 }
 
 struct Video: Identifiable {
@@ -82,6 +94,10 @@ struct Profile {
     let liked_videos: [String]?
     let interests: [String]?
     let viewed_videos: [String]?
+    
+    func name() -> String? {
+        return "\(firstName ?? "") \(lastName ?? "")"
+    }
     
     enum CodingKeys: String, CodingKey {
         case firstName

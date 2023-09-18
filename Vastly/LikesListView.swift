@@ -99,7 +99,7 @@ struct LikesListView: View {
         
         return URL(string: urlString ?? "")
     }
-    
+
     private func myGradient(channel_index: Int) -> [Color] {
         
 //        let background = Color(red: 18.0/255, green: 18.0/255, blue: 18.0/255)

@@ -63,19 +63,14 @@ struct VerticalVideoView: View {
                 GeometryReader { geo in
 
                     ScrollView {
-//                        if abs((Channel.allCases.firstIndex(of: activeChannel) ?? 0) - (Channel.allCases.firstIndex(of: channel) ?? 0)) <= 1 {
-                            
                         LazyVStack {
                             ForEach(0..<min(vids.count, videoListNum), id: \.self) { i in
                                 renderVStackVideo(
                                     geoWidth: geo.size.width,
+                                    geoHeight: geo.size.height,
                                     video: vids[i],
                                     next: i+1 < vids.count ? vids[i+1] : nil,
                                     i: i)
-                                    .id(i)
-                                    .frame(width: geo.size.width, height: geo.size.height)
-                                    .clipped()
-                                    .offset(y: channel == activeChannel ? dragOffset : 0.0)
                             }
                         }
 //                        } // end of if
@@ -179,9 +174,8 @@ struct VerticalVideoView: View {
 
     }
     
-    private func renderVStackVideo(geoWidth: CGFloat, video: Video, next: Video?, i: Int) -> some View {
+    private func renderVStackVideo(geoWidth: CGFloat, geoHeight: CGFloat, video: Video, next: Video?, i: Int) -> some View {
         VStack(alignment: .leading) {
-            //                                if i == current_playing {
             HStack {
                 
                 if !videoMode {
@@ -390,6 +384,10 @@ struct VerticalVideoView: View {
             
             
         }
+        .id(i)
+        .frame(width: geoWidth, height: geoHeight)
+        .clipped()
+        .offset(y: channel == activeChannel ? dragOffset : 0.0)
     }
     
     

@@ -83,6 +83,10 @@ struct Profile {
     let interests: [String]?
     let viewed_videos: [String]?
     
+    func name() -> String? {
+        return "\(firstName ?? "") \(lastName ?? "")"
+    }
+    
     enum CodingKeys: String, CodingKey {
         case firstName
         case lastName

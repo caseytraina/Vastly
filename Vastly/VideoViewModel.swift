@@ -377,6 +377,17 @@ class VideoViewModel: ObservableObject {
         
         return processedVideos
     }
+    
+    func getThumbnail(video: Video) -> URL? {
+        
+        var urlString = video.url?.absoluteString
+        
+        urlString = urlString?.replacingOccurrences(of: "?tr=f-auto", with: "/ik-thumbnail.jpg")
+        
+        return URL(string: urlString ?? "")
+    }
+    
+    
     // This function accepts an integer n and returns a random array consistent of n videos.
     func getRandomVideos(maxCount: Int) -> [Video] {
         // Convert the dictionary to a flat array

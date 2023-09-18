@@ -74,7 +74,7 @@ struct ChooseTagsView: View {
 //                        Button(action: createAccount) {
                             
                             
-                        NavigationLink(destination: PhoneLogin(phone: $credential, name: $name, selected: $selected)
+                        NavigationLink(destination: PhoneLogin(phone: $credential, name: $name, selected: $selected, flow: .signUp)
                             .environmentObject(authModel)
     //                        .environmentObject(viewModel)
                         ) {

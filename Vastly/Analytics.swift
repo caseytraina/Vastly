@@ -48,14 +48,17 @@ private func commonProperties(video: Video, user: User?, profile: Profile?) -> [
     return common
 }
 
-func videoClicked(for video: Video, with user: User?, profile: Profile?) {
+func videoClicked(for video: Video, with user: User?, profile: Profile?, watchedIn: Channel) {
+    var properties = commonProperties(video: video, user: user, profile: profile)
+    properties["Watched In Channel"] = watchedIn.id as NSObject
     Amplitude.instance().logEvent(
         "Video Clicked",
-        withEventProperties: commonProperties(video: video, user: user, profile: profile)
+        withEventProperties: properties
     )
 }
 
-func videoWatched(from start: Date, to end: Date, for video: Video, time: Double, watched: Double?, with user: User?, profile: Profile?, viewModel: VideoViewModel) {
+func videoWatched(from start: Date, to end: Date, for video: Video, time: Double,
+                  watched: Double?, with user: User?, profile: Profile?, viewModel: VideoViewModel, watchedIn: Channel) {
     let watchTime = min(watched ?? 10000.0, end.timeIntervalSince(start).magnitude)
     let realTime = watchTime >= time ? time : watchTime
     let percentage = ceil((realTime/time) * 100)
@@ -80,7 +83,7 @@ func videoWatched(from start: Date, to end: Date, for video: Video, time: Double
     var properties = commonProperties(video: video, user: user, profile: profile)
     properties["Watch Time"] = watchTime as NSNumber
     properties["Watch Percentage"] = percentage as NSNumber
-    
+    properties["Watched In Channel"] = watchedIn.id as NSObject
     Amplitude.instance().logEvent(
         "Video Watched",
         withEventProperties: properties)

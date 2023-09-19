@@ -68,13 +68,10 @@ struct SearchVideoView: View {
                                 ForEach(0..<vids.count, id: \.self) { i in
                                     renderVStackVideo(
                                         geoWidth: geo.size.width,
+                                        geoHeight: geo.size.height,
                                         video: vids[i],
                                         next: i+1 < vids.count ? vids[i+1] : nil,
                                         i: i)
-                                        .id(i)
-                                        .frame(width: geo.size.width, height: geo.size.height)
-                                        .clipped()
-                                        .offset(y: dragOffset)
                                 }
                             }
         //                        } // end of if
@@ -181,7 +178,7 @@ struct SearchVideoView: View {
 
     }
     
-    private func renderVStackVideo(geoWidth: CGFloat, video: Video, next: Video?, i: Int) -> some View {
+    private func renderVStackVideo(geoWidth: CGFloat, geoHeight: CGFloat, video: Video, next: Video?, i: Int) -> some View {
         VStack(alignment: .leading) {
             //                                if i == current_playing {
             HStack {
@@ -381,6 +378,10 @@ struct SearchVideoView: View {
             
             
         }
+        .id(i)
+        .frame(width: geoWidth, height: geoHeight)
+        .clipped()
+        .offset(y: dragOffset)
     }
     
     

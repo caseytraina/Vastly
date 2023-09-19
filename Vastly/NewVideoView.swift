@@ -128,7 +128,10 @@ struct NewVideoView: View {
                                 impact.impactOccurred()
 
                                 channelClicked(for: newChannel, with: authModel.user)
-                                videoClicked(for: getVideo(i: video_indices[channel_index], in: activeChannel), with: authModel.user, profile: authModel.current_user)
+                                videoClicked(for: getVideo(i: video_indices[channel_index], in: activeChannel),
+                                             with: authModel.user,
+                                             profile: authModel.current_user,
+                                             watchedIn: activeChannel)
                                 
                                 let duration = viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentTime().seconds
                                 
@@ -142,7 +145,8 @@ struct NewVideoView: View {
                                     watched: duration,
                                     with: authModel.user,
                                     profile: authModel.current_user,
-                                    viewModel: viewModel)
+                                    viewModel: viewModel,
+                                    watchedIn: previous_channel)
                                 startTime = Date()
                                 updateMetadata()
                                 
@@ -256,7 +260,8 @@ struct NewVideoView: View {
 
                         videoClicked(for: viewModel.videos[activeChannel]?[newIndex] ?? EMPTY_VIDEO,
                                      with: authModel.user,
-                                     profile: authModel.current_user)
+                                     profile: authModel.current_user,
+                                     watchedIn: activeChannel)
                         videoWatched(from: startTime,
                                      to: endTime,
                                      for: previousVideo,
@@ -264,7 +269,8 @@ struct NewVideoView: View {
                                      watched: duration,
                                      with: authModel.user,
                                      profile: authModel.current_user,
-                                     viewModel: viewModel)
+                                     viewModel: viewModel,
+                                     watchedIn: activeChannel)
                         
                     }
                     
@@ -281,7 +287,10 @@ struct NewVideoView: View {
                 .onAppear {
                     startTime = Date()
                     
-                    videoClicked(for: viewModel.videos[activeChannel]?[video_indices[channel_index]] ?? EMPTY_VIDEO, with: authModel.user, profile: authModel.current_user)
+                    videoClicked(for: viewModel.videos[activeChannel]?[video_indices[channel_index]] ?? EMPTY_VIDEO,
+                                 with: authModel.user,
+                                 profile: authModel.current_user,
+                                 watchedIn: activeChannel)
                     addVideos(at: 0)
 
                 }

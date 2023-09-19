@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>848133434953-e08k9nen8rtahd0h2etsd4oqkf9d74eu.apps.googleusercontent.com</string>
+	<string>848133434953-9ccpme4amcjl4ighjp4rvgof3ij25jbt.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.848133434953-e08k9nen8rtahd0h2etsd4oqkf9d74eu</string>
+	<string>com.googleusercontent.apps.848133434953-9ccpme4amcjl4ighjp4rvgof3ij25jbt</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBlOVPa5H_rbNmAcZprnczlxw8Xgy3076w</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.VastlyTV.Vastly</string>
+	<string>com.VastlyInc.Vastly</string>
 	<key>PROJECT_ID</key>
 	<string>rizeo-40249</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:848133434953:ios:5fd90b53ab7c157540d998</string>
+	<string>1:848133434953:ios:1ff1090989b85a2140d998</string>
 </dict>
 </plist>

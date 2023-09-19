@@ -84,16 +84,19 @@ struct SearchVideoView: View {
         //                    .id(activeChannel)
                         .clipped()
                         .onAppear {
-
+                            viewModel.playerManager?.updateQueue(with: vids)
                             isPlaying = true
 
                             withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(current_playing, anchor: .top)
                             }
+                            
+                            viewModel.playerManager?.changeToIndex(to: current_playing, shouldPlay: isPlaying)
                             viewModel.playerManager?.updateNowPlayingInfo(for: getVideo(current_playing))
+                            
                             previous = current_playing
                             trackAVStatus(for: getVideo(current_playing))
-                            play(current_playing)
+//                            play(current_playing)
     //                        viewModel.playerManager?.pauseAllOthers(except: getVideo(current_playing))
 
                         }
@@ -112,10 +115,11 @@ struct SearchVideoView: View {
                                 
                                 trackAVStatus(for: getVideo(newIndex))
                                 
+                                viewModel.playerManager?.changeToIndex(to: newIndex, shouldPlay: isPlaying)
                                 viewModel.playerManager?.updateNowPlayingInfo(for: getVideo(newIndex))
 
-                                pause(previous)
-                                play(newIndex)
+//                                pause(previous)
+//                                play(newIndex)
                                 
                                 DispatchQueue.main.async {
                                     liked = false
@@ -128,10 +132,16 @@ struct SearchVideoView: View {
                                 
                                 previous = newIndex
                             }
-                                
                         }
                     .frame(width: geo.size.width, height: geo.size.height)
                     
+                }
+            }
+            .onChange(of: isPlaying) { newPlaying in
+                if newPlaying {
+                    play(current_playing)
+                } else {
+                    pause(current_playing)
                 }
             }
             .gesture(DragGesture()

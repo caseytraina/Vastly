@@ -30,7 +30,6 @@ struct NewSearchBar: View {
 
     @State var isLinkActive = false
     @FocusState private var textFocused: Bool
-
     
 //    var viewModel: VideoViewModel
     
@@ -242,14 +241,6 @@ class NewAlgoliaController: ObservableObject {
     let client: SearchClient
     let index: Index
     
-//    let viewModel: VideoViewModel
-    
-//    @Published var text: String = "" {
-//        didSet {
-//            self.search(for: text)
-//        }
-//    }
-    
     var all_authors: [Author]
     
     @Published var videos: [Video] = []
@@ -284,14 +275,12 @@ class NewAlgoliaController: ObservableObject {
         }
     }
     
-    
     func search(for query: String) {
 
         var query = Query(query)
         query.hitsPerPage = 40
         
         index.search(query: query) { result in
-
             if case .success(let response) = result {
                 
                 DispatchQueue.main.async {
@@ -340,7 +329,7 @@ class NewAlgoliaController: ObservableObject {
 //                                    apple: decoded.apple,
 //                                    spotify: decoded.spotify)
                                 
-                                let author = self.all_authors.first(where:  { $0.name == decoded.name})
+                                let author = self.all_authors.first(where:  { $0.text_id == hit.objectID.rawValue})
                                 if let author {
                                     DispatchQueue.main.async {
                                         self.authors.append(author)

@@ -234,7 +234,10 @@ struct VideoHView: View {
                                 }
                                 .store(in: &cancellables)
                             
-                            videoClicked(for: getVideo(i: current_playing, in: activeChannel), with: authModel.user, profile: authModel.current_user)
+                            videoClicked(for: getVideo(i: current_playing, in: activeChannel),
+                                         with: authModel.user,
+                                         profile: authModel.current_user,
+                                         watchedIn: activeChannel)
                             channelClicked(for: activeChannel, with: authModel.user)
                             viewModel.playerManager?.updateNowPlayingInfo(for: getVideo(i: current_playing, in: activeChannel))
                             
@@ -285,7 +288,10 @@ struct VideoHView: View {
                             
                             
                             previous_playing = newIndex
-                            videoClicked(for: getVideo(i: newIndex, in: activeChannel), with: authModel.user, profile: authModel.current_user)
+                            videoClicked(for: getVideo(i: newIndex, in: activeChannel),
+                                         with: authModel.user,
+                                         profile: authModel.current_user,
+                                         watchedIn: activeChannel)
                             switchToNewPlayer(getVideo(i: newIndex, in: activeChannel))
                             recent_change = false
                             liked = videoIsLiked(newIndex)

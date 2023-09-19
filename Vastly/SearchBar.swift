@@ -29,6 +29,7 @@ struct NewSearchBar: View {
     @State var dummyPubTapped = false // dummy variable
 
     @State var isLinkActive = false
+    @FocusState private var textFocused: Bool
 
     
 //    var viewModel: VideoViewModel
@@ -59,6 +60,7 @@ struct NewSearchBar: View {
                 VStack {
                     TextField("Search...",text: $text)
                         .textFieldStyle(GradientTextFieldBackground(systemImageString: "magnifyingglass"))
+//                        .focused($textFocused)
                         .frame(width: geo.size.width * 0.9)
                         .padding(.top)
                     //                    List(controller.videos) { video in
@@ -134,9 +136,15 @@ struct NewSearchBar: View {
                                     
                                 } // end foreach
                             } // end scrollview
+                            .scrollDismissesKeyboard(.immediately)
+
+
+
 //                            .frame(maxHeight: geo.size.height * 0.4)
                         }
+
                     }
+                    
                     
 //                    if !controller.videos.isEmpty {
 //                    if !text.isEmpty {
@@ -210,6 +218,10 @@ struct NewSearchBar: View {
                 }
                 
             } //end ZStack
+//            .onTapGesture {
+//                textFocused = false
+//            }
+            
             
         } //end geo reader
 

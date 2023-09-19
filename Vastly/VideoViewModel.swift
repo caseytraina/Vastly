@@ -47,20 +47,24 @@ class VideoViewModel: ObservableObject {
         self.authModel = authModel
         
         Task {
-            await getVideos()
             
             await getChannels()
             print("Got channels.")
+            
+            await getAuthors()
+            print("Got authors.")
+            
+            await getVideos()
 
             await fetchViewedVideos()
             await fetchLikedVideos()
             
-            await getAuthors()
-            print("Got authors.")
+
                 
             // We do this at the end so we can analyze the liked and viewed videos
             await generateForYou(max: 40)
             
+            // For you page must have completed loading before letting user into the app
             DispatchQueue.main.async {
                 self.isProcessing = false
             }
@@ -338,9 +342,7 @@ class VideoViewModel: ObservableObject {
                         }
                     }
                 }
-                
             } catch {
-
                 print("error processing video: \(error)")
             }
         }
@@ -372,6 +374,7 @@ class VideoViewModel: ObservableObject {
         // Score each channel (2 points if comes from a liked video, 1 if from a view)
         var videosDict: [Channel : [UnprocessedVideo]] = [:]
         var topChannels: [String: Int] = [:]
+        
         for likedVideo in self.authModel.liked_videos {
             for likedVideoChannel in likedVideo.channels {
                 if topChannels[likedVideoChannel] != nil {
@@ -506,45 +509,49 @@ class VideoViewModel: ObservableObject {
             let db = Firestore.firestore()
             let ref = db.collection("videos")
             
-            for title in viewed_videos {
-                do {
-                    let doc = try await ref.document(title).getDocument()
-                    if doc.exists {
-                        
-                        print("Doc Found for \(title)")
-                        
-                        let data = try doc.data()
-                        
-                        let vid = UnprocessedVideo(
-                            id: doc.documentID,
-                            title: data?["title"] as? String ?? "",
-                            author: data?["author"] as? String ?? "",
-                            bio: data?["bio"] as? String ?? "",
-                            date: data?["date"] as? String ?? "",
-                            channels: data?["channels"] as? [String] ?? [],
-                            location: data?["fileName"] as? String ?? "",
-                            youtubeURL: data?["youtubeURL"] as? String ?? "")
-                        
-                        let video = Video(
-                            id: vid.id,
-                            title: vid.title,
-                            author: self.findAuthor(vid),
-                            bio: vid.bio,
-                            date: vid.date,
-                            channels: vid.channels,
-                            url: self.getVideoURL(from: vid.location),
-                            youtubeURL: vid.youtubeURL)
-                        
-                        if !self.viewed_videos.contains(where: {$0.id == video.id}) {
-                            self.viewed_videos.append(video)
+            for id in viewed_videos {
+                if viewed_videos.count < 20 {
+                    do {
+                        let doc = try await ref.document(id).getDocument()
+                        if doc.exists {
+                            
+                            print("Doc Found for \(id)")
+                            
+                            let data = try doc.data()
+                            
+                            let vid = UnprocessedVideo(
+                                id: doc.documentID,
+                                title: data?["title"] as? String ?? "",
+                                author: data?["author"] as? String ?? "",
+                                bio: data?["bio"] as? String ?? "",
+                                date: data?["date"] as? String ?? "",
+                                channels: data?["channels"] as? [String] ?? [],
+                                location: data?["fileName"] as? String ?? "",
+                                youtubeURL: data?["youtubeURL"] as? String ?? "")
+                            
+                            let video = Video(
+                                id: vid.id,
+                                title: vid.title,
+                                author: self.findAuthor(vid),
+                                bio: vid.bio,
+                                date: vid.date,
+                                channels: vid.channels,
+                                url: self.getVideoURL(from: vid.location),
+                                youtubeURL: vid.youtubeURL)
+                            
+                            if !self.viewed_videos.contains(where: {$0.id == video.id}) {
+                                self.viewed_videos.append(video)
+                            }
+                            
+                        } else {
+                            print("Doc not found for \(id)")
                         }
                         
-                    } else {
-                        print("Doc not found for \(title)")
+                    } catch {
+                        print("Error getting viewing history: \(error)")
                     }
-                    
-                } catch {
-                    print("Error getting viewing history: \(error)")
+                } else {
+                    break;
                 }
             }
         }
@@ -557,45 +564,49 @@ class VideoViewModel: ObservableObject {
             let db = Firestore.firestore()
             let ref = db.collection("videos")
             
-            for title in liked_videos {
-                do {
-                    let doc = try await ref.document(title).getDocument()
-                    if doc.exists {
-                        
-                        print("Doc Found for \(title)")
-                        
-                        let data = try doc.data()
-                        
-                        let vid = UnprocessedVideo(
-                            id: doc.documentID,
-                            title: data?["title"] as? String ?? "",
-                            author: data?["author"] as? String ?? "",
-                            bio: data?["bio"] as? String ?? "",
-                            date: data?["date"] as? String ?? "",
-                            channels: data?["channels"] as? [String] ?? [],
-                            location: data?["fileName"] as? String ?? "",
-                            youtubeURL: data?["youtubeURL"] as? String ?? "")
-                        
-                        let video = Video(
-                            id: vid.id,
-                            title: vid.title,
-                            author: self.findAuthor(vid),
-                            bio: vid.bio,
-                            date: vid.date,
-                            channels: vid.channels,
-                            url: self.getVideoURL(from: vid.location),
-                            youtubeURL: vid.youtubeURL)
-                        
-                        if !self.authModel.liked_videos.contains(where: {$0.id == video.id}) {
-                            self.authModel.liked_videos.append(video)
+            for id in liked_videos {
+                if liked_videos.count < 20 {
+                    do {
+                        let doc = try await ref.document(id).getDocument()
+                        if doc.exists {
+                            
+                            print("Doc Found for \(id)")
+                            
+                            let data = try doc.data()
+                            
+                            let vid = UnprocessedVideo(
+                                id: doc.documentID,
+                                title: data?["title"] as? String ?? "",
+                                author: data?["author"] as? String ?? "",
+                                bio: data?["bio"] as? String ?? "",
+                                date: data?["date"] as? String ?? "",
+                                channels: data?["channels"] as? [String] ?? [],
+                                location: data?["fileName"] as? String ?? "",
+                                youtubeURL: data?["youtubeURL"] as? String ?? "")
+                            
+                            let video = Video(
+                                id: vid.id,
+                                title: vid.title,
+                                author: self.findAuthor(vid),
+                                bio: vid.bio,
+                                date: vid.date,
+                                channels: vid.channels,
+                                url: self.getVideoURL(from: vid.location),
+                                youtubeURL: vid.youtubeURL)
+                            
+                            if !self.authModel.liked_videos.contains(where: {$0.id == video.id}) {
+                                self.authModel.liked_videos.append(video)
+                            }
+                            
+                        } else {
+                            print("Doc not found for \(id)")
                         }
                         
-                    } else {
-                        print("Doc not found for \(title)")
+                    } catch {
+                        print("Error getting viewing history: \(error)")
                     }
-                    
-                } catch {
-                    print("Error getting viewing history: \(error)")
+                } else {
+                    break;
                 }
             }
         }

@@ -13,22 +13,25 @@ import MediaPlayer
 /*
  This View Model governs all AVPlayers and their states, and controls the starting and stopping of videos. This exists as a child of the VideoViewModel. A given video can be described by its channel and current_index. videos[.foryou][0] describes the first video in the for you channel. Players is a flat array which correlates to videos based on their UUIDs
  */
+
 class VideoPlayerManager: ObservableObject {
+    
     @Published var players: [String: AVPlayer] = [:]
     @Published var loadingStates: [String: Bool] = [:]
+    
     var current_index: Int = 0
     var activeChannel: Channel = FOR_YOU_CHANNEL {
         didSet {
-            channel_videos = videos[activeChannel]
+            queue = videos[activeChannel]
         }
     }
     
     var commandCenter: MPRemoteCommandCenter?
     
-    @Published var channel_videos: [Video]?
+    @Published var queue: [Video]?
     @Published var videos: [Channel: [Video]] {
         didSet {
-            channel_videos = videos[activeChannel]
+            queue = videos[activeChannel]
         }
     }
     // initialize players as well as channel_videos and the command center. The command center must be setup once.
@@ -37,7 +40,7 @@ class VideoPlayerManager: ObservableObject {
     init(videos: [Channel: [Video]]) {
         self.videos = videos
 //        updatePlayers(videos: videos)
-        channel_videos = videos[activeChannel]
+        queue = videos[activeChannel]
         setupCommandCenter()
 //        current_index = x/UserDefaults.standard.integer(forKey: "current_index")
 
@@ -185,6 +188,10 @@ class VideoPlayerManager: ObservableObject {
 
         self.commandCenter = commandCenter
     }
+    
+    func updateQueue(with videos: [Video]) {
+        self.queue = videos
+    }
 
     // this function updates the command center metadata that is displayed. It must be called any time a change is made to the video or its state.
     func updateNowPlayingInfo(for video: Video) {
@@ -222,8 +229,8 @@ class VideoPlayerManager: ObservableObject {
     }
 
     // This function plays the next video in the currently active channel.
-    func nextVideoInChannel() {
-        if current_index ?? 0 + 1 < videos[activeChannel]?.count ?? 0 {
+    func nextVideo() {
+        if current_index ?? 0 + 1 < queue?.count ?? 0 {
             pauseCurrentVideo()
             current_index += 1
             playCurrentVideo()
@@ -231,7 +238,7 @@ class VideoPlayerManager: ObservableObject {
     }
     
     // This function plays the previous video in the currently active channel.
-    func previousVideoInChannel() {
+    func previousVideo() {
         if current_index ?? 0 > 0 {
             pauseCurrentVideo()
             current_index -= 1
@@ -241,7 +248,7 @@ class VideoPlayerManager: ObservableObject {
     
     // this video changes the current video to a new index in the same active channel.
     func changeToIndex(to index: Int, shouldPlay: Bool) {
-        if index >= 0 && index < videos[activeChannel]?.count ?? 0 {
+        if index >= 0 && index < queue?.count ?? 0 {
             pauseCurrentVideo()
             current_index = index
             if shouldPlay {
@@ -286,7 +293,7 @@ class VideoPlayerManager: ObservableObject {
 
     // This function returns the current video.
     func getCurrentVideo() -> Video? {
-        if let videos = videos[activeChannel], current_index >= 0 && current_index < videos.count {
+        if let videos = queue, current_index >= 0 && current_index < videos.count {
             return videos[current_index]
         }
         return nil

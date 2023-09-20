@@ -262,7 +262,6 @@ class AuthViewModel: ObservableObject {
 //                self.liked_videos = data?["liked_videos"] as? [String] ?? []
 //            }
 
-            print(profile)
             return profile
         } catch let error {
             print("Error fetching profile data: \(error)")

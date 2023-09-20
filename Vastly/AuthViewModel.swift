@@ -183,7 +183,7 @@ class AuthViewModel: ObservableObject {
             ])
             
             try await videoRef.updateData([
-                "liked_count": FieldValue.increment(Int64(1))
+                "likedCount": FieldValue.increment(Int64(1))
             ])
         } catch {
             print("Error updating liked videos: \(error)")

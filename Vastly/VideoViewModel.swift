@@ -55,7 +55,7 @@ class VideoViewModel: ObservableObject {
             print("Got authors.")
             
             await getVideos()
-
+            
             await fetchViewedVideos()
             await fetchLikedVideos()
             
@@ -412,11 +412,11 @@ class VideoViewModel: ObservableObject {
         for (channel, _) in sortedTopChannels {
             do {
                 // The channel in the video, is a string, which is the ID
-                print("FOR YOU: Fetching videos from", channel)
+                print("FOR YOU: Fetching most liked videos from", channel)
                 let snapshot = try await storageRef
                     .whereField("channels", arrayContains: channel)
                     .limit(to: videosPerChannel)
-                    .order(by: "liked_count", descending: true)
+//                    .order(by: "liked_count", descending: true) // need an index for this
                     .getDocuments()
                 for document in snapshot.documents {
                     let unfilteredVideo = try document.data(as: FirebaseData.self)

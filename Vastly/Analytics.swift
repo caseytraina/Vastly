@@ -73,9 +73,13 @@ func videoWatched(from start: Date, to end: Date, for video: Video, time: Double
         }
         return db.collection("users").document("");
     }
+    let videoRef = db.collection("videos").document(video.id)
     if realTime > 3 {
         userRef().updateData([
             "viewed_videos": FieldValue.arrayUnion([video.id])
+        ])
+        videoRef.updateData([
+            "viewed_count": FieldValue.increment(Int64(1))
         ])
         viewModel.viewed_videos.append(video)
     }

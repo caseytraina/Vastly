@@ -413,7 +413,11 @@ class VideoViewModel: ObservableObject {
             do {
                 // The channel in the video, is a string, which is the ID
                 print("FOR YOU: Fetching videos from", channel)
-                let snapshot = try await storageRef.whereField("channels", arrayContains: channel).limit(to: videosPerChannel).getDocuments()
+                let snapshot = try await storageRef
+                    .whereField("channels", arrayContains: channel)
+                    .limit(to: videosPerChannel)
+                    .order(by: "liked_count", descending: true)
+                    .getDocuments()
                 for document in snapshot.documents {
                     let unfilteredVideo = try document.data(as: FirebaseData.self)
                     let id = document.documentID

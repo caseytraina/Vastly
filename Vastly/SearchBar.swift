@@ -303,7 +303,7 @@ class NewAlgoliaController: ObservableObject {
                                 let video = Video(
                                     id: hit.objectID.rawValue,
                                     title: decoded.title ?? "",
-                                    author: self.all_authors.first(where: { $0.name == decoded.author}) ?? EXAMPLE_AUTHOR,
+                                    author: self.all_authors.first(where: {$0.text_id == decoded.author}) ?? EXAMPLE_AUTHOR,
                                     bio: decoded.bio ?? "",
                                     date: decoded.date,
                                     channels: decoded.channels ?? [],

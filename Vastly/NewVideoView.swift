@@ -113,6 +113,8 @@ struct NewVideoView: View {
                             } //end scrollview
                             .scrollDisabled(true)
                             .onAppear {
+                                
+                                viewModel.playerManager?.changeToChannel(to: activeChannel, shouldPlay: playing, newIndex: video_indices[channel_index])
                                 withAnimation(.easeOut(duration: 0.125)) {
                                     proxy.scrollTo(activeChannel, anchor: .leading)
                                 }

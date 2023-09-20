@@ -282,7 +282,7 @@ struct SearchVideoView: View {
                     
                     HStack(alignment: .center) {
                         if i == current_playing {
-                            AsyncImage(url: AuthorURL(i)) { image in
+                            AsyncImage(url: video.author.fileName) { image in
                                 image.resizable()
                             } placeholder: {
                                 ZStack {

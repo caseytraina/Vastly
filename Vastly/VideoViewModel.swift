@@ -416,7 +416,7 @@ class VideoViewModel: ObservableObject {
                 let snapshot = try await storageRef
                     .whereField("channels", arrayContains: channel)
                     .limit(to: videosPerChannel)
-//                    .order(by: "liked_count", descending: true) // need an index for this
+//                    .order(by: "likedCount", descending: true) // need an index for this
                     .getDocuments()
                 for document in snapshot.documents {
                     let unfilteredVideo = try document.data(as: FirebaseData.self)

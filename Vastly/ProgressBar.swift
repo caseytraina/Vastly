@@ -19,6 +19,7 @@ struct ProgressBar: View {
     
     var video: Video
     
+    @Binding var isPlaying: Bool
     
     @EnvironmentObject var viewModel: VideoViewModel
     
@@ -79,6 +80,9 @@ struct ProgressBar: View {
                     .onEnded(onDragEnded)
                     .onChanged(onDragChanged)
             )
+            .onTapGesture(count: 1) {
+                isPlaying.toggle()
+            }
             .onTapGesture(count: 2) { event in
                 if event.x < geometry.size.width / 2 {
                     print("Seek Backward.")

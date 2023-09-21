@@ -232,13 +232,10 @@ struct SearchVideoView: View {
                                             .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                     }
                                 }
-                                .onTapGesture {
-                                    isPlaying.toggle()
-                                }
 
                                 if i == current_playing {
                                     
-                                    ProgressBar(value: $playerProgress, activeChannel: $channel, video: video)
+                                    ProgressBar(value: $playerProgress, activeChannel: $channel, video: video, isPlaying: $isPlaying)
                                         .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                         .padding(0)
                                         .environmentObject(viewModel)

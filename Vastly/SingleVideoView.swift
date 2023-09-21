@@ -74,7 +74,7 @@ struct SingleVideoView: View {
                                     }
                                     player.pause()
                                 }
-                            ProgressBar(value: $playerProgress, activeChannel: $channel, video: video)
+                            ProgressBar(value: $playerProgress, activeChannel: $channel, video: video, isPlaying: $isPlaying)
                                 .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                 .padding(0)
                                 .environmentObject(viewModel)

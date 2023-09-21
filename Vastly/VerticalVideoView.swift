@@ -219,13 +219,10 @@ struct VerticalVideoView: View {
                                             .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                     }
                                 }
-                                .onTapGesture {
-                                    isPlaying.toggle()
-                                }
 
                                 if i == current_playing {
                                     
-                                    ProgressBar(value: $playerProgress, activeChannel: $activeChannel, video: video)
+                                    ProgressBar(value: $playerProgress, activeChannel: $activeChannel, video: video, isPlaying: $isPlaying)
                                         .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                         .padding(0)
                                         .environmentObject(viewModel)

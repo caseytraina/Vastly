@@ -39,45 +39,48 @@ struct SingleVideoView: View {
                 .ignoresSafeArea()
             GeometryReader { geo in
                 VStack(alignment: .leading) {
-                    if let player = viewModel.playerManager?.getPlayer(for: video) {
-                        FullscreenVideoPlayer(videoMode: $videoMode, video: video, activeChannel: $active)
-                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
-                            .padding(0)
-                            .environmentObject(viewModel)
-                            .onAppear {
-                                
-                                
-                                if let timeObserverToken = timeObserverToken {
-                                    player.removeTimeObserver(timeObserverToken)
-                                    self.timeObserverToken = nil
-                                }
-                                
-                                player.currentItem?.asset.loadValuesAsynchronously(forKeys: ["duration"]) {
-                                    DispatchQueue.main.async {
-                                        let duration = player.currentItem?.asset.duration
-                                        self.playerDuration = duration ?? CMTime(value: 0, timescale: 1000)
-                                        
-                                        player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.1, preferredTimescale: 600), queue: .main) { time in
-                                            self.playerTime = time
-                                            self.playerProgress = time.seconds / (duration?.seconds ?? 1.0)
+                    ZStack {
+                        if let player = viewModel.playerManager?.getPlayer(for: video) {
+                            FullscreenVideoPlayer(videoMode: $videoMode, video: video, activeChannel: $active)
+                                .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                                .padding(0)
+                                .environmentObject(viewModel)
+                                .onAppear {
+                                    
+                                    
+                                    if let timeObserverToken = timeObserverToken {
+                                        player.removeTimeObserver(timeObserverToken)
+                                        self.timeObserverToken = nil
+                                    }
+                                    
+                                    player.currentItem?.asset.loadValuesAsynchronously(forKeys: ["duration"]) {
+                                        DispatchQueue.main.async {
+                                            let duration = player.currentItem?.asset.duration
+                                            self.playerDuration = duration ?? CMTime(value: 0, timescale: 1000)
+                                            
+                                            player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.1, preferredTimescale: 600), queue: .main) { time in
+                                                self.playerTime = time
+                                                self.playerProgress = time.seconds / (duration?.seconds ?? 1.0)
+                                            }
                                         }
                                     }
+                                    
+                                    player.play()
                                 }
-                                
-                                player.play()
-                            }
-                            .onDisappear {
-                                if let timeObserverToken = timeObserverToken {
-                                    player.removeTimeObserver(timeObserverToken)
-                                    self.timeObserverToken = nil
+                                .onDisappear {
+                                    if let timeObserverToken = timeObserverToken {
+                                        player.removeTimeObserver(timeObserverToken)
+                                        self.timeObserverToken = nil
+                                    }
+                                    player.pause()
                                 }
-                                player.pause()
-                            }
-                        ProgressBar(value: $playerProgress, activeChannel: $channel, video: video)
-                            .frame(width: screenSize.width, height: PROGRESS_BAR_HEIGHT)
-                            .padding(0)
-                            .environmentObject(viewModel)
+                            ProgressBar(value: $playerProgress, activeChannel: $channel, video: video)
+                                .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                                .padding(0)
+                                .environmentObject(viewModel)
+                        }
                     }
+                    .frame(width: geo.size.width, height: geo.size.height)
                     
                     HStack {
                         MyText(text: getInfo(field: .title), size: geo.size.width * 0.045, bold: true, alignment:

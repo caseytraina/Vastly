@@ -208,11 +208,11 @@ struct SearchVideoView: View {
 
                     if videoFailed {
                         VideoFailedView()
-                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
+                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
                     } else {
                         if isLoaded {
                             
-                            VStack (spacing: 0) {
+                            ZStack {
                                 
                                 ZStack {
                                     FullscreenVideoPlayer(videoMode: $videoMode, video: video, activeChannel: $channel)
@@ -239,20 +239,21 @@ struct SearchVideoView: View {
                                 if i == current_playing {
                                     
                                     ProgressBar(value: $playerProgress, activeChannel: $channel, video: video)
-                                        .frame(width: screenSize.width, height: PROGRESS_BAR_HEIGHT)
+                                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                         .padding(0)
                                         .environmentObject(viewModel)
                                 }
                             } // end vstack
+                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                         }  else {
                             VideoThumbnailView(video: video)
-                                .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
+                                .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
                         }
                     } // end if
                 }
             } else {
                 VideoLoadingView()
-                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
+                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
             } // end abs if
             
             

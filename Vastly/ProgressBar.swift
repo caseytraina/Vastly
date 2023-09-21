@@ -26,38 +26,50 @@ struct ProgressBar: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .leading) {
-                
-                Rectangle().frame(width: geometry.size.width , height: geometry.size.height)
-                    .opacity(0.3)
-                    .foregroundColor(Color("AccentGray"))
-//                if video.id == viewModel.playerManager?.getCurrentVideo()?.id {
-                    Rectangle().frame(width: min(abs(geometry.size.width * CGFloat(self.value)), geometry.size.width), height: geometry.size.height)
-                        .foregroundColor(activeChannel.color)
+            VStack {
+                EmptyView()
+                Spacer()
+                ZStack(alignment: .leading) {
+                    
+                    Rectangle().frame(width: geometry.size.width , height: PROGRESS_BAR_HEIGHT)
+                        .opacity(0.3)
+                        .foregroundColor(Color("AccentGray"))
+    //                if video.id == viewModel.playerManager?.getCurrentVideo()?.id {
+                        Rectangle().frame(width: min(abs(geometry.size.width * CGFloat(self.value)), geometry.size.width), height: PROGRESS_BAR_HEIGHT)
+                            .foregroundColor(activeChannel.color)
 
-                
-                    Circle()
-                        .foregroundColor(activeChannel.color)
-                        .frame(width: geometry.size.height * 2 * (beingDragged ? 2 : 1), height: geometry.size.height * 2 * (beingDragged ? 2 : 1))
-                        .position(x: CGFloat(self.value) * geometry.size.width, y: geometry.size.height / 2)
-                        .gesture(
-                            DragGesture()
-                                .updating($dragState) { drag, state, transaction in
-                                    state = .dragging(translation: drag.translation)
-                                }
-                                .onEnded(onDragEnded)
-                                .onChanged(onDragEnded)
+                    
+                        Circle()
+                            .foregroundColor(activeChannel.color)
+                            .frame(width: geometry.size.height * 2 * (beingDragged ? 2 : 1), height: PROGRESS_BAR_HEIGHT * 2 * (beingDragged ? 2 : 1))
+                            .position(x: CGFloat(self.value) * geometry.size.width, y: PROGRESS_BAR_HEIGHT / 2)
+//                            .gesture(
+//                                DragGesture()
+//                                    .updating($dragState) { drag, state, transaction in
+//                                        state = .dragging(translation: drag.translation)
+//                                    }
+//                                    .onEnded(onDragEnded)
+//                                    .onChanged(onDragEnded)
+//
+//                            )
 
-                        )
+    //                }
+                }
+                .frame(width: geometry.size.width, height: PROGRESS_BAR_HEIGHT)
+//                .background(
+//                    Rectangle()  // The larger hitbox
+//                        .fill(Color.clear) // Make it invisible
+//                        .frame(width: geometry.size.width, height: PROGRESS_BAR_HEIGHT * 12)
+//                        .position(x: geometry.size.width / 2, y: PROGRESS_BAR_HEIGHT / 2)
+//                        .offset(y:25)
+//                )
 
-//                }
             }
+            .frame(width: geometry.size.width, height: geometry.size.height)
             .background(
-                Rectangle()  // The larger hitbox
-                    .fill(Color.clear) // Make it invisible
-                    .frame(width: geometry.size.width, height: geometry.size.height * 12)
-                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                    .offset(y:25)
+                Rectangle()
+                    .fill(Color.clear)
+                    .contentShape(Rectangle())  // Makes the entire area tappable
             )
             .highPriorityGesture(
                 DragGesture()
@@ -67,6 +79,17 @@ struct ProgressBar: View {
                     .onEnded(onDragEnded)
                     .onChanged(onDragChanged)
             )
+            .onTapGesture(count: 2) { event in
+                if event.x < geometry.size.width / 2 {
+                    print("Seek Backward.")
+                    viewModel.playerManager?.seekBackward(by: 15.0)
+                } else {
+                    print("Seek Forward.")
+                    viewModel.playerManager?.seekForward(by: 15.0)
+                }
+                    
+            }
+            
         }
     }
     

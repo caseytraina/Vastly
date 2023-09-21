@@ -278,12 +278,23 @@ class VideoPlayerManager: ObservableObject {
 //        updateNowPlayingInfo(for: currentVideo)
     }
     
-//    func nextVideo() {
-//        guard let currentVideo = getCurrentVideo() else { return }
-//        play(for: currentVideo)
-//        updateNowPlayingInfo(for: currentVideo)
-//    }
-
+    func seekForward(by increment: Double) {
+        if let video = self.getCurrentVideo() {
+            let player = self.getPlayer(for: video)
+            let currentTime = player.currentTime().seconds
+            player.seek(to: CMTime(seconds: currentTime + increment, preferredTimescale: 1)) // skip forward by 15 seconds
+            self.updateNowPlayingInfo(for: video)
+        }
+    }
+    
+    func seekBackward(by increment: Double) {
+        if let video = self.getCurrentVideo() {
+            let player = self.getPlayer(for: video)
+            let currentTime = player.currentTime().seconds
+            player.seek(to: CMTime(seconds: currentTime - increment, preferredTimescale: 1)) // skip forward by 15 seconds
+            self.updateNowPlayingInfo(for: video)
+        }
+    }
     
     // This function pauses the current video.
     func pauseCurrentVideo() {

@@ -195,11 +195,11 @@ struct VerticalVideoView: View {
 
                     if videoFailed {
                         VideoFailedView()
-                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
+                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
                     } else {
                         if isLoaded {
                             
-                            VStack (spacing: 0) {
+                            ZStack {
                                 
                                 ZStack {
                                     FullscreenVideoPlayer(videoMode: $videoMode, video: video, activeChannel: $activeChannel)
@@ -226,14 +226,15 @@ struct VerticalVideoView: View {
                                 if i == current_playing {
                                     
                                     ProgressBar(value: $playerProgress, activeChannel: $activeChannel, video: video)
-                                        .frame(width: screenSize.width, height: PROGRESS_BAR_HEIGHT)
+                                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                         .padding(0)
                                         .environmentObject(viewModel)
                                 }
                             } // end vstack
+                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                         }  else {
                             VideoThumbnailView(video: video)
-                                .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
+                                .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
 //                                                        VideoLoadingView()
 //                                                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
                         }
@@ -241,10 +242,10 @@ struct VerticalVideoView: View {
                 }
             } else if (i == current_playing && channel != activeChannel) {
                 VideoThumbnailView(video: video)
-                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
+                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
             } else {
                 VideoLoadingView()
-                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
+                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
             } // end abs if
             
             

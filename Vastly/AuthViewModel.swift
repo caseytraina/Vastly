@@ -170,15 +170,20 @@ class AuthViewModel: ObservableObject {
 
         let db = Firestore.firestore()
 
-        let ref = db.collection("users").document(current_user?.phoneNumber ?? current_user?.email ?? "")
+        let userRef = db.collection("users").document(current_user?.phoneNumber ?? current_user?.email ?? "")
+        let videoRef = db.collection("videos").document(video.id)
         
         DispatchQueue.main.async {
             self.liked_videos.append(video)
         }
         
         do {
-            try await ref.updateData([
+            try await userRef.updateData([
                 "liked_videos" : FieldValue.arrayUnion([video.id])
+            ])
+            
+            try await videoRef.updateData([
+                "likedCount": FieldValue.increment(Int64(1))
             ])
         } catch {
             print("Error updating liked videos: \(error)")
@@ -257,7 +262,6 @@ class AuthViewModel: ObservableObject {
 //                self.liked_videos = data?["liked_videos"] as? [String] ?? []
 //            }
 
-            print(profile)
             return profile
         } catch let error {
             print("Error fetching profile data: \(error)")

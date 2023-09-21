@@ -121,6 +121,7 @@
 		02FC35342A71B2360075C2B6 /* VideoFailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FC35332A71B2360075C2B6 /* VideoFailedView.swift */; };
 		02FC35362A72B9810075C2B6 /* AudioToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FC35352A72B9810075C2B6 /* AudioToggle.swift */; };
 		02FC35382A72BE390075C2B6 /* AudioOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FC35372A72BE390075C2B6 /* AudioOverlay.swift */; };
+		AA0E9E412ABADD0F00224782 /* FirebaseDistributedCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0E9E402ABADD0F00224782 /* FirebaseDistributedCounter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -214,6 +215,7 @@
 		02FC35332A71B2360075C2B6 /* VideoFailedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoFailedView.swift; sourceTree = "<group>"; };
 		02FC35352A72B9810075C2B6 /* AudioToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioToggle.swift; sourceTree = "<group>"; };
 		02FC35372A72BE390075C2B6 /* AudioOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioOverlay.swift; sourceTree = "<group>"; };
+		AA0E9E402ABADD0F00224782 /* FirebaseDistributedCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDistributedCounter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -298,6 +300,7 @@
 				023EE7BE2A0B0BF2004E09DD /* VideoStructure.swift */,
 				02583E162A1AFAE1008CDA59 /* AuthViewModel.swift */,
 				023EE7F12A0C5EF8004E09DD /* VideoViewModel.swift */,
+				AA0E9E402ABADD0F00224782 /* FirebaseDistributedCounter.swift */,
 				02BCA9402A37D3280069E49A /* VideoObserver.swift */,
 				02C5CCD02A4A04C900C7280E /* Analytics.swift */,
 				023EE7A92A0ADFDF004E09DD /* ScrollingStackModifier.swift */,
@@ -619,6 +622,7 @@
 				02583E052A19AB6C008CDA59 /* DeletedCode.swift in Sources */,
 				02583E202A1B462A008CDA59 /* VideoLoadingView.swift in Sources */,
 				02583E072A19ADB5008CDA59 /* TextOverlayView.swift in Sources */,
+				AA0E9E412ABADD0F00224782 /* FirebaseDistributedCounter.swift in Sources */,
 				029AEAAD2A852791002A09DF /* Carousel.swift in Sources */,
 				02583E0F2A1AEF4E008CDA59 /* TextField.swift in Sources */,
 				02FC35382A72BE390075C2B6 /* AudioOverlay.swift in Sources */,

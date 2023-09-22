@@ -95,6 +95,9 @@ struct VastlyApp: App {
       NavigationView {
         ContentView()
               .environmentObject(authModel)
+              .onOpenURL { URL in
+                  // Process the URL
+              }
 //              .environmentObject(videoViewModel)
 //              .environmentObject(playerManager)
 

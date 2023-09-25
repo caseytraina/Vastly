@@ -387,7 +387,7 @@ struct SearchVideoView: View {
         
         if let user = authModel.current_user {
             if let videos = user.liked_videos {
-                return videos.contains(where: { $0 == getVideo(i).title })
+                return videos.contains(where: { $0 == getVideo(i).id })
 
             }
         }

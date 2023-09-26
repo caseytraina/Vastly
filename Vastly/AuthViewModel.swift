@@ -164,6 +164,8 @@ class AuthViewModel: ObservableObject {
 
         await configureUser(current_user?.phoneNumber ?? current_user?.email ?? "")
     }
+    
+    
     // Likes are tracked in Firebase database. This adds a like from the local copy, and then updates firebase to match.
     func addLikeTo(_ video: Video) async {
 

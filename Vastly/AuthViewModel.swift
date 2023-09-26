@@ -154,11 +154,10 @@ class AuthViewModel: ObservableObject {
         }
         
         let ref = db.collection("users").document(current_user?.phoneNumber ?? current_user?.email ?? "")
+        let likedRef = ref.collection("likedVideos").document(video.id)
         
         do {
-            try await ref.updateData([
-                "liked_videos" : FieldValue.arrayRemove([video.id])
-            ])
+            try await likedRef.delete()
         } catch {
             print("Error updating liked videos: \(error)")
         }
@@ -256,21 +255,32 @@ class AuthViewModel: ObservableObject {
         do {
             let documentSnapshot = try await docRef.getDocument()
             let data = documentSnapshot.data()
-            
-            // This might not be strictly necessary, why do we need all likes to be loaded into memory?
+                
+            // TODO: this can be removed when enough people have logged in to the app and data
+            // has been moved over
+            // migrate old likes schema to new likes
             let likedVideos = try await docRef.collection("likedVideos").getDocuments().documents
+            let newLikedDocumentIds = likedVideos.map{ v in v.documentID }
+            
+            if let oldLikes = data?["liked_videos"] as? [String] ?? nil {
+                for like in oldLikes {
+                    if !newLikedDocumentIds.contains(where: {$0 == like }) {
+                        let userLikedRef = docRef.collection("likedVideos").document(like)
+                        try await userLikedRef.setData([
+                            "createdAt": Date()
+                        ])
+                    }
+                    
+                }
+            }
+            
             let profile = Profile(firstName: data?["firstName"] as? String ?? nil,
                                   lastName: data?["lastName"] as? String ?? nil,
                                   email: data?["email"] as? String ?? nil,
                                   phoneNumber: data?["phoneNumber"] as? String ?? nil,
-                                  likedVideos: likedVideos.map{ v in v.documentID },
+                                  likedVideos: newLikedDocumentIds,
                                   interests: data?["interests"] as? [String] ?? nil,
                                   viewed_videos: data?["viewed_videos"] as? [String] ?? nil)
-            
-//            DispatchQueue.main.async { [data] in
-//                self.liked_videos = data?["liked_videos"] as? [String] ?? []
-//            }
-
             return profile
         } catch let error {
             print("Error fetching profile data: \(error)")

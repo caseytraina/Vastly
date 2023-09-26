@@ -154,17 +154,22 @@ class AuthViewModel: ObservableObject {
         }
         
         let ref = db.collection("users").document(current_user?.phoneNumber ?? current_user?.email ?? "")
+        let likedRef = ref.collection("likedVideos").document(video.id)
         
         do {
             try await ref.updateData([
                 "liked_videos" : FieldValue.arrayRemove([video.id])
             ])
+            
+            try await likedRef.delete()
         } catch {
             print("Error updating liked videos: \(error)")
         }
 
         await configureUser(current_user?.phoneNumber ?? current_user?.email ?? "")
     }
+    
+    
     // Likes are tracked in Firebase database. This adds a like from the local copy, and then updates firebase to match.
     func addLikeTo(_ video: Video) async {
 
@@ -172,12 +177,18 @@ class AuthViewModel: ObservableObject {
 
         let userRef = db.collection("users").document(current_user?.phoneNumber ?? current_user?.email ?? "")
         let videoRef = db.collection("videos").document(video.id)
+        let userLikedRef = userRef.collection("likedVideos").document(video.id)
         
         DispatchQueue.main.async {
             self.liked_videos.append(video)
         }
         
         do {
+            try await userLikedRef.setData([
+                "createdAt": Date()
+            ])
+            
+            // This will be removed soon
             try await userRef.updateData([
                 "liked_videos" : FieldValue.arrayUnion([video.id])
             ])
@@ -254,10 +265,18 @@ class AuthViewModel: ObservableObject {
     func fetch(docRef: DocumentReference) async throws -> Profile {
         do {
             let documentSnapshot = try await docRef.getDocument()
-            
             let data = documentSnapshot.data()
             
-            let profile = Profile(firstName: data?["firstName"] as? String ?? nil, lastName: data?["lastName"] as? String ?? nil, email: data?["email"] as? String ?? nil, phoneNumber: data?["phoneNumber"] as? String ?? nil, liked_videos: data?["liked_videos"] as? [String] ?? nil, interests: data?["interests"] as? [String] ?? nil, viewed_videos: data?["viewed_videos"] as? [String] ?? nil)
+            let likedVideos = try await docRef.collection("likedVideos").getDocuments().documents
+            let profile = Profile(firstName: data?["firstName"] as? String ?? nil, 
+                                  lastName: data?["lastName"] as? String ?? nil,
+                                  email: data?["email"] as? String ?? nil,
+                                  phoneNumber: data?["phoneNumber"] as? String ?? nil,
+                                  likedVideos: likedVideos.map{ v in v.documentID },
+                                  liked_videos: data?["liked_videos"] as? [String] ?? nil,
+                                  interests: data?["interests"] as? [String] ?? nil,
+                                  viewed_videos: data?["viewed_videos"] as? [String] ?? nil)
+            
 //            DispatchQueue.main.async { [data] in
 //                self.liked_videos = data?["liked_videos"] as? [String] ?? []
 //            }

@@ -63,7 +63,7 @@ class AuthViewModel: ObservableObject {
                         .set((self?.user?.phoneNumber != nil) ? "phone_number" : "email", value: (self?.user?.phoneNumber ?? self?.user?.email ?? "unknown") as NSObject)
                         .set("user_id", value: user.uid as NSObject)
                         .set("name", value: "\(self?.current_user?.firstName) \(self?.current_user?.lastName)" as NSObject)
-                        .set("liked_video_count", value: (self?.current_user?.liked_videos?.count ?? 0) as NSObject)
+                        .set("liked_video_count", value: (self?.current_user?.likedVideos?.count ?? 0) as NSObject)
                     
                     if let interests = self?.current_user?.interests {
                         for value in interests {
@@ -183,11 +183,6 @@ class AuthViewModel: ObservableObject {
                 "createdAt": Date()
             ])
             
-            // This will be removed soon
-            try await userRef.updateData([
-                "liked_videos" : FieldValue.arrayUnion([video.id])
-            ])
-            
             try await videoRef.updateData([
                 "likedCount": FieldValue.increment(Int64(1))
             ])
@@ -262,13 +257,13 @@ class AuthViewModel: ObservableObject {
             let documentSnapshot = try await docRef.getDocument()
             let data = documentSnapshot.data()
             
+            // This might not be strictly necessary, why do we need all likes to be loaded into memory?
             let likedVideos = try await docRef.collection("likedVideos").getDocuments().documents
-            let profile = Profile(firstName: data?["firstName"] as? String ?? nil, 
+            let profile = Profile(firstName: data?["firstName"] as? String ?? nil,
                                   lastName: data?["lastName"] as? String ?? nil,
                                   email: data?["email"] as? String ?? nil,
                                   phoneNumber: data?["phoneNumber"] as? String ?? nil,
                                   likedVideos: likedVideos.map{ v in v.documentID },
-                                  liked_videos: data?["liked_videos"] as? [String] ?? nil,
                                   interests: data?["interests"] as? [String] ?? nil,
                                   viewed_videos: data?["viewed_videos"] as? [String] ?? nil)
             

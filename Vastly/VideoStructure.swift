@@ -92,7 +92,6 @@ struct Profile {
     let email: String?
     let phoneNumber: String?
     let likedVideos: [String]?
-    let liked_videos: [String]?
     let interests: [String]?
     let viewed_videos: [String]?
     

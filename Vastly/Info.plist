@@ -12,6 +12,16 @@
 				<string>app-1-848133434953-ios-1ff1090989b85a2140d998</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.VastlyInc.Vastly</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>vastlyapp</string>
+			</array>
+		</dict>
 	</array>
 	<key>UIAppFonts</key>
 	<array>

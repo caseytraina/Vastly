@@ -95,13 +95,18 @@ struct VastlyApp: App {
       NavigationView {
         ContentView()
               .environmentObject(authModel)
-              .onOpenURL { URL in
-                  // Process the URL
-              }
+//              .onOpenURL { URL in
+//                  // Process the URL
+//                  handleIncomingURL(URL)
+//              }
 //              .environmentObject(videoViewModel)
 //              .environmentObject(playerManager)
 
       }
     }
+      
   }
+    
+
+    
 }

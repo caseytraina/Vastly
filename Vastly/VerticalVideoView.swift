@@ -52,6 +52,8 @@ struct VerticalVideoView: View {
     
     @State var audioPlayer: AVAudioPlayer?
 
+    @State var shareURL: URL?
+    
     var channel: Channel
     
     @Binding var publisherIsTapped: Bool
@@ -96,6 +98,7 @@ struct VerticalVideoView: View {
                             trackAVStatus(for: getVideo(current_playing))
                             play(current_playing)
                             viewModel.playerManager?.pauseAllOthers(except: getVideo(current_playing))
+                            shareURL = videoShareURL(getVideo(current_playing))
                         }
 
                     }
@@ -130,7 +133,9 @@ struct VerticalVideoView: View {
                                 previous = newIndex
                             }
                             
-                            
+                            shareURL = videoShareURL(getVideo(current_playing))
+                                                     
+
                         }
                     }
                     .onChange(of: activeChannel) { newChannel in
@@ -151,6 +156,7 @@ struct VerticalVideoView: View {
                                 proxy.scrollTo(current_playing, anchor: .top)
                             }
                             previous_channel = newChannel
+                            shareURL = videoShareURL(getVideo(current_playing))
 
                         }
                     }
@@ -356,7 +362,14 @@ struct VerticalVideoView: View {
                         MyText(text: next != nil ? "\(next!.title)" : "Swipe up for more!", size: geoWidth * 0.03, bold: true, alignment: .leading, color: Color("AccentGray"))
                         Spacer()
                         
-                
+                        if let shareURL {
+                            ShareLink(item: shareURL) {
+                                Image(systemName: "square.and.arrow.up")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: geoWidth * 0.05, weight: .medium))
+                            }
+                        }
+                        
                         NavigationLink(destination: NewSearchBar(all_authors: viewModel.authors, oldPlaying: $isPlaying)
                             .environmentObject(authModel)
                             .environmentObject(viewModel)
@@ -393,6 +406,11 @@ struct VerticalVideoView: View {
             }
         }
         return false
+    }
+    
+    private func videoShareURL(_ video: Video) -> URL {
+        let string = "vastlyapp://open-video?id=\(String(video.id.replacingOccurrences(of: " ", with: "%20")))"
+        return URL(string: string)!
     }
     
     private func getVideo(_ i: Int) -> Video {

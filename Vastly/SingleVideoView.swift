@@ -149,10 +149,9 @@ struct SingleVideoView: View {
     }
     
     private func videoIsLiked() -> Bool {
-        
         if let user = authModel.current_user {
             if let videos = user.liked_videos {
-                return videos.contains(where: { $0 == video.title })
+                return videos.contains(where: { $0 == video.id })
 
             }
         }

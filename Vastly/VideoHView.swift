@@ -480,7 +480,7 @@ struct VideoHView: View {
         
         if let user = authModel.current_user {
             if let videos = user.liked_videos {
-                return videos.contains(where: { $0 == getVideo(i: i, in: activeChannel).title })
+                return videos.contains(where: { $0 == getVideo(i: i, in: activeChannel).id })
 
             }
         }

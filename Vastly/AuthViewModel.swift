@@ -154,17 +154,22 @@ class AuthViewModel: ObservableObject {
         }
         
         let ref = db.collection("users").document(current_user?.phoneNumber ?? current_user?.email ?? "")
+        let likedRef = ref.collection("likedVideos").document(video.id)
         
         do {
             try await ref.updateData([
                 "liked_videos" : FieldValue.arrayRemove([video.id])
             ])
+            
+            try await likedRef.delete()
         } catch {
             print("Error updating liked videos: \(error)")
         }
 
         await configureUser(current_user?.phoneNumber ?? current_user?.email ?? "")
     }
+    
+    
     // Likes are tracked in Firebase database. This adds a like from the local copy, and then updates firebase to match.
     func addLikeTo(_ video: Video) async {
 

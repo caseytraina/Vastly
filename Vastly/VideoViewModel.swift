@@ -521,48 +521,44 @@ class VideoViewModel: ObservableObject {
             let ref = db.collection("videos")
             
             for id in viewed_videos {
-                if viewed_videos.count < 20 {
-                    do {
-                        let doc = try await ref.document(id).getDocument()
-                        if doc.exists {
-                            
-                            print("Doc Found for \(id)")
-                            
-                            let data = try doc.data()
-                            
-                            let vid = UnprocessedVideo(
-                                id: doc.documentID,
-                                title: data?["title"] as? String ?? "",
-                                author: data?["author"] as? String ?? "",
-                                bio: data?["bio"] as? String ?? "",
-                                date: data?["date"] as? String ?? "",
-                                channels: data?["channels"] as? [String] ?? [],
-                                location: data?["fileName"] as? String ?? "",
-                                youtubeURL: data?["youtubeURL"] as? String ?? "")
-                            
-                            let video = Video(
-                                id: vid.id,
-                                title: vid.title,
-                                author: self.findAuthor(vid),
-                                bio: vid.bio,
-                                date: vid.date,
-                                channels: vid.channels,
-                                url: self.getVideoURL(from: vid.location),
-                                youtubeURL: vid.youtubeURL)
-                            
-                            if !self.viewed_videos.contains(where: {$0.id == video.id}) {
-                                self.viewed_videos.append(video)
-                            }
-                            
-                        } else {
-                            print("Doc not found for \(id)")
+                do {
+                    let doc = try await ref.document(id).getDocument()
+                    if doc.exists {
+                        
+                        print("Doc Found for \(id)")
+                        
+                        let data = try doc.data()
+                        
+                        let vid = UnprocessedVideo(
+                            id: doc.documentID,
+                            title: data?["title"] as? String ?? "",
+                            author: data?["author"] as? String ?? "",
+                            bio: data?["bio"] as? String ?? "",
+                            date: data?["date"] as? String ?? "",
+                            channels: data?["channels"] as? [String] ?? [],
+                            location: data?["fileName"] as? String ?? "",
+                            youtubeURL: data?["youtubeURL"] as? String ?? "")
+                        
+                        let video = Video(
+                            id: vid.id,
+                            title: vid.title,
+                            author: self.findAuthor(vid),
+                            bio: vid.bio,
+                            date: vid.date,
+                            channels: vid.channels,
+                            url: self.getVideoURL(from: vid.location),
+                            youtubeURL: vid.youtubeURL)
+                        
+                        if !self.viewed_videos.contains(where: {$0.id == video.id}) {
+                            self.viewed_videos.append(video)
                         }
                         
-                    } catch {
-                        print("Error getting viewing history: \(error)")
+                    } else {
+                        print("Doc not found for \(id)")
                     }
-                } else {
-                    break;
+                    
+                } catch {
+                    print("Error getting viewing history: \(error)")
                 }
             }
         }

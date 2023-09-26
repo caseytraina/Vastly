@@ -39,7 +39,7 @@ struct LikesListView: View {
                     ForEach(viewModel.authModel.liked_videos.reversed().indices) { i in
                         
                         NavigationLink(destination: {
-                            SingleVideoView(video: viewModel.authModel.liked_videos[i], isPlaying: $isPlaying)
+                            SingleVideoView(video: viewModel.authModel.liked_videos[i])
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
 

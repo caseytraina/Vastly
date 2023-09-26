@@ -54,6 +54,9 @@ struct NewVideoView: View {
 
     @State var publisherIsTapped = false
     
+    @State var isShareLinkActive = false
+    @State private var openedVideo: Video?
+
     init(channel_index: Binding<Int>, viewModel: VideoViewModel) {
         self._channel_index = channel_index
         self._video_indices = State(initialValue: [Int](repeating: 0, count: viewModel.channels.count))
@@ -236,10 +239,20 @@ struct NewVideoView: View {
                                 .frame(height: screenSize.height * 0.8)
                         }
                         
+//                        if isShareLinkActive == true {
+ 
+//                        }
                     } // end zstack
                     .frame(height: screenSize.height * 0.8)
+                    .onOpenURL { incomingURL in
+                        print("App was opened via URL: \(incomingURL)")
+                        Task {
+                            await handleIncomingURL(incomingURL)
+                        }
+                    }
 
                 }
+                
                 .onChange(of: channel_index) { newIndex in
                     if activeChannel != viewModel.channels[newIndex] {
                         activeChannel = viewModel.channels[newIndex]
@@ -322,7 +335,15 @@ struct NewVideoView: View {
 //                            .transition(.opacity)
 //                            .animation(.easeOut, value: publisherIsTapped)
                 }
+                if let openedVideo {
+                    NavigationLink("", destination: SingleVideoView(video: openedVideo)
+                        .environmentObject(viewModel)
+                        .environmentObject(authModel), isActive: $isShareLinkActive)
+                    .hidden()
+                }
+                
             }
+
 
         }
         .overlay(
@@ -342,6 +363,46 @@ struct NewVideoView: View {
         if let video = viewModel.playerManager?.getCurrentVideo() {
             viewModel.playerManager?.updateNowPlayingInfo(for: video)
         }
+    }
+    
+    private func handleIncomingURL(_ url: URL) async {
+        
+        print("Handling URL.")
+        
+        guard url.scheme == "vastlyapp" else {
+            print("Invalid Scheme")
+            return
+        }
+        print("Scheme Successful.")
+
+        
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
+            print("Invalid URL")
+            return
+        }
+        print("Scheme Successful.")
+
+
+        guard let action = components.host, action == "open-video" else {
+            print("Unknown URL, we can't handle this one!")
+            return
+        }
+        
+        guard let idQueryItem = components.queryItems?.first(where: { $0.name == "id" }), let videoId = idQueryItem.value else {
+            print("id query item not found in URL")
+            return
+        }
+
+        if let video = await viewModel.getVideo(id: videoId) {
+            print("Finished querying video.")
+            playing = false
+            openedVideo = video
+            isShareLinkActive = true
+        } else {
+            print("There was an issue querying the selected video.")
+        }
+
+
     }
     
     private func getVideo(i: Int, in channel: Channel) -> Video {

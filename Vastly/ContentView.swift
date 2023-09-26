@@ -18,6 +18,7 @@ import InstantSearchCore
 struct ContentView: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
+//    @StateObject var deepLinkHandler = DeepLinkHandler()
 //    @EnvironmentObject private var viewModel: VideoViewModel
 //    static let algoliaController = AlgoliaController()
 
@@ -43,9 +44,12 @@ struct ContentView: View {
         }
         
         
-        
     }
 }
+//
+//class DeepLinkHandler: ObservableObject {
+//    @Published var openedURL: URL?
+//}
 
 //struct ContentView_Previews: PreviewProvider {
 //    static var previews: some View {

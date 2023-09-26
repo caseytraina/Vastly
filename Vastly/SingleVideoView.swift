@@ -27,7 +27,7 @@ struct SingleVideoView: View {
     
     @State var videoMode = true
     
-    @Binding var isPlaying: Bool
+    @State var isPlaying = true
     ///ik-thumbnail.jpg
     ///
     ///
@@ -35,52 +35,40 @@ struct SingleVideoView: View {
         ZStack {
             Color("BackgroundColor")
                 .ignoresSafeArea()
-            LinearGradient(gradient: Gradient(colors: myGradient(channel_index: 0)), startPoint: .topLeading, endPoint: .bottom)
-                .ignoresSafeArea()
+//            LinearGradient(gradient: Gradient(colors: myGradient(channel_index: 0)), startPoint: .topLeading, endPoint: .bottom)
+//                .ignoresSafeArea()
             GeometryReader { geo in
                 VStack(alignment: .leading) {
                     ZStack {
-                        if let player = viewModel.playerManager?.getPlayer(for: video) {
+                        
+                        ZStack {
                             FullscreenVideoPlayer(videoMode: $videoMode, video: video, activeChannel: $active)
                                 .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                 .padding(0)
                                 .environmentObject(viewModel)
-                                .onAppear {
-                                    
-                                    
-                                    if let timeObserverToken = timeObserverToken {
-                                        player.removeTimeObserver(timeObserverToken)
-                                        self.timeObserverToken = nil
-                                    }
-                                    
-                                    player.currentItem?.asset.loadValuesAsynchronously(forKeys: ["duration"]) {
-                                        DispatchQueue.main.async {
-                                            let duration = player.currentItem?.asset.duration
-                                            self.playerDuration = duration ?? CMTime(value: 0, timescale: 1000)
-                                            
-                                            player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.1, preferredTimescale: 600), queue: .main) { time in
-                                                self.playerTime = time
-                                                self.playerProgress = time.seconds / (duration?.seconds ?? 1.0)
-                                            }
-                                        }
-                                    }
-                                    
-                                    player.play()
-                                }
-                                .onDisappear {
-                                    if let timeObserverToken = timeObserverToken {
-                                        player.removeTimeObserver(timeObserverToken)
-                                        self.timeObserverToken = nil
-                                    }
-                                    player.pause()
-                                }
-                            ProgressBar(value: $playerProgress, activeChannel: $channel, video: video, isPlaying: $isPlaying)
-                                .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
-                                .padding(0)
-                                .environmentObject(viewModel)
+                            
+                            if !videoMode {
+                                AudioOverlay(author: video.author, video: video, playing: $isPlaying)
+                                    .environmentObject(viewModel)
+                            }
+                            if !isPlaying {
+                                Image(systemName: "play.fill")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: screenSize.width * 0.15, weight: .light))
+                                    .shadow(radius: 2.0)
+                                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                            }
                         }
-                    }
-                    .frame(width: geo.size.width, height: geo.size.height)
+                        
+                        //                        if i == current_playing {
+                        
+                        ProgressBar(value: $playerProgress, activeChannel: $active, video: video, isPlaying: $isPlaying)
+                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                            .padding(0)
+                            .environmentObject(viewModel)
+                        //                        }
+                    } // end vstack
+                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                     
                     HStack {
                         MyText(text: getInfo(field: .title), size: geo.size.width * 0.045, bold: true, alignment:
@@ -105,10 +93,10 @@ struct SingleVideoView: View {
                     HStack() {
                         MyText(text: getInfo(field: .author), size: geo.size.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
                             .truncationMode(.tail)
-                        .lineLimit(1)
+                            .lineLimit(1)
                         Spacer()
                         MyText(text: getInfo(field: .date), size: geo.size.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
-
+                        
                     }
                     .padding(.bottom)
                     
@@ -116,15 +104,23 @@ struct SingleVideoView: View {
                         .truncationMode(.tail)
                         .lineLimit(8)
                         .padding(.bottom, geo.size.height * 0.05)
-                        
+                    
                     
                 }
                 .position(x: screenSize.width/2, y: screenSize.height/3)
+                .onChange(of: isPlaying) { newPlaying in
+                    if newPlaying {
+                        viewModel.playerManager?.getPlayer(for: video).play()
+                    } else {
+                        viewModel.playerManager?.getPlayer(for: video).pause()
+                    }
+                }
             }
             
         }
         .onAppear {
-            isPlaying = false
+//            isPlaying = false
+            viewModel.playerManager?.getPlayer(for: video).play()
         }
     }
     

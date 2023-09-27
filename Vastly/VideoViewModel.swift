@@ -99,7 +99,7 @@ class VideoViewModel: ObservableObject {
                     let id = document.documentID
                     let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
                     
-                    if !(authModel.current_user?.viewed_videos?.contains(where: {$0 == id}) ?? false) {
+                    if !(authModel.current_user?.viewedVideos?.contains(where: {$0 == id}) ?? false) {
                         if var loc = unfilteredVideo.location {
                             
                             loc.removeAll(where: { punctuation.contains($0) })
@@ -156,7 +156,7 @@ class VideoViewModel: ObservableObject {
                     let id = document.documentID
                     let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
                     
-                    if !(authModel.current_user?.viewed_videos?.contains(where: {$0 == id}) ?? false) {
+                    if !(authModel.current_user?.viewedVideos?.contains(where: {$0 == id}) ?? false) {
                         if var loc = unfilteredVideo.location {
                             
                             loc.removeAll(where: { punctuation.contains($0) })
@@ -475,7 +475,7 @@ class VideoViewModel: ObservableObject {
                     // for you channel
                     let alreadyAdded = videosDict[FOR_YOU_CHANNEL]?.contains(where: { $0.id == id })
                     if alreadyAdded == nil || alreadyAdded == false {
-                        if !(authModel.current_user?.viewed_videos?.contains(where: {$0 == id}) ?? false) {
+                        if !(authModel.current_user?.viewedVideos?.contains(where: {$0 == id}) ?? false) {
                             if var loc = unfilteredVideo.location {
                                 
                                 loc.removeAll(where: { punctuation.contains($0) })
@@ -533,7 +533,7 @@ class VideoViewModel: ObservableObject {
                         let unfilteredVideo = try document.data(as: FirebaseData.self)
                         let id = document.documentID
                         let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
-                        if !(authModel.current_user?.viewed_videos?.contains(where: {$0 == id}) ?? false) {
+                        if !(authModel.current_user?.viewedVideos?.contains(where: {$0 == id}) ?? false) {
                             if var loc = unfilteredVideo.location {
                                 loc.removeAll(where: { punctuation.contains($0) })
                                 let video = UnprocessedVideo(
@@ -566,7 +566,7 @@ class VideoViewModel: ObservableObject {
     }
     
     func fetchViewedVideos() async {
-        if let viewed_videos = self.authModel.current_user?.viewed_videos {
+        if let viewed_videos = self.authModel.current_user?.viewedVideos {
             
             let db = Firestore.firestore()
             let ref = db.collection("videos")

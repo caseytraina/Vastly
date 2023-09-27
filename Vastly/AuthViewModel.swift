@@ -276,13 +276,29 @@ class AuthViewModel: ObservableObject {
                 }
             }
             
+            // migrate old views schema to new views
+            let viewedVideos = try await docRef.collection("viewedVideos").getDocuments().documents
+            let newViewedDocumentIds = viewedVideos.map{ v in v.documentID }
+            
+            if let oldViews = data?["viewed_videos"] as? [String] ?? nil {
+                for view in oldViews {
+                    if !newViewedDocumentIds.contains(where: {$0 == view }) {
+                        let userViewedRef = docRef.collection("viewedVideos").document(view)
+                        try await userViewedRef.setData([
+                            "createdAt": Date()
+                        ])
+                    }
+                    
+                }
+            }
+            
             let profile = Profile(firstName: data?["firstName"] as? String ?? nil,
                                   lastName: data?["lastName"] as? String ?? nil,
                                   email: data?["email"] as? String ?? nil,
                                   phoneNumber: data?["phoneNumber"] as? String ?? nil,
-                                  likedVideos: newLikedDocumentIds,
                                   interests: data?["interests"] as? [String] ?? nil,
-                                  viewed_videos: data?["viewed_videos"] as? [String] ?? nil)
+                                  likedVideos: newLikedDocumentIds,
+                                  viewedVideos: newViewedDocumentIds)
             return profile
         } catch let error {
             print("Error fetching profile data: \(error)")

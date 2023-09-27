@@ -91,9 +91,9 @@ struct Profile {
     let lastName: String?
     let email: String?
     let phoneNumber: String?
-    let likedVideos: [String]?
     let interests: [String]?
-    let viewed_videos: [String]?
+    let likedVideos: [String]?
+    let viewedVideos: [String]?
     
     func name() -> String? {
         return "\(firstName ?? "") \(lastName ?? "")"

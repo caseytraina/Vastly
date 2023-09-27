@@ -479,9 +479,8 @@ struct VideoHView: View {
     private func videoIsLiked(_ i: Int) -> Bool {
         
         if let user = authModel.current_user {
-            if let videos = user.liked_videos {
+            if let videos = user.likedVideos {
                 return videos.contains(where: { $0 == getVideo(i: i, in: activeChannel).id })
-
             }
         }
         return false
@@ -489,7 +488,7 @@ struct VideoHView: View {
     
     private func toggleLike(_ i: Int) {
         if let user = authModel.current_user {
-            if let videos = user.liked_videos {
+            if let videos = user.likedVideos {
                 if videoIsLiked(i) {
                     Task {
                         let impact = UIImpactFeedbackGenerator(style: .medium)

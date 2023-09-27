@@ -65,19 +65,13 @@ func videoWatched(from start: Date, to end: Date, for video: Video, time: Double
     
     // TODO: This should be moved somewhere else, doesn't belong in analytics
     let db = Firestore.firestore()
-    let userRef = {
-        if (profile?.phoneNumber != nil) {
-            return db.collection("users").document((profile?.phoneNumber)!);
-        } else if (profile?.email != nil) {
-            return db.collection("users").document((profile?.email)!);
-        }
-        return db.collection("users").document("");
-    }
-    
+    let userRef = db.collection("users").document(profile?.phoneNumber ?? profile?.email ?? "")
     let videoRef = db.collection("videos").document(video.id)
+    let userViewedRef = userRef.collection("viewedVideos").document(video.id)
+    
     if realTime > 3 {
-        userRef().updateData([
-            "viewed_videos": FieldValue.arrayUnion([video.id])
+        userViewedRef.setData([
+            "createdAt": Date()
         ])
         videoRef.updateData([
             "viewedCount": FieldValue.increment(Int64(1))

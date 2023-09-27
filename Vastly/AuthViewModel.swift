@@ -63,7 +63,7 @@ class AuthViewModel: ObservableObject {
                         .set((self?.user?.phoneNumber != nil) ? "phone_number" : "email", value: (self?.user?.phoneNumber ?? self?.user?.email ?? "unknown") as NSObject)
                         .set("user_id", value: user.uid as NSObject)
                         .set("name", value: "\(self?.current_user?.firstName) \(self?.current_user?.lastName)" as NSObject)
-                        .set("liked_video_count", value: (self?.current_user?.liked_videos?.count ?? 0) as NSObject)
+                        .set("liked_video_count", value: (self?.current_user?.likedVideos?.count ?? 0) as NSObject)
                     
                     if let interests = self?.current_user?.interests {
                         for value in interests {
@@ -157,10 +157,6 @@ class AuthViewModel: ObservableObject {
         let likedRef = ref.collection("likedVideos").document(video.id)
         
         do {
-            try await ref.updateData([
-                "liked_videos" : FieldValue.arrayRemove([video.id])
-            ])
-            
             try await likedRef.delete()
         } catch {
             print("Error updating liked videos: \(error)")
@@ -186,11 +182,6 @@ class AuthViewModel: ObservableObject {
         do {
             try await userLikedRef.setData([
                 "createdAt": Date()
-            ])
-            
-            // This will be removed soon
-            try await userRef.updateData([
-                "liked_videos" : FieldValue.arrayUnion([video.id])
             ])
             
             try await videoRef.updateData([
@@ -266,21 +257,48 @@ class AuthViewModel: ObservableObject {
         do {
             let documentSnapshot = try await docRef.getDocument()
             let data = documentSnapshot.data()
-            
+                
+            // TODO: this can be removed when enough people have logged in to the app and data
+            // has been moved over
+            // migrate old likes schema to new likes
             let likedVideos = try await docRef.collection("likedVideos").getDocuments().documents
-            let profile = Profile(firstName: data?["firstName"] as? String ?? nil, 
+            let newLikedDocumentIds = likedVideos.map{ v in v.documentID }
+            
+            if let oldLikes = data?["liked_videos"] as? [String] ?? nil {
+                for like in oldLikes {
+                    if !newLikedDocumentIds.contains(where: {$0 == like }) {
+                        let userLikedRef = docRef.collection("likedVideos").document(like)
+                        try await userLikedRef.setData([
+                            "createdAt": Date()
+                        ])
+                    }
+                    
+                }
+            }
+            
+            // migrate old views schema to new views
+            let viewedVideos = try await docRef.collection("viewedVideos").getDocuments().documents
+            let newViewedDocumentIds = viewedVideos.map{ v in v.documentID }
+            
+            if let oldViews = data?["viewed_videos"] as? [String] ?? nil {
+                for view in oldViews {
+                    if !newViewedDocumentIds.contains(where: {$0 == view }) {
+                        let userViewedRef = docRef.collection("viewedVideos").document(view)
+                        try await userViewedRef.setData([
+                            "createdAt": Date()
+                        ])
+                    }
+                    
+                }
+            }
+            
+            let profile = Profile(firstName: data?["firstName"] as? String ?? nil,
                                   lastName: data?["lastName"] as? String ?? nil,
                                   email: data?["email"] as? String ?? nil,
                                   phoneNumber: data?["phoneNumber"] as? String ?? nil,
-                                  likedVideos: likedVideos.map{ v in v.documentID },
-                                  liked_videos: data?["liked_videos"] as? [String] ?? nil,
                                   interests: data?["interests"] as? [String] ?? nil,
-                                  viewed_videos: data?["viewed_videos"] as? [String] ?? nil)
-            
-//            DispatchQueue.main.async { [data] in
-//                self.liked_videos = data?["liked_videos"] as? [String] ?? []
-//            }
-
+                                  likedVideos: newLikedDocumentIds,
+                                  viewedVideos: newViewedDocumentIds)
             return profile
         } catch let error {
             print("Error fetching profile data: \(error)")

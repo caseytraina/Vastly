@@ -16,6 +16,8 @@ struct HomeView: View {
 
     @State var channel_index = 0
     
+    
+    
     init(authModel: AuthViewModel) {
         _viewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
     }
@@ -36,22 +38,31 @@ struct HomeView: View {
             if viewModel.isProcessing {
                 LoadingView()
             } else {
-                ForEach(0..<viewModel.channels.count) { index in
-                    LinearGradient(gradient: Gradient(colors: myGradient(channel_index: index)), startPoint: .topLeading, endPoint: .bottom)
-                        .ignoresSafeArea()
-                        .opacity(channel_index == index ? 1 : 0)
-                        .animation(.easeInOut(duration: 0.75), value: channel_index)
-                }
-                
-                VStack {
+                ZStack {
+                    ForEach(0..<viewModel.channels.count) { index in
+                        LinearGradient(gradient: Gradient(colors: myGradient(channel_index: index)), startPoint: .topLeading, endPoint: .bottom)
+                            .ignoresSafeArea()
+                            .opacity(channel_index == index ? 1 : 0)
+                            .animation(.easeInOut(duration: 0.75), value: channel_index)
+                    }
                     
-                    NewVideoView(channel_index: $channel_index, viewModel: viewModel)
-                        .environmentObject(viewModel)
-                        .environmentObject(authModel)
-                    
+                    VStack {
+                        
+//                        if let openedVideo {
+//
+//                        } else {
+                            NewVideoView(channel_index: $channel_index, viewModel: viewModel)
+                                .environmentObject(viewModel)
+                                .environmentObject(authModel)
+//                        }
+                        
+                    }
                 }
+
             }
         }
+
+        
         
     }
     // Creates Gradient
@@ -71,5 +82,6 @@ struct HomeView: View {
         }
         return gradient
     }
+
 }
 

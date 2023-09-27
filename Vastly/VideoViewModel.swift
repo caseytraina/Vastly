@@ -136,6 +136,55 @@ class VideoViewModel: ObservableObject {
         await processUnprocessedVideos(unprocessedVideos: videosDict)
     }
     
+    func getVideo(id: String) async -> Video? { //in channel: Channel) async {
+        
+//        var videosDict: [Channel : [UnprocessedVideo]] = [:]
+
+        let db = Firestore.firestore()
+        let storageRef = db.collection("videos").document(id)
+        
+        var result: Video? = nil
+        
+        for channel in self.channels {
+            
+            do {
+                let document = try await storageRef.getDocument()
+                //            let snapshot = try await storageRef.getDocuments()
+                
+//                for document in snapshot.documents {
+                    let unfilteredVideo = try document.data(as: FirebaseData.self)
+                    let id = document.documentID
+                    let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
+                    
+                    if !(authModel.current_user?.viewed_videos?.contains(where: {$0 == id}) ?? false) {
+                        if var loc = unfilteredVideo.location {
+                            
+                            loc.removeAll(where: { punctuation.contains($0) })
+                            let video = Video(id: id,
+                                  title: unfilteredVideo.title ?? "Unknown Title",
+                                  author: self.authors.first(where: { $0.text_id == unfilteredVideo.author?.trimmingCharacters(in: .whitespacesAndNewlines)}) ?? EMPTY_AUTHOR,
+                                  bio: unfilteredVideo.bio ?? "The bio for this video cannot be found. Please look online for more information.",
+                                  date: unfilteredVideo.date,
+                                  channels: unfilteredVideo.channels ?? ["none"],
+                                  url: getVideoURL(from: unfilteredVideo.location ?? ""),
+                                  youtubeURL: unfilteredVideo.youtubeURL)
+                            
+                            return video
+
+                        }
+                        
+                    }
+//                }
+            } catch {
+                print("error with video: \(error)")
+            }
+            
+        }
+        return nil
+    }
+    
+    
+    
     // This function queries all of the authors from firebase, housing them in a local array to be used to apply to videos.
     func getAuthors() async {
         
@@ -284,7 +333,9 @@ class VideoViewModel: ObservableObject {
                 }
             } catch {
                 // handle error
-                print("Error processing videos: \(error)")            }
+                print("Error processing videos: \(error)")
+                
+            }
 //        }
     }
     
@@ -521,48 +572,44 @@ class VideoViewModel: ObservableObject {
             let ref = db.collection("videos")
             
             for id in viewed_videos {
-                if viewed_videos.count < 20 {
-                    do {
-                        let doc = try await ref.document(id).getDocument()
-                        if doc.exists {
-                            
-                            print("Doc Found for \(id)")
-                            
-                            let data = try doc.data()
-                            
-                            let vid = UnprocessedVideo(
-                                id: doc.documentID,
-                                title: data?["title"] as? String ?? "",
-                                author: data?["author"] as? String ?? "",
-                                bio: data?["bio"] as? String ?? "",
-                                date: data?["date"] as? String ?? "",
-                                channels: data?["channels"] as? [String] ?? [],
-                                location: data?["fileName"] as? String ?? "",
-                                youtubeURL: data?["youtubeURL"] as? String ?? "")
-                            
-                            let video = Video(
-                                id: vid.id,
-                                title: vid.title,
-                                author: self.findAuthor(vid),
-                                bio: vid.bio,
-                                date: vid.date,
-                                channels: vid.channels,
-                                url: self.getVideoURL(from: vid.location),
-                                youtubeURL: vid.youtubeURL)
-                            
-                            if !self.viewed_videos.contains(where: {$0.id == video.id}) {
-                                self.viewed_videos.append(video)
-                            }
-                            
-                        } else {
-                            print("Doc not found for \(id)")
+                do {
+                    let doc = try await ref.document(id).getDocument()
+                    if doc.exists {
+                        
+                        print("Doc Found for \(id)")
+                        
+                        let data = try doc.data()
+                        
+                        let vid = UnprocessedVideo(
+                            id: doc.documentID,
+                            title: data?["title"] as? String ?? "",
+                            author: data?["author"] as? String ?? "",
+                            bio: data?["bio"] as? String ?? "",
+                            date: data?["date"] as? String ?? "",
+                            channels: data?["channels"] as? [String] ?? [],
+                            location: data?["fileName"] as? String ?? "",
+                            youtubeURL: data?["youtubeURL"] as? String ?? "")
+                        
+                        let video = Video(
+                            id: vid.id,
+                            title: vid.title,
+                            author: self.findAuthor(vid),
+                            bio: vid.bio,
+                            date: vid.date,
+                            channels: vid.channels,
+                            url: self.getVideoURL(from: vid.location),
+                            youtubeURL: vid.youtubeURL)
+                        
+                        if !self.viewed_videos.contains(where: {$0.id == video.id}) {
+                            self.viewed_videos.append(video)
                         }
                         
-                    } catch {
-                        print("Error getting viewing history: \(error)")
+                    } else {
+                        print("Doc not found for \(id)")
                     }
-                } else {
-                    break;
+                    
+                } catch {
+                    print("Error getting viewing history: \(error)")
                 }
             }
         }

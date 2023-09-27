@@ -8,6 +8,7 @@
 import Foundation
 import AVKit
 import SwiftUI
+import Firebase
 
 // Videos are queried from Firebase as FirebaseData, then translated into UnprocessedVideos before being used as type Video.
 // Read more about video querying in VideoViewModel
@@ -97,6 +98,17 @@ struct Profile {
     
     func name() -> String? {
         return "\(firstName ?? "") \(lastName ?? "")"
+    }
+    
+    func hasWatched(_ video: Video) async throws -> Bool {
+        return try await hasWatched(video.id)
+    }
+    
+    func hasWatched(_ id: String) async throws -> Bool {
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(self.phoneNumber ?? self.email ?? "")
+        let foundVideo = try await userRef.collection("viewedVideos").document(id).getDocument()
+        return foundVideo.exists
     }
     
     enum CodingKeys: String, CodingKey {

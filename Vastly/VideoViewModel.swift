@@ -475,7 +475,8 @@ class VideoViewModel: ObservableObject {
                     // for you channel
                     let alreadyAdded = videosDict[FOR_YOU_CHANNEL]?.contains(where: { $0.id == id })
                     if alreadyAdded == nil || alreadyAdded == false {
-                        if !(authModel.current_user?.viewedVideos?.contains(where: {$0 == id}) ?? false) {
+                        let hasWatched = try await authModel.current_user?.hasWatched(id)
+                        if !(hasWatched == true) {
                             if var loc = unfilteredVideo.location {
                                 
                                 loc.removeAll(where: { punctuation.contains($0) })

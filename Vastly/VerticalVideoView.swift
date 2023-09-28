@@ -408,7 +408,7 @@ struct VerticalVideoView: View {
     
     private func videoShareURL(_ video: Video) -> URL {
         let string = "vastlyapp://open-video?id=\(String(video.id.replacingOccurrences(of: " ", with: "%20")))"
-        return URL(string: string)!
+        return URL(string: string) ?? EMPTY_VIDEO.url!
     }
     
     private func getVideo(_ i: Int) -> Video {

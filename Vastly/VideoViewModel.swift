@@ -418,27 +418,18 @@ class VideoViewModel: ObservableObject {
     //    return top videos (sorted by likes and views) in those channels
     // If there isn't enough videos to reach the max then we backfill with random
     func generateForYou(max: Int) async {
-        // Score each channel (2 points if comes from a liked video, 1 if from a view)
         var videosDict: [Channel : [UnprocessedVideo]] = [:]
-        var topChannels: [String: Int] = [:]
+        var topChannels: [String] = []
         
         for likedVideo in self.authModel.liked_videos {
-            for likedVideoChannel in likedVideo.channels {
-                if topChannels[likedVideoChannel] != nil {
-                    topChannels[likedVideoChannel]! += 2
-                } else {
-                    topChannels[likedVideoChannel] = 2
-                }
+            for channel in likedVideo.channels {
+                topChannels.append(channel)
             }
         }
         
         for viewedVideo in self.viewed_videos {
-            for viewedVideoChannel in viewedVideo.channels {
-                if topChannels[viewedVideoChannel] != nil {
-                    topChannels[viewedVideoChannel]! += 1
-                } else {
-                    topChannels[viewedVideoChannel] = 1
-                }
+            for channel in viewedVideo.channels {
+                topChannels.append(channel)
             }
         }
         
@@ -447,62 +438,47 @@ class VideoViewModel: ObservableObject {
             return await generateRandomForYou(max: max)
         }
         
-        let videosPerChannel = (max / topChannels.count)
-        // topChannels is now { channelString: 2, channelString: 4... }
-        let sortedTopChannels = topChannels.sorted { $0.value > $1.value }
-        print("FOR YOU: Top Channels", sortedTopChannels)
-        print("FOR YOU: Fetching", videosPerChannel, "videos in each of the", topChannels.count, "channels")
         let db = Firestore.firestore()
         let storageRef = db.collection("videos")
-        // return videos in each of the top channels
-        for (channel, _) in sortedTopChannels {
-            do {
-                // The channel in the video, is a string, which is the ID
-                print("FOR YOU: Fetching most liked videos from", channel)
-                let snapshot = try await storageRef
-                    .whereField("channels", arrayContains: channel)
-                    .limit(to: videosPerChannel)
-                    .order(by: "likedCount", descending: true)
-                    .order(by: "viewedCount", descending: true)
-                    .getDocuments()
-                print("FOR YOU: Found", snapshot.documents.count)
-                for document in snapshot.documents {
-                    let unfilteredVideo = try document.data(as: FirebaseData.self)
-                    let id = document.documentID
-                    let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
+        // return videos in the top channels
+        print("FOR YOU: Fetching most liked videos in", topChannels)
+        do {
+            let snapshot = try await storageRef
+                .whereField("channels", arrayContains: topChannels)
+                .whereField("id", notIn: self.viewed_videos.map { v in v.id })
+                .order(by: "id")
+                .limit(to: max)
+                .order(by: "likedCount", descending: true)
+                .order(by: "viewedCount", descending: true)
+                .getDocuments()
+            print("FOR YOU: Found", snapshot.documents.count)
+            for document in snapshot.documents {
+                let unfilteredVideo = try document.data(as: FirebaseData.self)
+                let id = document.documentID
+                let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
+                
+                if var loc = unfilteredVideo.location {
                     
-                    // We can find the same video in multiple channels, but want to dedup from the
-                    // for you channel
-                    let alreadyAdded = videosDict[FOR_YOU_CHANNEL]?.contains(where: { $0.id == id })
-                    if alreadyAdded == nil || alreadyAdded == false {
-                        let hasWatched = try await authModel.current_user?.hasWatched(id)
-                        if !(hasWatched == true) {
-                            if var loc = unfilteredVideo.location {
-                                
-                                loc.removeAll(where: { punctuation.contains($0) })
-                                let video = UnprocessedVideo(
-                                    id: id,
-                                    title: unfilteredVideo.title ?? "Unknown Title",
-                                    author: unfilteredVideo.author ?? "The author for this video cannot be found.",
-                                    bio: unfilteredVideo.bio ?? "The bio for this video cannot be found. Please look online for more information.",
-                                    date: unfilteredVideo.date,
-                                    channels: unfilteredVideo.channels ?? ["none"],
-                                    location: "\(loc)",
-                                    youtubeURL: unfilteredVideo.youtubeURL)
-                                print(loc)
-                                if videosDict[FOR_YOU_CHANNEL] != nil {
-                                    videosDict[FOR_YOU_CHANNEL]!.append(video)
-                                } else {
-                                    videosDict[FOR_YOU_CHANNEL] = [video]
-                                }
-                            }
-                            
-                        }
+                    loc.removeAll(where: { punctuation.contains($0) })
+                    let video = UnprocessedVideo(
+                        id: id,
+                        title: unfilteredVideo.title ?? "Unknown Title",
+                        author: unfilteredVideo.author ?? "The author for this video cannot be found.",
+                        bio: unfilteredVideo.bio ?? "The bio for this video cannot be found. Please look online for more information.",
+                        date: unfilteredVideo.date,
+                        channels: unfilteredVideo.channels ?? ["none"],
+                        location: "\(loc)",
+                        youtubeURL: unfilteredVideo.youtubeURL)
+                    print(loc)
+                    if videosDict[FOR_YOU_CHANNEL] != nil {
+                        videosDict[FOR_YOU_CHANNEL]!.append(video)
+                    } else {
+                        videosDict[FOR_YOU_CHANNEL] = [video]
                     }
                 }
-            } catch {
-                print("Error getting for you videos.")
             }
+        } catch {
+            print("Error getting for you videos.")
         }
         let missingVideos = max - (videosDict[FOR_YOU_CHANNEL]?.count ?? 0)
         if missingVideos == 0 {

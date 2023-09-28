@@ -8,14 +8,13 @@
 import SwiftUI
 import AVKit
 
-let ANIMATION_URL = "https://ik.imagekit.io/4ni2tyc01/Firebase/launchAnimation.mp4?tr=orig"
 
 struct LaunchAnimation: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
     @StateObject var viewModel: VideoViewModel
     
-    @State var player: AVPlayer = AVPlayer(url: URL(string: ANIMATION_URL)!)
+    @State var player: AVPlayer = AVPlayer(url: Bundle.main.url(forResource: "launchAnimation", withExtension: "mp4")!)
     @State private var endObserverToken: Any?
 
     @State var completed = false

@@ -19,7 +19,7 @@ struct ContentView: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
 //    @StateObject var deepLinkHandler = DeepLinkHandler()
-//    @EnvironmentObject private var viewModel: VideoViewModel
+    @EnvironmentObject private var viewModel: VideoViewModel
 //    static let algoliaController = AlgoliaController()
 
     var body: some View {
@@ -35,8 +35,9 @@ struct ContentView: View {
         
         Group {
             if authModel.user != nil {
-                HomeView(authModel: authModel)
+                HomeView()
                     .environmentObject(authModel)
+                    .environmentObject(viewModel)
             } else {
                 GreetingView()
                     .environmentObject(authModel)

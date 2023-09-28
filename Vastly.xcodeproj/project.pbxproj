@@ -116,6 +116,7 @@
 		02C5CCD32A4A25EC00C7280E /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C5CCD22A4A25EC00C7280E /* TutorialView.swift */; };
 		02CB38792A7839810065F626 /* LikesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CB38782A7839810065F626 /* LikesListView.swift */; };
 		02CB387B2A783DF00065F626 /* SingleVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CB387A2A783DF00065F626 /* SingleVideoView.swift */; };
+		02DEC7432AC4A83000F4B5D0 /* LaunchAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEC7422AC4A83000F4B5D0 /* LaunchAnimation.swift */; };
 		02E0AB3D2A7C0A8D00405704 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E0AB3C2A7C0A8D00405704 /* ForgotPasswordView.swift */; };
 		02F257062A98A323009B57CC /* VerificationCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F257052A98A323009B57CC /* VerificationCode.swift */; };
 		02FC35342A71B2360075C2B6 /* VideoFailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FC35332A71B2360075C2B6 /* VideoFailedView.swift */; };
@@ -210,6 +211,7 @@
 		02C5CCD22A4A25EC00C7280E /* TutorialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialView.swift; sourceTree = "<group>"; };
 		02CB38782A7839810065F626 /* LikesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikesListView.swift; sourceTree = "<group>"; };
 		02CB387A2A783DF00065F626 /* SingleVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleVideoView.swift; sourceTree = "<group>"; };
+		02DEC7422AC4A83000F4B5D0 /* LaunchAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAnimation.swift; sourceTree = "<group>"; };
 		02E0AB3C2A7C0A8D00405704 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		02F257052A98A323009B57CC /* VerificationCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationCode.swift; sourceTree = "<group>"; };
 		02FC35332A71B2360075C2B6 /* VideoFailedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoFailedView.swift; sourceTree = "<group>"; };
@@ -350,6 +352,7 @@
 				02611E542AA77985007029BB /* Items */,
 				02E0AB3E2A7C0E4B00405704 /* Onboarding */,
 				023EE7782A0ADF36004E09DD /* ContentView.swift */,
+				02DEC7422AC4A83000F4B5D0 /* LaunchAnimation.swift */,
 				023EE7A52A0ADF6D004E09DD /* HomeView.swift */,
 				029AEAB02A858649002A09DF /* NewVideoView.swift */,
 				029AEAAE2A853754002A09DF /* VerticalVideoView.swift */,
@@ -632,6 +635,7 @@
 				0220D63F2A9593DB00A867FB /* FlowLayout.swift in Sources */,
 				0294DEA52A7987370073994D /* VideoThumbnailView.swift in Sources */,
 				023EE7792A0ADF36004E09DD /* ContentView.swift in Sources */,
+				02DEC7432AC4A83000F4B5D0 /* LaunchAnimation.swift in Sources */,
 				02F257062A98A323009B57CC /* VerificationCode.swift in Sources */,
 				023EE7832A0ADF37004E09DD /* Vastly.xcdatamodeld in Sources */,
 				025649A42A11FF4700C442AE /* LoadingView.swift in Sources */,

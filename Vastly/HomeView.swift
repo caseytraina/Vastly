@@ -10,17 +10,14 @@ import AVKit
 
 struct HomeView: View {
 //    @EnvironmentObject var viewModel: VideoViewModel
-    @StateObject var viewModel: VideoViewModel
-
+    @EnvironmentObject var viewModel: VideoViewModel
     @EnvironmentObject var authModel: AuthViewModel
 
     @State var channel_index = 0
     
-    
-    
-    init(authModel: AuthViewModel) {
-        _viewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
-    }
+//    init(authModel: AuthViewModel) {
+//        _viewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
+//    }
     
     var body: some View {
         

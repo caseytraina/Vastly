@@ -93,7 +93,7 @@ struct VastlyApp: App {
   var body: some Scene {
     WindowGroup {
       NavigationView {
-        ContentView()
+          LaunchAnimation(authModel: authModel)
               .environmentObject(authModel)
 //              .onOpenURL { URL in
 //                  // Process the URL

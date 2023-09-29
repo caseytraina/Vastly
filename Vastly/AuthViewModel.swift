@@ -36,7 +36,7 @@ class AuthViewModel: ObservableObject {
     @Published var current_user: Profile? = nil
     @Published var liked_videos: [Video] = []
     
-    var viewModel: VideoViewModel?
+//    var viewModel: VideoViewModel?
     
     init() {
         listenToAuthState()
@@ -54,7 +54,7 @@ class AuthViewModel: ObservableObject {
 
                     Task { [self] in
                         await self?.configureUser(self?.user?.phoneNumber ?? self?.user?.email ?? "")
-                        self?.viewModel = VideoViewModel(authModel: self ?? AuthViewModel())
+//                        self?.viewModel = VideoViewModel(authModel: self ?? AuthViewModel())
                     }
 
                     var AMP_Array: [AnyHashable] = []

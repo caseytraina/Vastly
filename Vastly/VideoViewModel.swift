@@ -62,7 +62,9 @@ class VideoViewModel: ObservableObject {
 
             await fetchLikedVideos()
             print("INIT: got liked videos.")
-
+            
+            await generateShapedForYou(max: 40)
+            
             // We do this at the end so we can analyze the liked and viewed videos
             await generateForYou(max: 40)
             print("INIT: got for you videos.")
@@ -551,6 +553,27 @@ class VideoViewModel: ObservableObject {
             return await generateRandomForYou(max: max)
         }
         
+    }
+    
+    func generateShapedForYou(max: Int) async {
+        let userId = self.authModel.current_user?.phoneNumber ?? self.authModel.current_user?.email ?? ""
+        var rankURL = URLComponents(string: "https://api.prod.shaped.ai/v1/models/viewed_video_recommendations/rank")!
+        let queryItems = [
+            URLQueryItem(name: "user_id", value: userId),
+            URLQueryItem(name: "limit", value: String(max)),
+            URLQueryItem(name: "return_metadata", value: "false")
+        ]
+        rankURL.queryItems = queryItems
+        var request = URLRequest(url: rankURL.url!)
+        
+        request.addValue("",
+                         forHTTPHeaderField: "x-api-key")
+        let urlSession = URLSession.shared
+        let (data, _) = try! await urlSession.data(for: request)
+        let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
+        if let responseJSON = responseJSON as? [String: Any] {
+            print("Shaped video ids", responseJSON["ids"] ?? "")
+        }
     }
     
     // *NEW* Approach

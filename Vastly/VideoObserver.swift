@@ -63,6 +63,8 @@ class VideoPlayerManager: ObservableObject {
     }
     
     // This function returns the AVPlayer for a given video by matching its UUID to one in the players array. If one does not exist, it is created and returned.
+    
+    // The video plays with the text to speech for the title and author before starting the video
     func getPlayer(for video: Video) -> AVPlayer {
         if let player = players[video.id] {
             if player.currentItem == nil {
@@ -74,11 +76,25 @@ class VideoPlayerManager: ObservableObject {
             }
             return player
         } else {
-            let player = AVPlayer(url: video.url ?? URL(string: "www.google.com")!)
-
+            
+//            let player = AVPlayer(url: video.url ?? URL(string: "www.google.com")!)
+//            if video.text {
+            let url = URL(string: "https://storage.googleapis.com/rizeo-40249-tts/videos/ The Rise of Wall Street Bets with Matt Levine.mp3")!
+                
+            let intro = AVPlayerItem(url: url)
+            let vid = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
+                
+                
+//            let player = AVPlayer(url: url ?? URL(string: "www.google.com")!)
+            let player = AVQueuePlayer(items: [intro, vid])
+//            player.actionAtItemEnd
+            
+//            let player = AVPlayer(url: url ?? URL(string: "www.google.com"))
             players[video.id] = player
+                
             return player
         }
+            
     }
     
     // This function loops through the existing players and pauses them except for the one given.
@@ -112,7 +128,6 @@ class VideoPlayerManager: ObservableObject {
     // plays the video.
     func play(for video: Video) {
         getPlayer(for: video).play()
-
     }
 
     // this function initializes the physical command center controls.

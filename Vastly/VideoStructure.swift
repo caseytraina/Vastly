@@ -66,6 +66,9 @@ struct Video: Identifiable {
     var channels: [String]
     var url: URL?
     var youtubeURL: String?
+    func introTextToSpeechURL() -> URL? {
+        return URL(string: "https://storage.googleapis.com/rizeo-40249-tts/videos/\(self.id).mp3")
+    }
 }
 
 struct Author: Identifiable {

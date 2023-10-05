@@ -57,11 +57,6 @@ class VideoViewModel: ObservableObject {
             await getVideos()
             print("Got videos.")
 
-            await fetchViewedVideos()
-            print("INIT: got viewed videos.")
-
-            await fetchLikedVideos()
-            print("INIT: got liked videos.")
             
             await generateShapedForYou(max: 20)
             // We do this at the end so we can analyze the liked and viewed videos
@@ -73,6 +68,14 @@ class VideoViewModel: ObservableObject {
                 self.isProcessing = false
             }
             print("Processed videos.")
+            
+            await fetchViewedVideos()
+            print("INIT: got viewed videos.")
+
+            await fetchLikedVideos()
+            print("INIT: got liked videos.")
+            
+            
         }
     }
     

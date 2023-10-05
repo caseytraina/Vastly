@@ -63,10 +63,9 @@ class VideoViewModel: ObservableObject {
             await fetchLikedVideos()
             print("INIT: got liked videos.")
             
-            await generateShapedForYou(max: 40)
-            
+            await generateShapedForYou(max: 20)
             // We do this at the end so we can analyze the liked and viewed videos
-            await generateForYou(max: 40)
+//            await generateForYou(max: 40)
             print("INIT: got for you videos.")
 
             // For you page must have completed loading before letting user into the app
@@ -555,7 +554,14 @@ class VideoViewModel: ObservableObject {
         
     }
     
+    struct ShapedResponse: Codable {
+        var ids: [String]
+        var scores: [Double]
+    }
+    
     func generateShapedForYou(max: Int) async {
+        var videosDict: [Channel : [UnprocessedVideo]] = [:]
+        
         let userId = self.authModel.current_user?.phoneNumber ?? self.authModel.current_user?.email ?? ""
         var rankURL = URLComponents(string: "https://api.prod.shaped.ai/v1/models/viewed_video_recommendations/rank")!
         let queryItems = [
@@ -570,10 +576,52 @@ class VideoViewModel: ObservableObject {
                          forHTTPHeaderField: "x-api-key")
         let urlSession = URLSession.shared
         let (data, _) = try! await urlSession.data(for: request)
-        let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
-        if let responseJSON = responseJSON as? [String: Any] {
-            print("Shaped video ids", responseJSON["ids"] ?? "")
+        do {
+            let json = try JSONDecoder().decode(ShapedResponse.self, from: data)
+            let db = Firestore.firestore()
+            let videosRef = db.collection("videos")
+            do {
+                for videoId in json.ids {
+                    // this doesn't seem to work right when you do an `in` query
+                    // preserve the order here as they will be ranked from shaped
+                    let document = try await videosRef.document(videoId).getDocument()
+                    if !self.viewed_videos.map({ $0.id }).contains(where: {$0 == document.documentID}) {
+                        let unfilteredVideo = try document.data(as: FirebaseData.self)
+                        let id = document.documentID
+                        let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
+                        
+                        if var loc = unfilteredVideo.location {
+                            
+                            loc.removeAll(where: { punctuation.contains($0) })
+                            
+                            let video = UnprocessedVideo(
+                                id: id,
+                                title: unfilteredVideo.title ?? "Unknown Title",
+                                author: unfilteredVideo.author ?? "The author for this video cannot be found.",
+                                bio: unfilteredVideo.bio ?? "The bio for this video cannot be found. Please look online for more information.",
+                                date: unfilteredVideo.date,
+                                channels: unfilteredVideo.channels ?? ["none"],
+                                location: "\(loc)",
+                                youtubeURL: unfilteredVideo.youtubeURL)
+                            
+                            if videosDict[FOR_YOU_CHANNEL] != nil {
+                                if !(videosDict[FOR_YOU_CHANNEL]?.contains(where: {$0.id == video.id}))! {
+                                    videosDict[FOR_YOU_CHANNEL]!.append(video)
+                                }
+                            } else {
+                                videosDict[FOR_YOU_CHANNEL] = [video]
+                            }
+                        }
+                    }
+                }
+            } catch {
+                print("error looking up videos")
+            }
+        } catch {
+            print("error looking up shaped api")
         }
+        
+        await processUnprocessedVideos(unprocessedVideos: videosDict, foryou: true)
     }
     
     // *NEW* Approach

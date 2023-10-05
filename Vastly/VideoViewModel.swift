@@ -572,8 +572,11 @@ class VideoViewModel: ObservableObject {
         rankURL.queryItems = queryItems
         var request = URLRequest(url: rankURL.url!)
         
-        request.addValue("",
+        let key: String = ProcessInfo.processInfo.environment["SHAPED_API_KEY"] ?? ""
+        
+        request.addValue(key,
                          forHTTPHeaderField: "x-api-key")
+        
         let urlSession = URLSession.shared
         let (data, _) = try! await urlSession.data(for: request)
         do {

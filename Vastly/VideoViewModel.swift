@@ -557,6 +557,15 @@ class VideoViewModel: ObservableObject {
         
     }
     
+    func fetchValueFromPlist(key: String) -> String? {
+        guard let path = Bundle.main.path(forResource: "Config", ofType: "plist"),
+              let dict = NSDictionary(contentsOfFile: path) as? [String: AnyObject] else {
+            return nil
+        }
+        
+        return dict[key] as? String
+    }
+    
     struct ShapedResponse: Codable {
         var ids: [String]
         var scores: [Double]
@@ -575,8 +584,8 @@ class VideoViewModel: ObservableObject {
         rankURL.queryItems = queryItems
         var request = URLRequest(url: rankURL.url!)
         
-        let key: String = ProcessInfo.processInfo.environment["SHAPED_API_KEY"] ?? ""
-        
+        let key: String = fetchValueFromPlist(key: "SHAPED_API_KEY") ?? ""
+
         request.addValue(key,
                          forHTTPHeaderField: "x-api-key")
         

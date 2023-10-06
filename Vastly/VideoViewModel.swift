@@ -575,7 +575,7 @@ class VideoViewModel: ObservableObject {
         var videosDict: [Channel : [UnprocessedVideo]] = [:]
         
         let userId = self.authModel.current_user?.phoneNumber ?? self.authModel.current_user?.email ?? ""
-        var rankURL = URLComponents(string: "https://api.prod.shaped.ai/v1/models/viewed_video_recommendations/rank")!
+        var rankURL = URLComponents(string: "https://api.prod.shaped.ai/v1/models/viewed_video_recommendations_3/rank")!
         let queryItems = [
             URLQueryItem(name: "user_id", value: userId),
             URLQueryItem(name: "limit", value: String(max)),
@@ -599,33 +599,34 @@ class VideoViewModel: ObservableObject {
                 for videoId in json.ids {
                     // this doesn't seem to work right when you do an `in` query
                     // preserve the order here as they will be ranked from shaped
+                    
+                    // the shaped model will handle filtering out videos
+                    // which have been viewed already
                     let document = try await videosRef.document(videoId).getDocument()
-                    if !self.viewed_videos.map({ $0.id }).contains(where: {$0 == document.documentID}) {
-                        let unfilteredVideo = try document.data(as: FirebaseData.self)
-                        let id = document.documentID
-                        let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
+                    let unfilteredVideo = try document.data(as: FirebaseData.self)
+                    let id = document.documentID
+                    let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
+                    
+                    if var loc = unfilteredVideo.location {
                         
-                        if var loc = unfilteredVideo.location {
-                            
-                            loc.removeAll(where: { punctuation.contains($0) })
-                            
-                            let video = UnprocessedVideo(
-                                id: id,
-                                title: unfilteredVideo.title ?? "Unknown Title",
-                                author: unfilteredVideo.author ?? "The author for this video cannot be found.",
-                                bio: unfilteredVideo.bio ?? "The bio for this video cannot be found. Please look online for more information.",
-                                date: unfilteredVideo.date,
-                                channels: unfilteredVideo.channels ?? ["none"],
-                                location: "\(loc)",
-                                youtubeURL: unfilteredVideo.youtubeURL)
-                            
-                            if videosDict[FOR_YOU_CHANNEL] != nil {
-                                if !(videosDict[FOR_YOU_CHANNEL]?.contains(where: {$0.id == video.id}))! {
-                                    videosDict[FOR_YOU_CHANNEL]!.append(video)
-                                }
-                            } else {
-                                videosDict[FOR_YOU_CHANNEL] = [video]
+                        loc.removeAll(where: { punctuation.contains($0) })
+                        
+                        let video = UnprocessedVideo(
+                            id: id,
+                            title: unfilteredVideo.title ?? "Unknown Title",
+                            author: unfilteredVideo.author ?? "The author for this video cannot be found.",
+                            bio: unfilteredVideo.bio ?? "The bio for this video cannot be found. Please look online for more information.",
+                            date: unfilteredVideo.date,
+                            channels: unfilteredVideo.channels ?? ["none"],
+                            location: "\(loc)",
+                            youtubeURL: unfilteredVideo.youtubeURL)
+                        
+                        if videosDict[FOR_YOU_CHANNEL] != nil {
+                            if !(videosDict[FOR_YOU_CHANNEL]?.contains(where: {$0.id == video.id}))! {
+                                videosDict[FOR_YOU_CHANNEL]!.append(video)
                             }
+                        } else {
+                            videosDict[FOR_YOU_CHANNEL] = [video]
                         }
                     }
                 }

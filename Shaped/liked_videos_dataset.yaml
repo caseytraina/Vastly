@@ -1,0 +1,8 @@
+dataset_name: bigtable_liked_videos
+schema_type: BIGQUERY
+config:
+  table: "rizeo-40249.firestore_export_likes.liked_videos_raw_latest"
+  columns: ["path_params", "document_id", "timestamp"]
+  datetime_key: "timestamp"
+  start_datetime: "2020-01-01T00:00:00Z"
+  schedule_interval: "@hourly"

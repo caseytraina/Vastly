@@ -1,0 +1,24 @@
+model:
+    name: video_recommendations
+connectors:
+    - type: Dataset
+      id: bigquery_dataset
+      name: bigtable_viewed_videos
+    - type: Dataset
+      id: bigquery_dataset_likes
+      name: bigtable_liked_videos
+    - type: Dataset
+      id: bigquery_videos
+      name: bigtable_videos
+fetch:
+    events: |
+        SELECT JSON_EXTRACT_STRING(path_params, '$.userid') as user_id, document_id as item_id, timestamp as created_at, '1' as label
+        FROM bigquery_dataset_likes
+        UNION ALL
+        SELECT JSON_EXTRACT_STRING(path_params, '$.userid') as user_id, document_id as item_id, timestamp as created_at, '0.3' as label
+        FROM bigquery_dataset
+    personal_filters: |
+        SELECT JSON_EXTRACT_STRING(path_params, '$.userid') as user_id, document_id as item_id FROM bigquery_dataset
+    items: |
+        SELECT document_id as item_id, JSON_EXTRACT_STRING(data, '$.title') || ' ' || JSON_EXTRACT_STRING(data, '$.bio') as description, JSON_EXTRACT_STRING(data, '$.channels') as hashtags, timestamp as created_at
+        FROM bigquery_videos

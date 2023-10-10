@@ -49,3 +49,7 @@ gcloud projects add-iam-policy-binding <YOUR_PROJECT> \
 gcloud projects add-iam-policy-binding <YOUR_PROJECT> \
 --member='serviceAccount:<OUR_SERVICE_ACCOUNT>' \
 --role='roles/bigquery.readSessionUser'
+
+### Functions
+
+Firebase functions are stored in a node app in vastly-functions. They can be deployed with the firebase CLI - https://firebase.google.com/docs/functions/get-started?gen=2nd

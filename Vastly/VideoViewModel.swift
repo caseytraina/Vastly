@@ -24,7 +24,9 @@ class VideoViewModel: ObservableObject {
         
     @Published var videos: [Channel: [Video]] = [:] {
         didSet {
-            self.playerManager?.videos = self.videos
+            DispatchQueue.main.async {
+                self.playerManager?.videos = self.videos
+            }
         }
     }
     @Published var channels: [Channel] = [FOR_YOU_CHANNEL]
@@ -540,7 +542,9 @@ class VideoViewModel: ObservableObject {
                             youtubeURL: vid.youtubeURL)
                         
                         if !self.viewed_videos.contains(where: {$0.id == video.id}) {
-                            self.viewed_videos.append(video)
+                            DispatchQueue.main.async {
+                                self.viewed_videos.append(video)
+                            }
                         }
                         
                     } else {
@@ -591,7 +595,9 @@ class VideoViewModel: ObservableObject {
                             youtubeURL: vid.youtubeURL)
                         
                         if !self.authModel.liked_videos.contains(where: {$0.id == video.id}) {
-                            self.authModel.liked_videos.append(video)
+                            DispatchQueue.main.async {
+                                self.authModel.liked_videos.append(video)
+                            }
                         }
                         
                     } else {

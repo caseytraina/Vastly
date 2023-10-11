@@ -309,6 +309,12 @@ struct NewVideoView: View {
                     addVideos(at: 0)
 
                 }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
+                    DispatchQueue.main.async {
+                        updateMetadata()
+                    }
+                    print("Available again")
+                }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataWillBecomeUnavailableNotification)) { _ in
                     DispatchQueue.main.async {
                         updateMetadata()

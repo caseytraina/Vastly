@@ -1,5 +1,10 @@
 model:
-    name: video_recommendations
+    name: video_recommendations_ttl
+    # This will keep a cache of the ranks results for 2hrs. This is in place
+    # because the datasets refresh every hour, and so we want the viewed videos to
+    # be ignored until we can refresh the datasets. The pagination store will mean
+    # that subsequent requests to the rank API will get new data until the cache expires
+    pagination_store_ttl: 7200
 connectors:
     - type: Dataset
       id: bigquery_dataset

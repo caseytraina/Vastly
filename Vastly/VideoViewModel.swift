@@ -38,6 +38,10 @@ class VideoViewModel: ObservableObject {
         }
     }
     
+    @Published var viewedVideosProcessing: Bool = true
+    @Published var likedVideosProcessing: Bool = true
+
+    
     @Published var viewed_videos: [Video] = []
     
     var playerManager: VideoPlayerManager?
@@ -56,10 +60,6 @@ class VideoViewModel: ObservableObject {
             await getAuthors()
             print("Got authors.")
             
-            await getVideos()
-            print("Got videos.")
-
-            
             await generateShapedForYou(max: 20)
             // We do this at the end so we can analyze the liked and viewed videos
             print("INIT: got for you videos.")
@@ -68,13 +68,11 @@ class VideoViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self.isProcessing = false
             }
-            print("Processed videos.")
             
-            await fetchViewedVideos()
-            print("INIT: got viewed videos.")
-
-            await fetchLikedVideos()
-            print("INIT: got liked videos.")
+            await getVideos()
+            print("Got videos.")
+            
+            print("Processed videos.")
             
             
         }
@@ -101,7 +99,10 @@ class VideoViewModel: ObservableObject {
         for channel in self.channels {
             
             do {
-                let snapshot = try await storageRef.whereField("channels", arrayContains: channel.id).limit(to: 20).getDocuments()
+                let snapshot = try await storageRef
+                    .whereField("channels", arrayContains: channel.id)
+                    .order(by: "likedCount", descending: true)
+                    .limit(to: 15).getDocuments()
                 //            let snapshot = try await storageRef.getDocuments()
                 
                 for document in snapshot.documents {
@@ -461,8 +462,9 @@ class VideoViewModel: ObservableObject {
             let json = try JSONDecoder().decode(ShapedResponse.self, from: data)
             let db = Firestore.firestore()
             let videosRef = db.collection("videos")
-            do {
-                for videoId in json.ids {
+            for videoId in json.ids {
+
+                do {
                     // this doesn't seem to work right when you do an `in` query
                     // preserve the order here as they will be ranked from shaped
                     
@@ -495,12 +497,13 @@ class VideoViewModel: ObservableObject {
                             videosDict[FOR_YOU_CHANNEL] = [video]
                         }
                     }
+                } catch {
+                    print("error looking up videos: \(error)")
                 }
-            } catch {
-                print("error looking up videos")
             }
+
         } catch {
-            print("error looking up shaped api")
+            print("error looking up shaped api: \(error)")
         }
         
         await processUnprocessedVideos(unprocessedVideos: videosDict, foryou: true)
@@ -512,7 +515,7 @@ class VideoViewModel: ObservableObject {
             let db = Firestore.firestore()
             let ref = db.collection("videos")
             
-            for id in viewed_videos {
+            for id in viewed_videos.reversed() {
                 do {
                     let doc = try await ref.document(id).getDocument()
                     if doc.exists {
@@ -547,6 +550,12 @@ class VideoViewModel: ObservableObject {
                             }
                         }
                         
+                        if self.viewed_videos.count > 5 {
+                            DispatchQueue.main.async {
+                                self.viewedVideosProcessing = false
+                            }
+                        }
+                        
                     } else {
                         print("Doc not found for \(id)")
                     }
@@ -555,6 +564,9 @@ class VideoViewModel: ObservableObject {
                     print("Error getting viewing history: \(error)")
                 }
             }
+        }
+        DispatchQueue.main.async {
+            self.viewedVideosProcessing = false
         }
     }
     
@@ -609,6 +621,11 @@ class VideoViewModel: ObservableObject {
                 }
             }
         }
+        
+        DispatchQueue.main.async {
+            self.likedVideosProcessing = false
+        }
+        
     }
     
     

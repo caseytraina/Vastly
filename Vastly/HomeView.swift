@@ -8,12 +8,68 @@
 import SwiftUI
 import AVKit
 
+enum Page: CaseIterable {
+    
+    case home
+    case search
+    case bookmarks
+    case profile
+    
+    var title: String {
+        switch self {
+            
+        case .home:
+            return "Home"
+        case .search:
+            return "Search"
+        case .bookmarks:
+            return "Bookmarks"
+        case .profile:
+            return "Profile"
+            
+        }
+    }
+    
+    var iconInactive: String {
+        switch self {
+            
+        case .home:
+            return "house"
+        case .search:
+            return "magnifyingglass"
+        case .bookmarks:
+            return "book.pages"
+        case .profile:
+            return "person"
+        }
+    }
+    
+    var iconActive: String {
+        switch self {
+            
+        case .home:
+            return "house.fill"
+        case .search:
+            return "magnifyingglass"
+        case .bookmarks:
+            return "book.pages.fill"
+        case .profile:
+            return "person.fill"
+        }
+    }
+    
+}
+
 struct HomeView: View {
 //    @EnvironmentObject var viewModel: VideoViewModel
     @EnvironmentObject var viewModel: VideoViewModel
     @EnvironmentObject var authModel: AuthViewModel
 
     @State var channel_index = 0
+    
+    @State var currentPage: Page = .home
+    
+    @State var isPlaying = true
     
 //    init(authModel: AuthViewModel) {
 //        _viewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
@@ -22,20 +78,19 @@ struct HomeView: View {
     var body: some View {
         
         // Create Background + Display Videos
-        
-        ZStack {
-//            LinearGradient(gradient: Gradient(colors: myGradient(channel_index: channel_index)), startPoint: .topLeading, endPoint: .bottom)
-//                .ignoresSafeArea()
-//                .transition(.opacity)
-//                .animation(.easeInOut(duration: 1.0), value: channel_index)
-
-            Color("BackgroundColor")
-                .ignoresSafeArea()
-            
-            if viewModel.isProcessing {
-                LoadingView()
-            } else {
-                ZStack {
+        GeometryReader { geo in
+            ZStack {
+                //            LinearGradient(gradient: Gradient(colors: myGradient(channel_index: channel_index)), startPoint: .topLeading, endPoint: .bottom)
+                //                .ignoresSafeArea()
+                //                .transition(.opacity)
+                //                .animation(.easeInOut(duration: 1.0), value: channel_index)
+                
+                Color("BackgroundColor")
+                    .ignoresSafeArea()
+                
+                if viewModel.isProcessing || authModel.current_user == nil {
+                    LoadingView()
+                } else {
                     ForEach(0..<viewModel.channels.count) { index in
                         LinearGradient(gradient: Gradient(colors: myGradient(channel_index: index)), startPoint: .topLeading, endPoint: .bottom)
                             .ignoresSafeArea()
@@ -44,19 +99,40 @@ struct HomeView: View {
                     }
                     
                     VStack {
-                        
-//                        if let openedVideo {
-//
-//                        } else {
-                            NewVideoView(channel_index: $channel_index, viewModel: viewModel)
+                        switch currentPage {
+                            
+                        case .home:
+                            NewVideoView(playing: $isPlaying, channel_index: $channel_index, viewModel: viewModel)
                                 .environmentObject(viewModel)
                                 .environmentObject(authModel)
-//                        }
+                        case .search:
+                            NewSearchBar(all_authors: viewModel.authors, oldPlaying: $isPlaying)
+                                .environmentObject(authModel)
+                                .environmentObject(viewModel)
+                        case .bookmarks:
+                            LikesListView(isPlaying: $isPlaying)
+                                .environmentObject(authModel)
+                                .environmentObject(viewModel)
+                        case .profile:
+                            ProfileView(isPlaying: $isPlaying)
+                                .environmentObject(authModel)
+                                .environmentObject(viewModel)
+                        }
                         
                     }
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    
+                    VStack {
+                        Spacer()
+                        NavBar(selected: $currentPage)
+                            .frame(width: geo.size.width, height: geo.size.width / 5)
+                        //                        .ignoresSafeArea()
+                    }
+                    .ignoresSafeArea()
+                    //                .frame(width: screenSize.width, height: screenSize.height)
                 }
-
             }
+            
         }
 
         

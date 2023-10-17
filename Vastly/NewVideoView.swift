@@ -20,14 +20,14 @@ struct NewVideoView: View {
     @EnvironmentObject var authModel: AuthViewModel
 
     @State var activeChannel: Channel = FOR_YOU_CHANNEL
-    
+    @Binding var playing: Bool
+
     @Binding var channel_index: Int
     @State var video_indices: [Int]
     @State var current_trending = 0
     
     @State var offset: CGSize = CGSize(width: 0, height: 0)
     
-    @State var playing = true
     
     @State var opacity = 1.0
     @State var dragOffset = 0.0
@@ -57,7 +57,8 @@ struct NewVideoView: View {
     @State var isShareLinkActive = false
     @State private var openedVideo: Video?
 
-    init(channel_index: Binding<Int>, viewModel: VideoViewModel) {
+    init(playing: Binding<Bool>, channel_index: Binding<Int>, viewModel: VideoViewModel) {
+        self._playing = playing
         self._channel_index = channel_index
         self._video_indices = State(initialValue: [Int](repeating: 0, count: viewModel.channels.count))
     }
@@ -301,11 +302,15 @@ struct NewVideoView: View {
                 }
                 .onAppear {
                     startTime = Date()
-                    
-                    videoClicked(for: viewModel.videos[activeChannel]?[video_indices[channel_index]] ?? EMPTY_VIDEO,
-                                 with: authModel.user,
-                                 profile: authModel.current_user,
-                                 watchedIn: activeChannel)
+                    if let queue = viewModel.videos[activeChannel] {
+                        if queue.count > video_indices[channel_index] {
+                            
+                            videoClicked(for: queue[video_indices[channel_index]] ?? EMPTY_VIDEO,
+                                         with: authModel.user,
+                                         profile: authModel.current_user,
+                                         watchedIn: activeChannel)
+                        }
+                    }
                     addVideos(at: 0)
 
                 }

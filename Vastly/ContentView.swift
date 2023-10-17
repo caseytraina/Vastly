@@ -38,6 +38,7 @@ struct ContentView: View {
                 HomeView()
                     .environmentObject(authModel)
                     .environmentObject(viewModel)
+//                    .frame(width: screenSize.width, height: screenSize.height)
             } else {
                 GreetingView()
                     .environmentObject(authModel)

@@ -62,10 +62,56 @@ struct NewSearchBar: View {
 //                        .focused($textFocused)
                         .frame(width: geo.size.width * 0.9)
                         .padding(.top)
+                        .onSubmit {
+                            Task {
+                                await authModel.addToSearch(text)
+                            }
+                        }
                     //                    List(controller.videos) { video in
                     if text.isEmpty {
-                        MyText(text: "Search your favorite topics, shows, interests, or episodes above!", size: geo.size.width * 0.04, bold: true, alignment: .center, color: .white)
+                        MyText(text: "Search your favorite topics, shows, interests, or episodes above!", size: 18, bold: true, alignment: .center, color: .white)
                             .padding()
+                        VStack {
+
+                            if let queries = authModel.searchQueries {
+                                
+                                HStack {
+                                    MyText(text: "Recent Searches", size: 18, bold: true, alignment: .center, color: .white)
+                                    Spacer()
+                                }
+                                
+                                ForEach(queries, id: \.self) { query in
+                                    HStack {
+                                        Button(action: {
+                                            text = query
+                                        }, label: {
+                                            Image(systemName: "clock.arrow.circlepath")
+                                                .font(.system(size: 18))
+                                                .foregroundStyle(.gray)
+                                                .padding(5)
+                                            MyText(text: query, size: 18, bold: false, alignment: .leading, color: .gray)
+                                                .lineLimit(1)
+                                            Spacer()
+                                        })
+                                        Spacer()
+                                        Button(action: {
+                                            Task {
+                                                await authModel.removeFromSearch(query)
+                                            }
+                                        }, label: {
+                                            Image(systemName: "xmark")
+                                                .font(.system(size: 18))
+                                                .foregroundStyle(.gray)
+                                                .padding(5)
+
+                                        })
+                                    }
+                                    
+                                }
+                            }
+                        }
+                        
+                        
                     } else {
                         HStack {
                             MyText(text: "Clips", size: geo.size.width * 0.06, bold: true, alignment: .leading, color: .white)
@@ -87,13 +133,15 @@ struct NewSearchBar: View {
                                                    isActive: $isLinkActive) {
                                         EmptyView()
                                     }
-                                    
-                                    //                                NavigationLink(destination: , isActive: $isLinkActive, label: {
-                                    
+                                                                        
                                     Button(action: {
                                         current = controller.videos.firstIndex(where:  { $0.id == video.id}) ?? 0
                                         
                                         isLinkActive = true
+                                        Task {
+                                            await authModel.addToSearch(text)
+                                        }
+
                                         
                                     }, label: {
                                         
@@ -141,75 +189,8 @@ struct NewSearchBar: View {
 
 //                            .frame(maxHeight: geo.size.height * 0.4)
                         }
-
                     }
-                    
-                    
-//                    if !controller.videos.isEmpty {
-//                    if !text.isEmpty {
-//                        HStack {
-//                            MyText(text: "Podcasts", size: geo.size.width * 0.06, bold: true, alignment: .leading, color: .white)
-//                                .padding()
-//                            Spacer()
-//                        }
-//
-//                        if controller.authors.isEmpty {
-//                            MyText(text: "No results.", size: geo.size.width * 0.04, bold: true, alignment: .center, color: .white)
-//                                .padding()
-//                        } else {
-//
-//                            ScrollView(.horizontal, showsIndicators: false) {
-//                                HStack {
-//                                    ForEach(controller.authors) { author in
-//
-//
-//                                        Button(action: {
-//                                            self.author = author
-//                                            publisherIsTapped = true
-//                                        }, label: {
-//
-//
-//
-//
-//                                            VStack(alignment: .center) {
-//                                                AsyncImage(url: author.fileName, content: { image in
-//                                                    image
-//                                                        .resizable()
-//                                                        .frame(maxWidth: geo.size.width * 0.25, maxHeight: geo.size.width * 0.25)
-//                                                        .padding(.horizontal)
-//                                                }, placeholder: {
-//                                                    Color("BackgroundColor")
-//                                                        .frame(width: geo.size.width * 0.15, height: geo.size.width * 0.15)
-//                                                        .padding(.horizontal)
-//                                                })
-//                                                //                                VStack(alignment: .leading) {
-//                                                MyText(text: author.name ?? "", size: geo.size.width * 0.04, bold: true, alignment: .leading, color: .white)
-//                                                    .frame(maxWidth: geo.size.width * 0.4)
-//                                                    .lineLimit(2)
-//
-//                                                //                                }
-//                                            }
-//                                            .frame(width: geo.size.width * 0.35, height: geo.size.height * 0.3)
-//                                            .background(
-//                                                RoundedRectangle(cornerRadius: 10)
-//                                                    .foregroundColor(color)
-//                                            )
-//
-//                                        })
-//
-//                                    }
-//                                } // end foreach
-//                            } // end scrollview
-//                            .frame(maxHeight: geo.size.height * 0.3)
-//                        }
-//
-//                    }
-                    
-                    
-                    
-                    
                     Spacer()
-
                 }
 
                 if publisherIsTapped {

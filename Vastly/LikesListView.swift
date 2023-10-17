@@ -26,67 +26,86 @@ struct LikesListView: View {
                 .ignoresSafeArea()
             VStack {
                 HStack {
-                    Image(systemName: "heart")
-                        .font(.system(size: screenSize.width * 0.06, weight: .light))
+                    Image(systemName: "book.pages")
+                        .font(.system(size: 24, weight: .light))
                         .foregroundColor(.white)
                         .padding(.leading)
-                    MyText(text: "My Likes", size: screenSize.width * 0.06, bold: true, alignment: .leading, color: .white)
+                    MyText(text: "Bookmarks", size: 24, bold: true, alignment: .leading, color: .white)
                         .padding()
                     Spacer()
                 }
+                Spacer()
 
-                ScrollView {
-                    ForEach(viewModel.authModel.liked_videos.reversed().indices) { i in
-                        
-                        NavigationLink(destination: {
-                            SingleVideoView(video: viewModel.authModel.liked_videos[i])
-                                .environmentObject(authModel)
-                                .environmentObject(viewModel)
-
-                        }, label: {
-                            HStack {
-                                AsyncImage(url: getThumbnail(video: viewModel.authModel.liked_videos[i])) { mainImage in
-                                    mainImage.resizable()
-                                        .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
-                                } placeholder: {
-                                    
-                                    AsyncImage(url: viewModel.authModel.liked_videos[i].author.fileName) { image in
-                                        image.resizable()
+                if (viewModel.likedVideosProcessing) {
+                    ProgressView()
+                        .font(.system(size: 32))
+                        .brightness(0.5)
+                } else {
+                    
+                    ScrollView {
+                        ForEach(viewModel.authModel.liked_videos.reversed().indices) { i in
+                            
+                            NavigationLink(destination: {
+                                SingleVideoView(video: viewModel.authModel.liked_videos[i])
+                                    .environmentObject(authModel)
+                                    .environmentObject(viewModel)
+                                
+                            }, label: {
+                                HStack {
+                                    AsyncImage(url: getThumbnail(video: viewModel.authModel.liked_videos[i])) { mainImage in
+                                        mainImage.resizable()
                                             .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
                                     } placeholder: {
-                                        ZStack {
-                                            Color("BackgroundColor")
-                                            ProgressView()
-                                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                                .scaleEffect(2, anchor: .center)
-                                                .rotationEffect(.degrees(isAnimating ? 360 : 0))
-                                                .animation(Animation.linear(duration: 2).repeatForever(autoreverses: false))
-                                                .onAppear {
-                                                    isAnimating = true
-                                                }
+                                        
+                                        AsyncImage(url: viewModel.authModel.liked_videos[i].author.fileName) { image in
+                                            image.resizable()
                                                 .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
-
+                                        } placeholder: {
+                                            ZStack {
+                                                Color("BackgroundColor")
+                                                ProgressView()
+                                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                                    .scaleEffect(2, anchor: .center)
+                                                    .rotationEffect(.degrees(isAnimating ? 360 : 0))
+                                                    .animation(Animation.linear(duration: 2).repeatForever(autoreverses: false))
+                                                    .onAppear {
+                                                        isAnimating = true
+                                                    }
+                                                    .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
+                                                
+                                            }
                                         }
                                     }
+                                    
+                                    VStack(alignment: .leading) {
+                                        MyText(text: "\(viewModel.authModel.liked_videos[i].title)", size: screenSize.width * 0.035, bold: true, alignment: .leading, color: .white)
+                                            .lineLimit(2)
+                                        MyText(text: "\(viewModel.authModel.liked_videos[i].author.name ?? "")", size: screenSize.width * 0.035, bold: false, alignment: .leading, color: Color("AccentGray"))
+                                            .lineLimit(1)
+                                    }
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.white)
+                                        .font(.system(size: screenSize.width * 0.05, weight: .light))
+                                        .padding()
                                 }
-                                
-                                VStack(alignment: .leading) {
-                                    MyText(text: "\(viewModel.authModel.liked_videos[i].title)", size: screenSize.width * 0.035, bold: true, alignment: .leading, color: .white)
-                                        .lineLimit(2)
-                                    MyText(text: "\(viewModel.authModel.liked_videos[i].author.name ?? "")", size: screenSize.width * 0.035, bold: false, alignment: .leading, color: Color("AccentGray"))
-                                        .lineLimit(1)
-                                }
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: screenSize.width * 0.05, weight: .light))
-                                    .padding()
-                            }
-                        })
+                            })
+                        }
                     }
+                    .frame(maxWidth: screenSize.width * 0.95, maxHeight: screenSize.height * 0.65)
+                    
                 }
-                .frame(maxWidth: screenSize.width * 0.95, maxHeight: screenSize.height * 0.65)
+                
+                Spacer()
+                
+            }
+        }
+        .onAppear {
+            Task {
+                await viewModel.fetchLikedVideos()
+                print("INIT: got liked videos.")
+                
             }
         }
     }

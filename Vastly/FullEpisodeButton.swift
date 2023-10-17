@@ -15,34 +15,33 @@ struct FullEpisodeButton: View {
     @Binding var isPlaying: Bool
 
     var body: some View {
-        GeometryReader { geo in
+//        GeometryReader { geo in
             Button(action: {
                 clicked = true
                 isPlaying = false
             }, label: {
                 
-                HStack {
-                    Image(systemName: "play.fill")
-                        .font(.system(size: geo.size.width * 0.05))
-                        .foregroundColor(.accentColor)
-                    MyText(text: "Full Episode", size: geo.size.width * 0.04, bold: false, alignment: .leading, color: Color("BackgroundColor"))
-                }
-                .padding(10)
-                .background(
-                Capsule()
-                    .foregroundColor(Color("AccentGray"))
-    //                .frame(width: geo.size.width, height: geo.size.height)
-                )
-                .sheet(isPresented: $clicked, onDismiss: {
-                    isPlaying = true
-                    clicked = false
-                }, content: {
-                    FullEpisodeView(video: video)
-                })
+                MyText(text: "Full Episode", size: 16, bold: true, alignment: .leading, color: .black)
+//                    .brightness(-0.5)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 30)
+                    .background(
+                    RoundedRectangle(cornerRadius: 100)
+                        .foregroundColor(.gray)
+                        .brightness(0.5)
+                    )
+                    .sheet(isPresented: $clicked, onDismiss: {
+                        isPlaying = true
+                        clicked = false
+                    }, content: {
+                        FullEpisodeView(video: video)
+                    })
                 
-//            .frame(width: geo.size.width, height: geo.size.height)
             })
-        }
+//            .frame(width: geo.size.width, height: geo.size.height)
+
+            
+//        }
     }
 }
 

@@ -11,6 +11,9 @@
 		0220D63B2A905C5800A867FB /* AuthorProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0220D63A2A905C5800A867FB /* AuthorProfileView.swift */; };
 		0220D63D2A946C8A00A867FB /* ChooseTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0220D63C2A946C8A00A867FB /* ChooseTagsView.swift */; };
 		0220D63F2A9593DB00A867FB /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0220D63E2A9593DB00A867FB /* FlowLayout.swift */; };
+		022E6BE92ADDD272005750EF /* NavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022E6BE82ADDD272005750EF /* NavBar.swift */; };
+		022E6BEA2ADDD272005750EF /* NavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022E6BE82ADDD272005750EF /* NavBar.swift */; };
+		022E6BEB2ADDD272005750EF /* NavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022E6BE82ADDD272005750EF /* NavBar.swift */; };
 		02313CBB2A2167AE00C02CC4 /* ChannelSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02313CBA2A2167AE00C02CC4 /* ChannelSelectorView.swift */; };
 		02313CBD2A25467B00C02CC4 /* TopTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02313CBC2A25467B00C02CC4 /* TopTextView.swift */; };
 		023EE7772A0ADF36004E09DD /* VastlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023EE7762A0ADF36004E09DD /* VastlyApp.swift */; };
@@ -95,9 +98,6 @@
 		029170142AB2444000ADF426 /* InstantSearchCore in Frameworks */ = {isa = PBXBuildFile; productRef = 029170132AB2444000ADF426 /* InstantSearchCore */; };
 		029170162AB2444000ADF426 /* InstantSearchInsights in Frameworks */ = {isa = PBXBuildFile; productRef = 029170152AB2444000ADF426 /* InstantSearchInsights */; };
 		029170182AB2444000ADF426 /* InstantSearchSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 029170172AB2444000ADF426 /* InstantSearchSwiftUI */; };
-		0291701A2AB244DD00ADF426 /* SearchPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029170192AB244DD00ADF426 /* SearchPage.swift */; };
-		0291701B2AB244DD00ADF426 /* SearchPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029170192AB244DD00ADF426 /* SearchPage.swift */; };
-		0291701C2AB244DD00ADF426 /* SearchPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029170192AB244DD00ADF426 /* SearchPage.swift */; };
 		029170222AB375CA00ADF426 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029170212AB375CA00ADF426 /* SearchBar.swift */; };
 		029170232AB375CA00ADF426 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029170212AB375CA00ADF426 /* SearchBar.swift */; };
 		029170242AB375CA00ADF426 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029170212AB375CA00ADF426 /* SearchBar.swift */; };
@@ -151,6 +151,7 @@
 		0220D63A2A905C5800A867FB /* AuthorProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorProfileView.swift; sourceTree = "<group>"; };
 		0220D63C2A946C8A00A867FB /* ChooseTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseTagsView.swift; sourceTree = "<group>"; };
 		0220D63E2A9593DB00A867FB /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
+		022E6BE82ADDD272005750EF /* NavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBar.swift; sourceTree = "<group>"; };
 		02313CBA2A2167AE00C02CC4 /* ChannelSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelSelectorView.swift; sourceTree = "<group>"; };
 		02313CBC2A25467B00C02CC4 /* TopTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopTextView.swift; sourceTree = "<group>"; };
 		023EE7732A0ADF36004E09DD /* Vastly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vastly.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -201,7 +202,6 @@
 		02781AA02AB8A56C0068E246 /* SearchVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchVideoView.swift; sourceTree = "<group>"; };
 		028381752A98873200FE25C0 /* PhoneLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneLogin.swift; sourceTree = "<group>"; };
 		0291700C2AB14D8000ADF426 /* ViewingHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewingHistory.swift; sourceTree = "<group>"; };
-		029170192AB244DD00ADF426 /* SearchPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPage.swift; sourceTree = "<group>"; };
 		029170212AB375CA00ADF426 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		029295332A27B231001EE121 /* Vastly.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Vastly.entitlements; sourceTree = "<group>"; };
 		0294DEA42A7987370073994D /* VideoThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoThumbnailView.swift; sourceTree = "<group>"; };
@@ -371,7 +371,6 @@
 				02FC35332A71B2360075C2B6 /* VideoFailedView.swift */,
 				02FC35372A72BE390075C2B6 /* AudioOverlay.swift */,
 				0220D63A2A905C5800A867FB /* AuthorProfileView.swift */,
-				029170192AB244DD00ADF426 /* SearchPage.swift */,
 				029170212AB375CA00ADF426 /* SearchBar.swift */,
 				02781AA02AB8A56C0068E246 /* SearchVideoView.swift */,
 				02583E182A1B0F56008CDA59 /* ProfileView.swift */,
@@ -406,6 +405,7 @@
 				02637B322A61571500528A8E /* ProgressBar.swift */,
 				021E5A912A69BB9D00B120CD /* PageIndicator.swift */,
 				02FC35352A72B9810075C2B6 /* AudioToggle.swift */,
+				022E6BE82ADDD272005750EF /* NavBar.swift */,
 			);
 			name = Items;
 			sourceTree = "<group>";
@@ -642,6 +642,7 @@
 				02583E0F2A1AEF4E008CDA59 /* TextField.swift in Sources */,
 				02FC35382A72BE390075C2B6 /* AudioOverlay.swift in Sources */,
 				023EE7EE2A0C5DC6004E09DD /* Constants.swift in Sources */,
+				022E6BE92ADDD272005750EF /* NavBar.swift in Sources */,
 				02FC35362A72B9810075C2B6 /* AudioToggle.swift in Sources */,
 				02611E592AA77CEA007029BB /* FullEpisodeView.swift in Sources */,
 				0220D63F2A9593DB00A867FB /* FlowLayout.swift in Sources */,
@@ -652,7 +653,6 @@
 				023EE7832A0ADF37004E09DD /* Vastly.xcdatamodeld in Sources */,
 				025649A42A11FF4700C442AE /* LoadingView.swift in Sources */,
 				02611E532AA7797D007029BB /* FullEpisodeButton.swift in Sources */,
-				0291701A2AB244DD00ADF426 /* SearchPage.swift in Sources */,
 				02583E222A1D736C008CDA59 /* FullscreenVideoPlayer.swift in Sources */,
 				029AEAB12A858649002A09DF /* NewVideoView.swift in Sources */,
 				02583E0B2A19EA4B008CDA59 /* NamePromptView.swift in Sources */,
@@ -700,7 +700,7 @@
 				023EE78D2A0ADF37004E09DD /* VastlyTests.swift in Sources */,
 				023EE7EF2A0C5DC6004E09DD /* Constants.swift in Sources */,
 				02781AA22AB8A56C0068E246 /* SearchVideoView.swift in Sources */,
-				0291701B2AB244DD00ADF426 /* SearchPage.swift in Sources */,
+				022E6BEA2ADDD272005750EF /* NavBar.swift in Sources */,
 				029170232AB375CA00ADF426 /* SearchBar.swift in Sources */,
 				02611E5B2AA7B59F007029BB /* TopTextView.swift in Sources */,
 				023EE7F32A0C5EF8004E09DD /* VideoViewModel.swift in Sources */,
@@ -718,7 +718,7 @@
 				0291700F2AB14D8000ADF426 /* ViewingHistory.swift in Sources */,
 				029170242AB375CA00ADF426 /* SearchBar.swift in Sources */,
 				023EE7992A0ADF37004E09DD /* VastlyUITestsLaunchTests.swift in Sources */,
-				0291701C2AB244DD00ADF426 /* SearchPage.swift in Sources */,
+				022E6BEB2ADDD272005750EF /* NavBar.swift in Sources */,
 				02781AA32AB8A56C0068E246 /* SearchVideoView.swift in Sources */,
 				023EE7F02A0C5DC6004E09DD /* Constants.swift in Sources */,
 			);

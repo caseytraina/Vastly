@@ -51,10 +51,12 @@ struct ProfileView: View {
                         HStack {
                             Image(systemName: "person.circle")
                                 .foregroundColor(.white)
-                                .font(.system(size: geo.size.width * 0.05, weight: .light))
+                                .font(.system(size: 18, weight: .light))
                                 .padding()
+                            MyText(text: "Name", size: 18, bold: false, alignment: .leading, color: .white)
+
                             Spacer()
-                            MyText(text: "\(authModel.current_user?.firstName?.capitalized ?? "") \(authModel.current_user?.lastName?.capitalized ?? "")", size: geo.size.width * 0.05, bold: true, alignment: .leading, color: .white)
+                            MyText(text: "\(authModel.current_user?.firstName?.capitalized ?? "") \(authModel.current_user?.lastName?.capitalized ?? "")", size: 18, bold: true, alignment: .leading, color: .white)
                                 .padding()
                             //                                .padding()                        }
                         }
@@ -66,43 +68,12 @@ struct ProfileView: View {
                                 .foregroundColor(.white)
                                 .font(.system(size: geo.size.width * 0.05, weight: .light))
                                 .padding()
+                            MyText(text: (authModel.current_user?.phoneNumber != "") ? "Phone Number" : "Email", size: 18, bold: false, alignment: .leading, color: .white)
+
                             Spacer()
-                            MyText(text: ((authModel.current_user?.phoneNumber) != "") ? "\(authModel.current_user?.phoneNumber ?? authModel.current_user?.email ?? "")" : "\(authModel.current_user?.email ?? "")", size: geo.size.width * 0.05, bold: true, alignment: .leading, color: .white)
+                            MyText(text: ((authModel.current_user?.phoneNumber) != "") ? "\(authModel.current_user?.phoneNumber ?? authModel.current_user?.email ?? "")" : "\(authModel.current_user?.email ?? "")", size: 18, bold: true, alignment: .leading, color: .white)
                                 .padding()
                         }
-                        
-                            
-                        NavigationLink(destination: {
-                            LikesListView(isPlaying: $isPlaying)
-                                .environmentObject(authModel)
-                                .environmentObject(viewModel)
-                        }, label: {
-                            HStack {
-
-                                ZStack {
-                                    Color("BackgroundColor")
-                                    Image(systemName: "heart")
-                                        .font(.system(size: screenSize.width * 0.075, weight: .light))
-                                        .foregroundColor(.white)
-                                }
-                                .frame(width: screenSize.width * 0.2, height: screenSize.width * 0.2)
-                                
-                                VStack(alignment: .leading) {
-                                    MyText(text: "Likes", size: screenSize.width * 0.04, bold: true, alignment: .leading, color: .white)
-                                    MyText(text: "\(authModel.liked_videos.count) Videos", size: screenSize.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
-                                }
-                                .padding()
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: geo.size.width * 0.05, weight: .light))
-                                    .padding()
-                                
-                            
-                            }
-                            
-                        })
                         
                         NavigationLink(destination: {
                             ViewingHistory(isPlaying: $isPlaying)
@@ -110,21 +81,13 @@ struct ProfileView: View {
                                 .environmentObject(viewModel)
                         }, label: {
                             HStack {
+                                Image(systemName: "clock.arrow.circlepath")
+                                    .font(.system(size: 18, weight: .light))
+                                    .foregroundColor(.white)
+                                    .padding()
 
-                                ZStack {
-                                    Color("BackgroundColor")
-                                    Image(systemName: "clock.arrow.circlepath")
-                                        .font(.system(size: screenSize.width * 0.075, weight: .light))
-                                        .foregroundColor(.white)
-                                }
-                                .frame(width: screenSize.width * 0.2, height: screenSize.width * 0.2)
-
-            
-                                VStack(alignment: .leading) {
                                     MyText(text: "Viewing History", size: screenSize.width * 0.04, bold: true, alignment: .leading, color: .white)
-                                    MyText(text: "\(viewModel.viewed_videos.count) Videos", size: screenSize.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
-                                }
-                                .padding()
+                                
                                 Spacer()
                                 
                                 Image(systemName: "chevron.right")

@@ -35,7 +35,8 @@ class AuthViewModel: ObservableObject {
     
     @Published var current_user: Profile? = nil
     @Published var liked_videos: [Video] = []
-    
+    @Published var searchQueries: [String]?
+
 //    var viewModel: VideoViewModel?
     
     init() {
@@ -251,6 +252,61 @@ class AuthViewModel: ObservableObject {
             print(error)
         }
     }
+    
+    func addToSearch(_ query: String) async {
+        
+        if (self.searchQueries != nil) {
+            if !(self.searchQueries?.contains(where: {$0 == query}) ?? false) {
+                DispatchQueue.main.async {
+                    self.searchQueries?.append(query)
+                }
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.searchQueries = [query]
+            }
+        }
+        
+        let db = Firestore.firestore()
+        let storageRef = db.collection("users").document(current_user?.phoneNumber ?? current_user?.email ?? "")
+        
+        do {
+            try await storageRef.collection("searchHistory").addDocument(data: [
+                "createdAt" : Date(),
+                "query" : query
+            ])
+        } catch {
+            print("error uploading query: \(error)")
+        }
+    }
+    
+    func removeFromSearch(_ query: String) async {
+        DispatchQueue.main.async {
+            self.searchQueries?.removeAll(where: {$0 == query})
+        }
+        
+        let db = Firestore.firestore()
+        let storageRef = db.collection("users").document(current_user?.phoneNumber ?? current_user?.email ?? "")
+        
+        
+        
+        do {
+            
+            let docs = try await storageRef.collection("searchHistory").whereField("query", isEqualTo: query).getDocuments().documents
+            
+            for doc in docs {
+                let ID = doc.documentID
+                
+                let docs = try await storageRef.collection("searchHistory").document(ID).delete()
+            
+            }
+            
+        } catch {
+            print("Error deleting query: \(query)")
+        }
+        
+        
+    }
 
     // This function retrieves and returns the user profile from firebase, given a database path input. This returns type "Profile"
     func fetch(docRef: DocumentReference) async throws -> Profile {
@@ -263,34 +319,70 @@ class AuthViewModel: ObservableObject {
             // migrate old likes schema to new likes
             let likedVideos = try await docRef.collection("likedVideos").getDocuments().documents
             let newLikedDocumentIds = likedVideos.map{ v in v.documentID }
-            
-            if let oldLikes = data?["liked_videos"] as? [String] ?? nil {
-                for like in oldLikes {
-                    if !newLikedDocumentIds.contains(where: {$0 == like }) {
-                        let userLikedRef = docRef.collection("likedVideos").document(like)
-                        try await userLikedRef.setData([
-                            "createdAt": Date()
-                        ])
-                    }
-                    
-                }
-            }
+//            
+//            if let oldLikes = data?["liked_videos"] as? [String] ?? nil {
+//                for like in oldLikes {
+//                    if !newLikedDocumentIds.contains(where: {$0 == like }) {
+//                        let userLikedRef = docRef.collection("likedVideos").document(like)
+//                        try await userLikedRef.setData([
+//                            "createdAt": Date()
+//                        ])
+//                    }
+//                    
+//                }
+//            }
             
             // migrate old views schema to new views
-            let viewedVideos = try await docRef.collection("viewedVideos").getDocuments().documents
+            let viewedVideos = try await docRef.collection("viewedVideos").limit(to: 100).getDocuments().documents
             let newViewedDocumentIds = viewedVideos.map{ v in v.documentID }
             
-            if let oldViews = data?["viewed_videos"] as? [String] ?? nil {
-                for view in oldViews {
-                    if !newViewedDocumentIds.contains(where: {$0 == view }) {
-                        let userViewedRef = docRef.collection("viewedVideos").document(view)
-                        try await userViewedRef.setData([
-                            "createdAt": Date()
-                        ])
+//            if let oldViews = data?["viewed_videos"] as? [String] ?? nil {
+//                for view in oldViews {
+//                    if !newViewedDocumentIds.contains(where: {$0 == view }) {
+//                        let userViewedRef = docRef.collection("viewedVideos").document(view)
+//                        try await userViewedRef.setData([
+//                            "createdAt": Date()
+//                        ])
+//                    }
+//                    
+//                }
+//            }
+            
+            // migrate old views schema to new views
+            let searchDocs = try await docRef.collection("searchHistory")
+                .order(by: "createdAt", descending: true)
+                .limit(to: 6).getDocuments().documents
+            var searchQueries: [String] = []
+            
+            for doc in searchDocs {
+                do {
+                    let data = try doc.data()
+                    
+                    let query = data["query"] as! String
+                    
+                    if (self.searchQueries != nil) {
+                        if !(self.searchQueries!.contains(where: {$0 == query})) {
+                            DispatchQueue.main.async {
+                                self.searchQueries?.append(query)
+                            }
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.searchQueries = [query]
+                        }
                     }
                     
+                    if !(self.searchQueries?.contains(where: {$0 == data["query"] as! String}) ?? false) {
+                        DispatchQueue.main.async {
+                            self.searchQueries?.append(data["query"] as! String)
+                        }
+                    }
+                    
+                } catch {
+                    print("error getting query: \(error)")
                 }
             }
+            
             
             let profile = Profile(firstName: data?["firstName"] as? String ?? nil,
                                   lastName: data?["lastName"] as? String ?? nil,

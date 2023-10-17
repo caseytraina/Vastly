@@ -2,7 +2,7 @@
 //  NavBar.swift
 //  Vastly
 //
-//  Created by Casey Traina on 10/13/23.
+//  Created by Casey Traina on 10/16/23.
 //
 
 import SwiftUI

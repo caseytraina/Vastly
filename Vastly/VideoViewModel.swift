@@ -442,7 +442,7 @@ class VideoViewModel: ObservableObject {
         var videosDict: [Channel : [UnprocessedVideo]] = [:]
         
         let userId = self.authModel.current_user?.phoneNumber ?? self.authModel.current_user?.email ?? ""
-        var rankURL = URLComponents(string: "https://api.prod.shaped.ai/v1/models/video_recommendations_ttl/rank")!
+        var rankURL = URLComponents(string: "https://api.prod.shaped.ai/v1/models/video_recommendations_percentages/rank")!
         let queryItems = [
             URLQueryItem(name: "user_id", value: userId),
             URLQueryItem(name: "limit", value: String(max)),

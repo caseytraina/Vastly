@@ -137,43 +137,33 @@ class VideoViewModel: ObservableObject {
         await self.processUnprocessedVideos(unprocessedVideos: videosDict)
     }
     
-    func getVideo(id: String) async -> Video? { // in channel: Channel) async {
-//        var videosDict: [Channel : [UnprocessedVideo]] = [:]
-
+    func getVideo(id: String) async -> Video? {
         let db = Firestore.firestore()
         let storageRef = db.collection("videos").document(id)
         
-        var result: Video? = nil
-        
-        for channel in self.channels {
-            do {
-                let document = try await storageRef.getDocument()
-                //            let snapshot = try await storageRef.getDocuments()
+        do {
+            let document = try await storageRef.getDocument()
+            let unfilteredVideo = try document.data(as: FirebaseData.self)
+            let id = document.documentID
+            let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
                 
-//                for document in snapshot.documents {
-                let unfilteredVideo = try document.data(as: FirebaseData.self)
-                let id = document.documentID
-                let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
-                    
-                if !(self.authModel.current_user?.viewedVideos?.contains(where: { $0 == id }) ?? false) {
-                    if var loc = unfilteredVideo.location {
-                        loc.removeAll(where: { punctuation.contains($0) })
-                        let video = Video(id: id,
-                                          title: unfilteredVideo.title ?? "Unknown Title",
-                                          author: self.authors.first(where: { $0.text_id == unfilteredVideo.author?.trimmingCharacters(in: .whitespacesAndNewlines) }) ?? EMPTY_AUTHOR,
-                                          bio: unfilteredVideo.bio ?? "The bio for this video cannot be found. Please look online for more information.",
-                                          date: unfilteredVideo.date,
-                                          channels: unfilteredVideo.channels ?? ["none"],
-                                          url: self.getVideoURL(from: unfilteredVideo.location ?? ""),
-                                          youtubeURL: unfilteredVideo.youtubeURL)
-                            
-                        return video
-                    }
+            if !(self.authModel.current_user?.viewedVideos?.contains(where: { $0 == id }) ?? false) {
+                if var loc = unfilteredVideo.location {
+                    loc.removeAll(where: { punctuation.contains($0) })
+                    let video = Video(id: id,
+                                      title: unfilteredVideo.title ?? "Unknown Title",
+                                      author: self.authors.first(where: { $0.text_id == unfilteredVideo.author?.trimmingCharacters(in: .whitespacesAndNewlines) }) ?? EMPTY_AUTHOR,
+                                      bio: unfilteredVideo.bio ?? "The bio for this video cannot be found. Please look online for more information.",
+                                      date: unfilteredVideo.date,
+                                      channels: unfilteredVideo.channels ?? ["none"],
+                                      url: self.getVideoURL(from: unfilteredVideo.location ?? ""),
+                                      youtubeURL: unfilteredVideo.youtubeURL)
+                        
+                    return video
                 }
-//                }
-            } catch {
-                print("error with video: \(error)")
             }
+        } catch {
+            print("error with video: \(error)")
         }
         return nil
     }
@@ -188,31 +178,16 @@ class VideoViewModel: ObservableObject {
             
             for document in documents {
                 let data = document.data()
-                
-                if let location = data?["fileName"] {
-                    var author = Author(
-                        id: UUID(),
-                        text_id: document.documentID,
-                        name: data?["name"] as? String ?? "",
-                        bio: data?["bio"] as? String ?? "",
-                        fileName: self.pathToURL("Author Logos/\(location)"),
-                        website: data?["website"] as? String ?? "",
-                        apple: data?["apple"] as? String ?? "",
-                        spotify: data?["spotify"] as? String ?? "")
-                    self.authors.append(author)
-
-                } else {
-                    var author = Author(
-                        id: UUID(),
-                        text_id: document.documentID,
-                        name: data?["name"] as? String ?? "",
-                        bio: data?["bio"] as? String ?? "",
-                        fileName: self.pathToURL("Author Logos/\(data?["fileName"] ?? "")"),
-                        website: data?["website"] as? String ?? "",
-                        apple: data?["apple"] as? String ?? "",
-                        spotify: data?["spotify"] as? String ?? "")
-                    self.authors.append(author)
-                }
+                let author = Author(
+                    id: UUID(),
+                    text_id: document.documentID,
+                    name: data?["name"] as? String ?? "",
+                    bio: data?["bio"] as? String ?? "",
+                    fileName: self.pathToURL("Author Logos/\(data?["fileName"] ?? "")"),
+                    website: data?["website"] as? String ?? "",
+                    apple: data?["apple"] as? String ?? "",
+                    spotify: data?["spotify"] as? String ?? "")
+                self.authors.append(author)
             }
             
         } catch {
@@ -285,7 +260,6 @@ class VideoViewModel: ObservableObject {
 
     // This function accepts a storage regerence and returns all documents at the given reference in Firebase.
     func fetchDocuments(in storageRef: CollectionReference) async throws -> [DocumentSnapshot] {
-        let db = Firestore.firestore()
         let snapshot = try await storageRef.getDocuments()
         return snapshot.documents
     }
@@ -334,14 +308,11 @@ class VideoViewModel: ObservableObject {
         fixedPath = fixedPath.replacingOccurrences(of: "’", with: "%E2%80%99")
         
         let urlStringUnkept: String = IMAGEKIT_ENDPOINT + fixedPath + "?tr=f-auto"
-        var urlString = urlStringUnkept
-        
-//        print(urlString)
-        if let url = URL(string: urlString ?? "") {
+        if let url = URL(string: urlStringUnkept) {
             return url
         } else {
-            return EMPTY_VIDEO.url
             print("URL is invalid")
+            return EMPTY_VIDEO.url
         }
     }
     
@@ -351,31 +322,27 @@ class VideoViewModel: ObservableObject {
         var count = 0
         // loop through unprocessed
         for video in Array(videos.values.flatMap { $0 }) {
-            do {
-                // await used since getAVPlayer returns async.
-                let player = self.getVideoURL(from: video.location)
-                let processedVideo = Video(id: video.id, title: video.title, author: self.findAuthor(video), bio: video.bio, date: video.date, channels: video.channels, url: player, youtubeURL: video.youtubeURL)
-                count += 1
-                
-                if foryou == true {
-                    if processedVideos[FOR_YOU_CHANNEL] != nil {
-                        processedVideos[FOR_YOU_CHANNEL]!.append(processedVideo)
-                    } else {
-                        processedVideos[FOR_YOU_CHANNEL] = [processedVideo]
-                    }
+            // await used since getAVPlayer returns async.
+            let player = self.getVideoURL(from: video.location)
+            let processedVideo = Video(id: video.id, title: video.title, author: self.findAuthor(video), bio: video.bio, date: video.date, channels: video.channels, url: player, youtubeURL: video.youtubeURL)
+            count += 1
+            
+            if foryou == true {
+                if processedVideos[FOR_YOU_CHANNEL] != nil {
+                    processedVideos[FOR_YOU_CHANNEL]!.append(processedVideo)
                 } else {
-                    for channelItem in processedVideo.channels {
-                        if let channel = self.channels.first(where: { $0.id == channelItem }) {
-                            if processedVideos[channel] != nil {
-                                processedVideos[channel]!.append(processedVideo)
-                            } else {
-                                processedVideos[channel] = [processedVideo]
-                            }
+                    processedVideos[FOR_YOU_CHANNEL] = [processedVideo]
+                }
+            } else {
+                for channelItem in processedVideo.channels {
+                    if let channel = self.channels.first(where: { $0.id == channelItem }) {
+                        if processedVideos[channel] != nil {
+                            processedVideos[channel]!.append(processedVideo)
+                        } else {
+                            processedVideos[channel] = [processedVideo]
                         }
                     }
                 }
-            } catch {
-                print("error processing video: \(error)")
             }
         }
         // foryou is ordered, don't want to shuffle it up
@@ -491,7 +458,7 @@ class VideoViewModel: ObservableObject {
                     if doc.exists {
                         print("Doc Found for \(id)")
                         
-                        let data = try doc.data()
+                        let data = doc.data()
                         
                         let vid = UnprocessedVideo(
                             id: doc.documentID,
@@ -550,7 +517,7 @@ class VideoViewModel: ObservableObject {
                     if doc.exists {
                         print("Doc Found for \(id)")
                         
-                        let data = try doc.data()
+                        let data = doc.data()
                         
                         let vid = UnprocessedVideo(
                             id: doc.documentID,

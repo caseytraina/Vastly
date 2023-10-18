@@ -26,7 +26,7 @@ fetch:
                coalesce((CAST(JSON_EXTRACT_STRING(data, '$.watchPercentage') as INT) / 100), 0.3) as label
         FROM bigquery_dataset_views
     personal_filters: |
-        SELECT JSON_EXTRACT_STRING(path_params, '$.userid') as user_id, document_id as item_id FROM bigquery_dataset
+        SELECT JSON_EXTRACT_STRING(path_params, '$.userid') as user_id, document_id as item_id FROM bigquery_dataset_views
     items: |
         SELECT document_id as item_id, JSON_EXTRACT_STRING(data, '$.title') || ' ' || JSON_EXTRACT_STRING(data, '$.bio') as description, JSON_EXTRACT_STRING(data, '$.channels') as hashtags, timestamp as created_at
         FROM bigquery_videos

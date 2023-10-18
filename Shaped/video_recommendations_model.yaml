@@ -1,5 +1,5 @@
 model:
-    name: video_recommendations_ttl
+    name: video_recommendations_percentages
     # This will keep a cache of the ranks results for 2hrs. This is in place
     # because the datasets refresh every hour, and so we want the viewed videos to
     # be ignored until we can refresh the datasets. The pagination store will mean
@@ -7,8 +7,8 @@ model:
     pagination_store_ttl: 7200
 connectors:
     - type: Dataset
-      id: bigquery_dataset
-      name: bigtable_viewed_videos
+      id: bigquery_dataset_views
+      name: bigtable_viewed_videos_with_metadata
     - type: Dataset
       id: bigquery_dataset_likes
       name: bigtable_liked_videos
@@ -20,10 +20,13 @@ fetch:
         SELECT JSON_EXTRACT_STRING(path_params, '$.userid') as user_id, document_id as item_id, timestamp as created_at, '1' as label
         FROM bigquery_dataset_likes
         UNION ALL
-        SELECT JSON_EXTRACT_STRING(path_params, '$.userid') as user_id, document_id as item_id, timestamp as created_at, '0.3' as label
-        FROM bigquery_dataset
+        SELECT JSON_EXTRACT_STRING(path_params, '$.userid') as user_id, 
+               document_id as item_id, 
+               timestamp as created_at, 
+               coalesce((CAST(JSON_EXTRACT_STRING(data, '$.watchPercentage') as INT) / 100), 0.3) as label
+        FROM bigquery_dataset_views
     personal_filters: |
-        SELECT JSON_EXTRACT_STRING(path_params, '$.userid') as user_id, document_id as item_id FROM bigquery_dataset
+        SELECT JSON_EXTRACT_STRING(path_params, '$.userid') as user_id, document_id as item_id FROM bigquery_dataset_views
     items: |
         SELECT document_id as item_id, JSON_EXTRACT_STRING(data, '$.title') || ' ' || JSON_EXTRACT_STRING(data, '$.bio') as description, JSON_EXTRACT_STRING(data, '$.channels') as hashtags, timestamp as created_at
         FROM bigquery_videos

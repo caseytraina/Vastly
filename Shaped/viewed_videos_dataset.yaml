@@ -1,8 +1,8 @@
-dataset_name: bigtable_viewed_videos
+dataset_name: bigtable_viewed_videos_with_metadata
 schema_type: BIGQUERY
 config:
   table: "rizeo-40249.firestore_viewed_videos_export.viewed_videos_raw_latest"
-  columns: ["path_params", "document_id", "timestamp"]
+  columns: ["path_params", "document_id", "timestamp", "data"]
   datetime_key: "timestamp"
   start_datetime: "2020-01-01T00:00:00Z"
   schedule_interval: "@hourly"

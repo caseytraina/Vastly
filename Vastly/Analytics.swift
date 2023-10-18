@@ -71,7 +71,10 @@ func videoWatched(from start: Date, to end: Date, for video: Video, time: Double
     
     if realTime > 3 {
         userViewedRef.setData([
-            "createdAt": Date()
+            "createdAt": Date(),
+            "watchTime": watchTime,
+            "watchPercentage": percentage,
+            "inChannel": watchedIn.id
         ])
         videoRef.updateData([
             "viewedCount": FieldValue.increment(Int64(1))

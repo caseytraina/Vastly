@@ -132,22 +132,25 @@ struct NewVideoView: View {
                                 
                                 let impact = UIImpactFeedbackGenerator(style: .medium)
                                 impact.impactOccurred()
-
+                                
+                                let currentVideo = getVideo(i: video_indices[channel_index], in: activeChannel)
+                                let previousVideo = getVideo(i: video_indices[channel_index], in: previous_channel)
+                                
                                 channelClicked(for: newChannel, with: authModel.user)
-                                videoClicked(for: getVideo(i: video_indices[channel_index], in: activeChannel),
+                                videoClicked(for: currentVideo,
                                              with: authModel.user,
                                              profile: authModel.current_user,
                                              watchedIn: activeChannel)
                                 
-                                let duration = viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentTime().seconds
+                                let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
                                 
                                 viewModel.playerManager?.changeToChannel(to: newChannel, shouldPlay: playing, newIndex: video_indices[channel_index])
                                 
                                 videoWatched(
                                     from: startTime,
                                     to: endTime,
-                                    for: getVideo(i: video_indices[channel_index], in: previous_channel),
-                                    time: (viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentItem!.duration.seconds) ?? 0.0,
+                                    for: previousVideo,
+                                    time: (viewModel.playerManager?.getPlayer(for: previousVideo).currentItem!.duration.seconds) ?? 0.0,
                                     watched: duration,
                                     with: authModel.user,
                                     profile: authModel.current_user,

@@ -104,8 +104,9 @@ struct VerticalVideoView: View {
 //                            play(current_playing)
 //                            viewModel.playerManager?.pauseAllOthers(except: getVideo(current_playing))
                             shareURL = videoShareURL(getVideo(current_playing))
-                            proxy.scrollTo(current_playing, anchor: .top)
-
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                proxy.scrollTo(current_playing, anchor: .top)
+                            }
                         }
 
                     }

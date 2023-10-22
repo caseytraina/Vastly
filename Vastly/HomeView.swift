@@ -96,11 +96,6 @@ struct HomeView: View {
         // Create Background + Display Videos
         GeometryReader { geo in
             ZStack {
-                //            LinearGradient(gradient: Gradient(colors: myGradient(channel_index: channel_index)), startPoint: .topLeading, endPoint: .bottom)
-                //                .ignoresSafeArea()
-                //                .transition(.opacity)
-                //                .animation(.easeInOut(duration: 1.0), value: channel_index)
-                
                 Color("BackgroundColor")
                     .ignoresSafeArea()
                 
@@ -113,6 +108,9 @@ struct HomeView: View {
                             .opacity(channel_index == index ? 1 : 0)
                             .animation(.easeInOut(duration: 0.75), value: channel_index)
                     }
+                    
+                    
+          
                     
                     VStack {
                         switch currentPage {

@@ -232,12 +232,6 @@ struct NewVideoView: View {
                             
                         }// end scroll view reader
                         
-                        if channelGuidePressed {
-                            ChannelSelectorView(activeChannel: $activeChannel, channel_index: $channel_index, video_indices: $video_indices, channelsExpanded: $channelGuidePressed)
-                                .environmentObject(viewModel)
-                                .frame(height: screenSize.height * 0.8)
-                        }
-                        
 //                        if isShareLinkActive == true {
  
 //                        }

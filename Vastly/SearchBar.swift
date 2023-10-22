@@ -136,8 +136,9 @@ struct NewSearchBar: View {
                                                                         
                                     Button(action: {
                                         current = controller.videos.firstIndex(where:  { $0.id == video.id}) ?? 0
-                                        
+                                        oldPlaying = false
                                         isLinkActive = true
+                                        
                                         Task {
                                             await authModel.addToSearch(text)
                                         }
@@ -209,7 +210,7 @@ struct NewSearchBar: View {
             controller.search(for: newText)
         }
         .onAppear {
-            oldPlaying = false
+//            oldPlaying = false
         }
     } // end body
     

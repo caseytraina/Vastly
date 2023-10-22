@@ -36,12 +36,15 @@ struct AudioToggleStyle: ToggleStyle {
                             RoundedRectangle(cornerRadius: 100)
                                 .stroke(Color.white, lineWidth: 1)
                         )
-
                         .onTapGesture {
-                            withAnimation(.spring()) {
-                                configuration.isOn.toggle()
-                            }
-                    }
+                            
+                        }
+                        .highPriorityGesture(TapGesture()
+                            .onEnded{
+                                withAnimation(.spring()) {
+                                    configuration.isOn.toggle()
+                                }
+                            })
                     
                     ZStack {
                         Image(systemName: "video.fill")

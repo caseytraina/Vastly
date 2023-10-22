@@ -19,15 +19,14 @@ struct NewVideoView: View {
     @EnvironmentObject var viewModel: VideoViewModel
     @EnvironmentObject var authModel: AuthViewModel
 
-    @State var activeChannel: Channel = FOR_YOU_CHANNEL
+    @Binding var activeChannel: Channel
     @Binding var playing: Bool
 
     @Binding var channel_index: Int
-    @State var video_indices: [Int]
+    @Binding var video_indices: [Int]
     @State var current_trending = 0
     
     @State var offset: CGSize = CGSize(width: 0, height: 0)
-    
     
     @State var opacity = 1.0
     @State var dragOffset = 0.0
@@ -57,10 +56,11 @@ struct NewVideoView: View {
     @State var isShareLinkActive = false
     @State private var openedVideo: Video?
 
-    init(playing: Binding<Bool>, channel_index: Binding<Int>, viewModel: VideoViewModel) {
+    init(playing: Binding<Bool>, channel_index: Binding<Int>, activeChannel: Binding<Channel>, viewModel: VideoViewModel, video_indices: Binding<[Int]>) {
         self._playing = playing
         self._channel_index = channel_index
-        self._video_indices = State(initialValue: [Int](repeating: 0, count: viewModel.channels.count))
+        self._activeChannel = activeChannel
+        self._video_indices = video_indices
     }
     
     var body: some View {
@@ -85,9 +85,7 @@ struct NewVideoView: View {
                                     
                                     ForEach(viewModel.channels, id: \.self) { channel in
                                         if abs((viewModel.channels.firstIndex(of: activeChannel) ?? 0) - (viewModel.channels.firstIndex(of: channel) ?? 0)) <= 1 {
-                                            
-                                            
-                                            //                                        if abs(channel_index - Channel.allCases.first(where: {$0 == channel})) <= 1 {
+
                                             if (viewModel.videos[channel] ?? []).isEmpty {
                                                 ZStack {
                                                     Color("BackgroundColor")
@@ -117,13 +115,12 @@ struct NewVideoView: View {
                             } //end scrollview
                             .scrollDisabled(true)
                             .onAppear {
-                                
+                                print("APPEAR: \(video_indices[channel_index])")
                                 viewModel.playerManager?.changeToChannel(to: activeChannel, shouldPlay: playing, newIndex: video_indices[channel_index])
-                                withAnimation(.easeOut(duration: 0.125)) {
-                                    proxy.scrollTo(activeChannel, anchor: .leading)
-                                }
+                                proxy.scrollTo(activeChannel, anchor: .leading)
                             }
                             .onChange(of: activeChannel) { newChannel in
+                                print("APPEAR ACTIVE")
                                 if channel_index != viewModel.channels.firstIndex(where: {$0.id == newChannel.id}) ?? 0 {
                                     channel_index = viewModel.channels.firstIndex(where: {$0.id == newChannel.id}) ?? 0
                                 }
@@ -153,6 +150,7 @@ struct NewVideoView: View {
                                     profile: authModel.current_user,
                                     viewModel: viewModel,
                                     watchedIn: previous_channel)
+                                
                                 startTime = Date()
                                 updateMetadata()
                                 
@@ -293,6 +291,12 @@ struct NewVideoView: View {
                     viewModel.playerManager?.changeToIndex(to: newIndex, shouldPlay: playing)
                     viewModel.playerManager?.playCurrentVideo()
                     
+                    if abs(newIndex - (viewModel.videos[activeChannel]?.count)!) <= 2 {
+                        Task {
+                            await viewModel.addVideosTo(activeChannel)
+                        }
+                    }
+                    
                     
                     let impact = UIImpactFeedbackGenerator(style: .light)
                     impact.impactOccurred()
@@ -311,7 +315,6 @@ struct NewVideoView: View {
                                          watchedIn: activeChannel)
                         }
                     }
-                    addVideos(at: 0)
 
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in

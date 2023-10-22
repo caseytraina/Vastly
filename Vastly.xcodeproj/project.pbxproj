@@ -91,6 +91,7 @@
 		02781AA32AB8A56C0068E246 /* SearchVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02781AA02AB8A56C0068E246 /* SearchVideoView.swift */; };
 		028381742A9886F300FE25C0 /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 028381732A9886F300FE25C0 /* iPhoneNumberField */; };
 		028381762A98873200FE25C0 /* PhoneLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028381752A98873200FE25C0 /* PhoneLogin.swift */; };
+		0288EB432AE086B700EEE77F /* MaterialDesignSymbol in Frameworks */ = {isa = PBXBuildFile; productRef = 0288EB422AE086B700EEE77F /* MaterialDesignSymbol */; };
 		0291700D2AB14D8000ADF426 /* ViewingHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0291700C2AB14D8000ADF426 /* ViewingHistory.swift */; };
 		0291700E2AB14D8000ADF426 /* ViewingHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0291700C2AB14D8000ADF426 /* ViewingHistory.swift */; };
 		0291700F2AB14D8000ADF426 /* ViewingHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0291700C2AB14D8000ADF426 /* ViewingHistory.swift */; };
@@ -119,6 +120,7 @@
 		02C5CCD32A4A25EC00C7280E /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C5CCD22A4A25EC00C7280E /* TutorialView.swift */; };
 		02CB38792A7839810065F626 /* LikesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CB38782A7839810065F626 /* LikesListView.swift */; };
 		02CB387B2A783DF00065F626 /* SingleVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CB387A2A783DF00065F626 /* SingleVideoView.swift */; };
+		02DCE3F22AE48C68002F8EF7 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 02DCE3F12AE48C68002F8EF7 /* FirebaseFunctions */; };
 		02DEC7432AC4A83000F4B5D0 /* LaunchAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02DEC7422AC4A83000F4B5D0 /* LaunchAnimation.swift */; };
 		02DEC7472AC60D0E00F4B5D0 /* launchAnimation.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 02DEC7462AC60D0E00F4B5D0 /* launchAnimation.mp4 */; };
 		02E0AB3D2A7C0A8D00405704 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E0AB3C2A7C0A8D00405704 /* ForgotPasswordView.swift */; };
@@ -246,7 +248,9 @@
 				029170142AB2444000ADF426 /* InstantSearchCore in Frameworks */,
 				02583E1E2A1B2769008CDA59 /* ApiVideoClient in Frameworks */,
 				023EE7CC2A0C5D9E004E09DD /* FirebaseAnalytics in Frameworks */,
+				02DCE3F22AE48C68002F8EF7 /* FirebaseFunctions in Frameworks */,
 				023EE7CE2A0C5D9E004E09DD /* FirebaseAnalyticsOnDeviceConversion in Frameworks */,
+				0288EB432AE086B700EEE77F /* MaterialDesignSymbol in Frameworks */,
 				023EE7D42A0C5D9E004E09DD /* FirebaseAppCheck in Frameworks */,
 				028381742A9886F300FE25C0 /* iPhoneNumberField in Frameworks */,
 				023EE7DC2A0C5D9E004E09DD /* FirebaseCrashlytics in Frameworks */,
@@ -285,6 +289,7 @@
 				023EE7952A0ADF37004E09DD /* VastlyUITests */,
 				023EE7742A0ADF36004E09DD /* Products */,
 				DDFF44A9F5E9AEFEFD4C699D /* Pods */,
+				02DCE3F02AE48C68002F8EF7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -423,6 +428,13 @@
 			name = "Not In Use";
 			sourceTree = "<group>";
 		};
+		02DCE3F02AE48C68002F8EF7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		02E0AB3E2A7C0E4B00405704 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
@@ -491,6 +503,8 @@
 				029170152AB2444000ADF426 /* InstantSearchInsights */,
 				029170172AB2444000ADF426 /* InstantSearchSwiftUI */,
 				029170292AB376B100ADF426 /* AlgoliaSearchClient */,
+				0288EB422AE086B700EEE77F /* MaterialDesignSymbol */,
+				02DCE3F12AE48C68002F8EF7 /* FirebaseFunctions */,
 			);
 			productName = Vastly;
 			productReference = 023EE7732A0ADF36004E09DD /* Vastly.app */;
@@ -572,6 +586,7 @@
 				02611E552AA77CC7007029BB /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
 				029170102AB2444000ADF426 /* XCRemoteSwiftPackageReference "instantsearch-ios" */,
 				029170282AB376B100ADF426 /* XCRemoteSwiftPackageReference "algoliasearch-client-swift" */,
+				0288EB412AE086B700EEE77F /* XCRemoteSwiftPackageReference "MaterialDesignSymbol" */,
 			);
 			productRefGroup = 023EE7742A0ADF36004E09DD /* Products */;
 			projectDirPath = "";
@@ -1088,6 +1103,14 @@
 				minimumVersion = 0.10.1;
 			};
 		};
+		0288EB412AE086B700EEE77F /* XCRemoteSwiftPackageReference "MaterialDesignSymbol" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tichise/MaterialDesignSymbol";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.6;
+			};
+		};
 		029170102AB2444000ADF426 /* XCRemoteSwiftPackageReference "instantsearch-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/algolia/instantsearch-ios";
@@ -1215,6 +1238,11 @@
 			package = 028381722A9886F300FE25C0 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */;
 			productName = iPhoneNumberField;
 		};
+		0288EB422AE086B700EEE77F /* MaterialDesignSymbol */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0288EB412AE086B700EEE77F /* XCRemoteSwiftPackageReference "MaterialDesignSymbol" */;
+			productName = MaterialDesignSymbol;
+		};
 		029170112AB2444000ADF426 /* InstantSearch */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 029170102AB2444000ADF426 /* XCRemoteSwiftPackageReference "instantsearch-ios" */;
@@ -1244,6 +1272,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 029B70562A9C3C5600ECA74B /* XCRemoteSwiftPackageReference "Amplitude-iOS" */;
 			productName = Amplitude;
+		};
+		02DCE3F12AE48C68002F8EF7 /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 023EE7CA2A0C5D9E004E09DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
 		};
 /* End XCSwiftPackageProductDependency section */
 

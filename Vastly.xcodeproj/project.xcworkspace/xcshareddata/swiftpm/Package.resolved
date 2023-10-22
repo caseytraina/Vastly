@@ -163,6 +163,15 @@
       }
     },
     {
+      "identity" : "materialdesignsymbol",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tichise/MaterialDesignSymbol",
+      "state" : {
+        "revision" : "13f491836b0c16f5c54bc86809d97a23fb50242a",
+        "version" : "2.8.6"
+      }
+    },
+    {
       "identity" : "nanopb",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/nanopb.git",

@@ -34,6 +34,9 @@ class VideoPlayerManager: ObservableObject {
             queue = videos[activeChannel]
         }
     }
+    
+    
+    
     // initialize players as well as channel_videos and the command center. The command center must be setup once.
     // the channel_videos is for ease-of-use.
     

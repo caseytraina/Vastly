@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AVKit
+import MaterialDesignSymbol
 
 enum Page: CaseIterable {
     
@@ -34,11 +35,11 @@ enum Page: CaseIterable {
         switch self {
             
         case .home:
-            return "house"
+            return "home"
         case .search:
-            return "magnifyingglass"
+            return "search"
         case .bookmarks:
-            return "book.pages"
+            return "bookmark"
         case .profile:
             return "person"
         }
@@ -48,16 +49,22 @@ enum Page: CaseIterable {
         switch self {
             
         case .home:
-            return "house.fill"
+            return "home-fill"
         case .search:
-            return "magnifyingglass"
+            return "search"
         case .bookmarks:
-            return "book.pages.fill"
+            return "bookmark-fill"
         case .profile:
-            return "person.fill"
+            return "person-fill"
         }
     }
     
+//    var image: UIImage {
+//        let symbol = MaterialDesignSymbol(icon: .home24px, size:25)
+//        symbol.addAttribute(attributeName: .foregroundColor, value: UIColor.red)
+//        let iconImage = symbol.image(size: CGSize(width:25, height:25))
+//    }
+//    
 }
 
 struct HomeView: View {
@@ -66,14 +73,23 @@ struct HomeView: View {
     @EnvironmentObject var authModel: AuthViewModel
 
     @State var channel_index = 0
+    @State var activeChannel: Channel = FOR_YOU_CHANNEL
     
     @State var currentPage: Page = .home
     
     @State var isPlaying = true
-    
+    @State var video_indices: [Int]
 //    init(authModel: AuthViewModel) {
 //        _viewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
 //    }
+    
+    init(viewModel: VideoViewModel, channel_index: Int = 0, currentPage: Page = .home, isPlaying: Bool = true) {
+        self.channel_index = channel_index
+        self.currentPage = currentPage
+        self.isPlaying = isPlaying
+        self._video_indices = State(initialValue: [Int](repeating: 0, count: viewModel.channels.count))
+
+    }
     
     var body: some View {
         
@@ -102,7 +118,7 @@ struct HomeView: View {
                         switch currentPage {
                             
                         case .home:
-                            NewVideoView(playing: $isPlaying, channel_index: $channel_index, viewModel: viewModel)
+                            NewVideoView(playing: $isPlaying, channel_index: $channel_index, activeChannel: $activeChannel, viewModel: viewModel, video_indices: $video_indices)
                                 .environmentObject(viewModel)
                                 .environmentObject(authModel)
                         case .search:

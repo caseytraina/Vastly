@@ -20,22 +20,33 @@ struct FullEpisodeButton: View {
                 clicked = true
                 isPlaying = false
             }, label: {
-                
-                MyText(text: "Full Episode", size: 16, bold: true, alignment: .leading, color: .black)
-//                    .brightness(-0.5)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 30)
-                    .background(
+                HStack {
+                    
+                    Image(systemName: "play.fill")
+                        .font(.system(size: 18))
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(.white)
+                    
+                    MyText(text: "Full Episode", size: 16, bold: true, alignment: .leading, color: .white)
+                    //                    .brightness(-0.5)
+                    //                    .padding(./*vertical*/, 10)
+//                        .padding(10)
+
+                        .sheet(isPresented: $clicked, onDismiss: {
+                            isPlaying = true
+                            clicked = false
+                        }, content: {
+                            FullEpisodeView(video: video)
+                        })
+                    
+                }
+                .padding(.vertical, 5)
+                .padding(.horizontal, 10)
+                .background(
                     RoundedRectangle(cornerRadius: 100)
                         .foregroundColor(.gray)
-                        .brightness(0.5)
-                    )
-                    .sheet(isPresented: $clicked, onDismiss: {
-                        isPlaying = true
-                        clicked = false
-                    }, content: {
-                        FullEpisodeView(video: video)
-                    })
+                        .opacity(0.25)
+                )
                 
             })
 //            .frame(width: geo.size.width, height: geo.size.height)

@@ -21,13 +21,19 @@ struct NavBar: View {
                             selected = page
                         }, label: {
                             VStack (alignment: .center) {
-                                Image(systemName: selected == page ? page.iconActive : page.iconInactive)
-                                    .font(.system(size: 18))
-                                    .foregroundColor(selected == page ? .accentColor : .gray)
-                                    .brightness(0.3)
-                                    .frame(width: 24, height: 20)
-                                    .animation(.easeOut, value: selected)
-                                    .transition(.opacity)
+                                
+//                                Image(systemName: selected == page ? page.iconActive : page.iconInactive)
+                                if let uiImage = UIImage(named: selected == page ? page.iconActive : page.iconInactive) {
+                                    Image(uiImage: uiImage)
+                                        .renderingMode(.template)
+                                        .font(.system(size: 18))
+                                        .foregroundColor(selected == page ? .accentColor : .gray)
+                                        .brightness(0.3)
+                                        .frame(width: 24, height: 20)
+                                        .animation(.easeOut, value: selected)
+                                        .transition(.opacity)
+                                }
+                                    
                                 
                                 MyText(text: page.title, size: geo.size.width * 0.03, bold: true, alignment: .center, color: selected == page ? .accentColor : .gray)
                                     .lineLimit(1)
@@ -51,7 +57,7 @@ struct NavBar: View {
             .background(
                 Rectangle()
                     .foregroundStyle(Color("BackgroundColor"))
-                    .brightness(0.1)
+                    .brightness(0.05)
             )
         }
         

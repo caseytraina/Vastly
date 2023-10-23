@@ -68,8 +68,7 @@ enum Page: CaseIterable {
 }
 
 struct HomeView: View {
-//    @EnvironmentObject var viewModel: VideoViewModel
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogModel
     @EnvironmentObject var authModel: AuthViewModel
 
     @State var channel_index = 0
@@ -116,7 +115,17 @@ struct HomeView: View {
                         switch currentPage {
                             
                         case .home:
-                            NewVideoView(playing: $isPlaying, channel_index: $channel_index, activeChannel: $activeChannel, viewModel: viewModel, video_indices: $video_indices)
+                          //CatalogVideoView(playing: $isPlaying,
+                          //                   channel_index: $channel_index,
+                           //                  viewModel: viewModel)
+                          
+                          
+                          
+                            NewVideoView(playing: $isPlaying, 
+                                         channel_index: $channel_index, 
+                                         activeChannel: $activeChannel, 
+                                         viewModel: viewModel, 
+                                         video_indices: $video_indices)
                                 .environmentObject(viewModel)
                                 .environmentObject(authModel)
                         case .search:

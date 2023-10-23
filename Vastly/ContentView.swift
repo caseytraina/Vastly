@@ -35,7 +35,7 @@ struct ContentView: View {
         
         Group {
             if authModel.user != nil {
-                HomeView()
+                HomeView(viewModel: viewModel)
                     .environmentObject(authModel)
                     .environmentObject(viewModel)
 //                    .frame(width: screenSize.width, height: screenSize.height)

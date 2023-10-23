@@ -44,23 +44,6 @@ struct UnprocessedVideo: Codable {
     let location: String
     let youtubeURL: String?
     
-    // This function turns a path to a URL of a cached and compressed video, connecting to our CDN imagekit which is a URL-based video and image delivery and transformation company.
-    func getVideoURL() -> URL? {
-        var allowedCharacters = CharacterSet.urlQueryAllowed
-        allowedCharacters.insert("/")
-        
-        var fixedPath = self.location.addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? ""
-        fixedPath = fixedPath.replacingOccurrences(of: "’", with: "%E2%80%99")
-        
-        let urlStringUnkept: String = IMAGEKIT_ENDPOINT + fixedPath + "?tr=f-auto"
-        if let url = URL(string: urlStringUnkept) {
-            return url
-        } else {
-            print("URL is invalid")
-            return EMPTY_VIDEO.url
-        }
-    }
-    
     enum CodingKeys: String, CodingKey {
         case id
         case title
@@ -83,14 +66,6 @@ struct Video: Identifiable {
     var channels: [String]
     var url: URL?
     var youtubeURL: String?
-    
-    func getThumbnail() -> URL? {
-        var urlString = self.url?.absoluteString
-        
-        urlString = urlString?.replacingOccurrences(of: "?tr=f-auto", with: "/ik-thumbnail.jpg")
-        
-        return URL(string: urlString ?? "")
-    }
 }
 
 struct Author: Identifiable {

@@ -119,10 +119,6 @@
 		02FC35362A72B9810075C2B6 /* AudioToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FC35352A72B9810075C2B6 /* AudioToggle.swift */; };
 		02FC35382A72BE390075C2B6 /* AudioOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FC35372A72BE390075C2B6 /* AudioOverlay.swift */; };
 		AA0E9E412ABADD0F00224782 /* FirebaseDistributedCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0E9E402ABADD0F00224782 /* FirebaseDistributedCounter.swift */; };
-		AAA20DF52AE2617200061254 /* CatalogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA20DF42AE2617200061254 /* CatalogViewModel.swift */; };
-		AAA20DF72AE268D500061254 /* CatalogPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA20DF62AE268D500061254 /* CatalogPlayerManager.swift */; };
-		AAA20DF92AE27C9F00061254 /* CatalogVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA20DF82AE27C9F00061254 /* CatalogVideoView.swift */; };
-		AAA20DFB2AE2804800061254 /* CatalogVerticalVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA20DFA2AE2804800061254 /* CatalogVerticalVideoView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -214,10 +210,6 @@
 		02FC35352A72B9810075C2B6 /* AudioToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioToggle.swift; sourceTree = "<group>"; };
 		02FC35372A72BE390075C2B6 /* AudioOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioOverlay.swift; sourceTree = "<group>"; };
 		AA0E9E402ABADD0F00224782 /* FirebaseDistributedCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDistributedCounter.swift; sourceTree = "<group>"; };
-		AAA20DF42AE2617200061254 /* CatalogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogViewModel.swift; sourceTree = "<group>"; };
-		AAA20DF62AE268D500061254 /* CatalogPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPlayerManager.swift; sourceTree = "<group>"; };
-		AAA20DF82AE27C9F00061254 /* CatalogVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogVideoView.swift; sourceTree = "<group>"; };
-		AAA20DFA2AE2804800061254 /* CatalogVerticalVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogVerticalVideoView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -305,10 +297,8 @@
 				023EE7A82A0ADF7A004E09DD /* Views */,
 				023EE7BE2A0B0BF2004E09DD /* VideoStructure.swift */,
 				02583E162A1AFAE1008CDA59 /* AuthViewModel.swift */,
-				AAA20DF42AE2617200061254 /* CatalogViewModel.swift */,
 				023EE7F12A0C5EF8004E09DD /* VideoViewModel.swift */,
 				02BCA9402A37D3280069E49A /* VideoObserver.swift */,
-				AAA20DF62AE268D500061254 /* CatalogPlayerManager.swift */,
 				AA0E9E402ABADD0F00224782 /* FirebaseDistributedCounter.swift */,
 				02C5CCD02A4A04C900C7280E /* Analytics.swift */,
 				023EE7A92A0ADFDF004E09DD /* ScrollingStackModifier.swift */,
@@ -377,8 +367,6 @@
 				0291700C2AB14D8000ADF426 /* ViewingHistory.swift */,
 				02CB387A2A783DF00065F626 /* SingleVideoView.swift */,
 				02611E582AA77CEA007029BB /* FullEpisodeView.swift */,
-				AAA20DF82AE27C9F00061254 /* CatalogVideoView.swift */,
-				AAA20DFA2AE2804800061254 /* CatalogVerticalVideoView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -650,8 +638,6 @@
 				02FC35362A72B9810075C2B6 /* AudioToggle.swift in Sources */,
 				02611E592AA77CEA007029BB /* FullEpisodeView.swift in Sources */,
 				0220D63F2A9593DB00A867FB /* FlowLayout.swift in Sources */,
-				AAA20DFB2AE2804800061254 /* CatalogVerticalVideoView.swift in Sources */,
-				AAA20DF52AE2617200061254 /* CatalogViewModel.swift in Sources */,
 				0294DEA52A7987370073994D /* VideoThumbnailView.swift in Sources */,
 				023EE7792A0ADF36004E09DD /* ContentView.swift in Sources */,
 				02DEC7432AC4A83000F4B5D0 /* LaunchAnimation.swift in Sources */,
@@ -666,9 +652,7 @@
 				021E5A922A69BB9D00B120CD /* PageIndicator.swift in Sources */,
 				023EE7F22A0C5EF8004E09DD /* VideoViewModel.swift in Sources */,
 				023EE7BF2A0B0BF2004E09DD /* VideoStructure.swift in Sources */,
-				AAA20DF92AE27C9F00061254 /* CatalogVideoView.swift in Sources */,
 				02583E0D2A19EA67008CDA59 /* LogInView.swift in Sources */,
-				AAA20DF72AE268D500061254 /* CatalogPlayerManager.swift in Sources */,
 				02E0AB3D2A7C0A8D00405704 /* ForgotPasswordView.swift in Sources */,
 				0220D63D2A946C8A00A867FB /* ChooseTagsView.swift in Sources */,
 				02BCA9412A37D3280069E49A /* VideoObserver.swift in Sources */,

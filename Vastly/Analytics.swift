@@ -57,9 +57,6 @@ func videoClicked(for video: Video, with user: User?, profile: Profile?, watched
     )
 }
 
-//func videoSwiped()
-//func videoPaused()
-
 func videoWatched(from start: Date, to end: Date, for video: Video, time: Double,
                   watched: Double?, with user: User?, profile: Profile?, viewModel: VideoViewModel, watchedIn: Channel) {
     let watchTime = min(watched ?? 10000.0, end.timeIntervalSince(start).magnitude)

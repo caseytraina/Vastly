@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		021BEB192AE8D61C00857910 /* SeeMoreText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021BEB182AE8D61C00857910 /* SeeMoreText.swift */; };
+		021BEB1A2AE8D61C00857910 /* SeeMoreText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021BEB182AE8D61C00857910 /* SeeMoreText.swift */; };
+		021BEB1B2AE8D61C00857910 /* SeeMoreText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021BEB182AE8D61C00857910 /* SeeMoreText.swift */; };
 		021E5A922A69BB9D00B120CD /* PageIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021E5A912A69BB9D00B120CD /* PageIndicator.swift */; };
 		0220D63B2A905C5800A867FB /* AuthorProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0220D63A2A905C5800A867FB /* AuthorProfileView.swift */; };
 		0220D63D2A946C8A00A867FB /* ChooseTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0220D63C2A946C8A00A867FB /* ChooseTagsView.swift */; };
@@ -139,6 +142,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		021BEB182AE8D61C00857910 /* SeeMoreText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeMoreText.swift; sourceTree = "<group>"; };
 		021E5A912A69BB9D00B120CD /* PageIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageIndicator.swift; sourceTree = "<group>"; };
 		0220D63A2A905C5800A867FB /* AuthorProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorProfileView.swift; sourceTree = "<group>"; };
 		0220D63C2A946C8A00A867FB /* ChooseTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseTagsView.swift; sourceTree = "<group>"; };
@@ -395,6 +399,7 @@
 				021E5A912A69BB9D00B120CD /* PageIndicator.swift */,
 				02FC35352A72B9810075C2B6 /* AudioToggle.swift */,
 				022E6BE82ADDD272005750EF /* NavBar.swift */,
+				021BEB182AE8D61C00857910 /* SeeMoreText.swift */,
 			);
 			name = Items;
 			sourceTree = "<group>";
@@ -653,6 +658,7 @@
 				023EE7F22A0C5EF8004E09DD /* VideoViewModel.swift in Sources */,
 				023EE7BF2A0B0BF2004E09DD /* VideoStructure.swift in Sources */,
 				02583E0D2A19EA67008CDA59 /* LogInView.swift in Sources */,
+				021BEB192AE8D61C00857910 /* SeeMoreText.swift in Sources */,
 				02E0AB3D2A7C0A8D00405704 /* ForgotPasswordView.swift in Sources */,
 				0220D63D2A946C8A00A867FB /* ChooseTagsView.swift in Sources */,
 				02BCA9412A37D3280069E49A /* VideoObserver.swift in Sources */,
@@ -683,6 +689,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0291700E2AB14D8000ADF426 /* ViewingHistory.swift in Sources */,
+				021BEB1A2AE8D61C00857910 /* SeeMoreText.swift in Sources */,
 				023EE78D2A0ADF37004E09DD /* VastlyTests.swift in Sources */,
 				023EE7EF2A0C5DC6004E09DD /* Constants.swift in Sources */,
 				02781AA22AB8A56C0068E246 /* SearchVideoView.swift in Sources */,
@@ -697,6 +704,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				023EE7972A0ADF37004E09DD /* VastlyUITests.swift in Sources */,
+				021BEB1B2AE8D61C00857910 /* SeeMoreText.swift in Sources */,
 				023EE7F42A0C5EF8004E09DD /* VideoViewModel.swift in Sources */,
 				0291700F2AB14D8000ADF426 /* ViewingHistory.swift in Sources */,
 				029170242AB375CA00ADF426 /* SearchBar.swift in Sources */,

@@ -30,71 +30,85 @@ struct ViewingHistory: View {
             VStack {
                 HStack {
                     Image(systemName: "clock.arrow.circlepath")
-                        .font(.system(size: screenSize.width * 0.06, weight: .light))
+                        .font(.system(size: 24, weight: .light))
                         .foregroundColor(.white)
                         .padding(.leading)
-                    MyText(text: "Viewing History", size: screenSize.width * 0.06, bold: true, alignment: .leading, color: .white)
+                    MyText(text: "Viewing History", size: 24, bold: true, alignment: .leading, color: .white)
                         .padding()
                     Spacer()
                 }
-
-                ScrollView {
-                    ForEach(viewModel.viewed_videos.reversed()) { video in
-                        
-                        NavigationLink(destination: {
-                            SingleVideoView(video: video)
-                                .environmentObject(authModel)
-                                .environmentObject(viewModel)
-
-                        }, label: {
-                            HStack {
-                                AsyncImage(url: getThumbnail(video: video)) { mainImage in
-                                    mainImage.resizable()
-                                        .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
-                                } placeholder: {
-                                    
-                                    AsyncImage(url: video.author.fileName) { image in
-                                        image.resizable()
+                Spacer()
+                if (viewModel.viewedVideosProcessing) {
+                    ProgressView()
+                        .font(.system(size: 32))
+                        .brightness(0.5)
+                } else {
+                    
+                    ScrollView {
+                        ForEach(viewModel.viewed_videos) { video in
+                            
+                            NavigationLink(destination: {
+                                SingleVideoView(video: video)
+                                    .environmentObject(authModel)
+                                    .environmentObject(viewModel)
+                                
+                            }, label: {
+                                HStack {
+                                    AsyncImage(url: getThumbnail(video: video)) { mainImage in
+                                        mainImage.resizable()
                                             .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
                                     } placeholder: {
-                                        ZStack {
-                                            Color("BackgroundColor")
-                                            ProgressView()
-                                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                                .scaleEffect(2, anchor: .center)
-                                                .rotationEffect(.degrees(isAnimating ? 360 : 0))
-                                                .animation(Animation.linear(duration: 2).repeatForever(autoreverses: false))
-                                                .onAppear {
-                                                    isAnimating = true
-                                                }
+                                        
+                                        AsyncImage(url: video.author.fileName) { image in
+                                            image.resizable()
                                                 .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
-
+                                        } placeholder: {
+                                            ZStack {
+                                                Color("BackgroundColor")
+                                                ProgressView()
+                                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                                    .scaleEffect(2, anchor: .center)
+                                                    .rotationEffect(.degrees(isAnimating ? 360 : 0))
+                                                    .animation(Animation.linear(duration: 2).repeatForever(autoreverses: false))
+                                                    .onAppear {
+                                                        isAnimating = true
+                                                    }
+                                                    .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
+                                                
+                                            }
                                         }
                                     }
+                                    
+                                    VStack(alignment: .leading) {
+                                        MyText(text: "\(video.title)", size: screenSize.width * 0.035, bold: true, alignment: .leading, color: .white)
+                                            .lineLimit(2)
+                                        MyText(text: "\(video.author.name ?? "")", size: screenSize.width * 0.035, bold: false, alignment: .leading, color: Color("AccentGray"))
+                                            .lineLimit(1)
+                                    }
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.white)
+                                        .font(.system(size: screenSize.width * 0.05, weight: .light))
+                                        .padding()
+                                    
+                                    
                                 }
-                                
-                                VStack(alignment: .leading) {
-                                    MyText(text: "\(video.title)", size: screenSize.width * 0.035, bold: true, alignment: .leading, color: .white)
-                                        .lineLimit(2)
-                                    MyText(text: "\(video.author.name ?? "")", size: screenSize.width * 0.035, bold: false, alignment: .leading, color: Color("AccentGray"))
-                                        .lineLimit(1)
-                                }
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: screenSize.width * 0.05, weight: .light))
-                                    .padding()
-                                
-                                
-                            }
-                        })
+                            })
+                        }
                     }
+                    .frame(maxWidth: screenSize.width * 0.95, maxHeight: screenSize.height * 0.65)
+                    
                 }
-                .frame(maxWidth: screenSize.width * 0.95, maxHeight: screenSize.height * 0.65)
             
+                Spacer()
                 
-            
+            }
+        }
+        .onAppear {
+            Task {
+                await viewModel.fetchViewedVideos()
+                print("INIT: got viewed videos.")
                 
             }
         }

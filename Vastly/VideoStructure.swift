@@ -125,110 +125,14 @@ struct Profile {
     }
 }
 
-//enum Channel: String, CaseIterable {
-//    case foryou = "For You"
-//
-//    case bizNews = "Daily Biz News"
-//    case startups = "Entrepreneurship"
-//    case ai = "AI"
-//    case ventureCapital = "Venture Capital"
-//    case bigTech = "Big Tech"
-//    case finance = "Finance & Investing"
-//    case leadership = "Leadership"
-//    case stanford = "View From The Top"
-//    case global = "World Economic Forum"
-//    case space = "Space"
-//
-//    var title: String {
-//        switch self {
-//        case .foryou: return "For You"
-//        case .bizNews: return "Biz News"
-//        case .startups: return "Startups"
-//        case .ai: return "AI"
-//        case .ventureCapital: return "VC"
-//        case .bigTech: return "Big Tech"
-//        case .finance: return "Finance"
-//        case .leadership: return "Leadership"
-//        case .stanford: return "Stanford"
-//        case .global: return "Global"
-//        case .space: return "Space"
-//        }
-//    }
-//
-//    var imageName: String {
-//        switch self {
-//        case .foryou:
-//            return "foryou"
-//        case .startups:
-//            return "entrepreneurship"
-//        case .finance:
-//            return "investingfinance"
-//        case .stanford:
-//            return "viewfromthetop"
-//        case .global:
-//            return "worldeconomicforum"
-//        case .ventureCapital:
-//            return "ventureCapital"
-//        case .bizNews:
-//            return "dailyBiz"
-//        case .ai:
-//            return "ai"
-//        case .bigTech:
-//            return "bigTech"
-//        case .leadership:
-//            return "leadership"
-//        default:
-//            return ""
-//        }
-//    }
-//
-//    var color: Color {
-//        switch self {
-//        case .foryou:
-//            return Color(red: 0.45, green: 0.31, blue: 1);
-//        case .startups:
-//            return Color(red: 0.18, green: 0.59, blue: 0.69);
-//        case .bigTech:
-//            return Color(red: 0.31, green: 0.46, blue: 1);
-//        case .stanford:
-//            return Color(red: 0.31, green: 0.83, blue: 1);
-//        case .global:
-//            return Color(red: 0.31, green: 1, blue: 0.71);
-//        case .leadership:
-//            return Color(red: 1, green: 0.31, blue: 0.31);
-//        case .finance:
-//            return Color(red: 1, green: 0.81, blue: 0.31);
-//        case .ventureCapital:
-//            return Color(red: 1, green: 0.43, blue: 0.31);
-//        case .bizNews:
-//            return Color(red: 0, green: 0.61, blue: 0.46);
-//        case .ai:
-//            return Color(red: 0.71, green: 0.34, blue: 0);
-//        case .space:
-//            return Color(red: 0.45, green: 0.31, blue: 1);
-//        }
-//    }
-    
-    
-    
-    //    case bizNews = "Biz News"
-    //    case startups = "Startups"
-    //    case ai = "AI"
-    //    case ventureCapital = "VC"
-    //    case bigTech = "Big Tech"
-    //    case finance = "Finance"
-    //    case leadership = "Leadership"
-    //    case stanford = "Stanford"
-    //    case global = "Global"
-//    case allIn = "All-In"
-//    case acquired = "Acquired"
-//    case stanfordGSB = "Stanford"
-//    case thisWeekStartups = "This Week In Startups"
-//    case grahamWeaver = "Graham Weaver"
-//    case netflix = "Netflix Co-founder Marc Randolph"
-//    case morningBrew = "Morning Brew Daily"
-//    case bestOneYet = "The Best One Yet"
-//}
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0..<Swift.min($0 + size, count)])
+        }
+    }
+}
+
 
 
 extension Video {

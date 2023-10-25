@@ -39,13 +39,20 @@ struct Carousel: View {
                                     }, label: {
                                         MyText(text: viewModel.channels[i].title, size: screenSize.width * 0.04, bold: true, alignment: .center, color: selected == viewModel.channels[i] ? .white : Color("AccentGray"))
                                             .padding(.horizontal, 15)
+                                            .padding(.vertical, 10)
                                             .lineLimit(1)
-                                            .background(Capsule()
-                                                .fill(LinearGradient(gradient: Gradient(colors: [selected == viewModel.channels[i] ? selected.color.opacity(0.75) : .white.opacity(0.1), .white.opacity(0.1)]), startPoint: .topLeading, endPoint: .bottomTrailing))
-                                                )
-                                            .overlay(Capsule()
-                                                .stroke(Color.black, lineWidth: 1)
-                                                .shadow(color: Color.black.opacity(selected == viewModel.channels[i] ? 1.0 : 0.0), radius: 5, x: 0, y: 5))
+                                            .overlay(
+                                                Rectangle()
+                                                    .frame(height: 4)
+                                                    .foregroundColor(selected == viewModel.channels[i] ? .white : .clear),
+                                                alignment: .bottom
+                                            )
+//                                            .background(Capsule()
+//                                                .fill(LinearGradient(gradient: Gradient(colors: [selected == viewModel.channels[i] ? selected.color.opacity(0.75) : .white.opacity(0.1), .white.opacity(0.1)]), startPoint: .topLeading, endPoint: .bottomTrailing))
+//                                                )
+//                                            .overlay(Capsule()
+//                                                .stroke(Color.black, lineWidth: 1)
+//                                                .shadow(color: Color.black.opacity(selected == viewModel.channels[i] ? 1.0 : 0.0), radius: 5, x: 0, y: 5))
                                             .animation(.easeOut, value: selected)
                                             .transition(.opacity)
                                         
@@ -64,26 +71,6 @@ struct Carousel: View {
                     }
                     Spacer()
                     
-                
-                    Button(action: {
-                        isNavigationActive = true
-                        isPlaying = false
-                    }, label: {
-                        Image(systemName: "person.crop.circle")
-                            .foregroundColor(.white)
-                            .font(.system(size: geo.size.width * 0.08, weight: .light))
-                            .shadow(radius: 2.0)
-
-                    })
-                    .background(
-                        NavigationLink(destination: ProfileView(isPlaying: $isPlaying)
-                                        .environmentObject(authModel)
-                                        .environmentObject(viewModel),
-                                       isActive: $isNavigationActive,
-                                       label: { EmptyView() })
-                    )
-                    .padding(10)
-//                    .frame(maxWidth: screenSize.width * 0.15)
                 }
                 .frame(maxHeight: geo.size.height * 0.1)
                 .frame(width: geo.size.width)

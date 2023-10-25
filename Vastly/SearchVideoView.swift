@@ -56,7 +56,7 @@ struct SearchVideoView: View {
     
     @Binding var publisherIsTapped: Bool
 
-    
+    @State var shareURL: URL?
     
     var body: some View {
             GeometryReader { geo in
@@ -80,6 +80,9 @@ struct SearchVideoView: View {
                         .scrollDisabled(true)
         //                    .id(activeChannel)
                         .clipped()
+                    
+
+                    
                         .onAppear {
                             viewModel.playerManager?.updateQueue(with: vids)
                             isPlaying = true
@@ -93,8 +96,9 @@ struct SearchVideoView: View {
                             
                             previous = current_playing
                             trackAVStatus(for: getVideo(current_playing))
+                            viewModel.playerManager?.pauseAllOthers(except: getVideo(current_playing))
+                            shareURL = videoShareURL(getVideo(current_playing))
 //                            play(current_playing)
-    //                        viewModel.playerManager?.pauseAllOthers(except: getVideo(current_playing))
 
                         }
                         .onChange(of: current_playing) { newIndex in
@@ -129,6 +133,10 @@ struct SearchVideoView: View {
                                 
                                 previous = newIndex
                             }
+                            
+
+                            
+                            
                         }
                     .frame(width: geo.size.width, height: geo.size.height)
                     
@@ -153,12 +161,12 @@ struct SearchVideoView: View {
                         let vel = event.predictedEndTranslation.height
                         let distance = event.translation.height
                         
-                        if vel <= -screenSize.height/4 || distance <= -screenSize.height/2 {
+                        if vel <= -screenSize.height / 4 || distance <= -screenSize.height / 2 {
                             if current_playing + 1 <= vids.count {
                                 current_playing += 1
                                 
                             }
-                        } else if vel >= screenSize.height/4 || distance >= screenSize.height/2 {
+                        } else if vel >= screenSize.height / 4 || distance >= screenSize.height / 2 {
                             if current_playing > 0 {
                                 current_playing -= 1
                             }
@@ -177,10 +185,15 @@ struct SearchVideoView: View {
             )
 
     }
-    
     private func renderVStackVideo(geoWidth: CGFloat, geoHeight: CGFloat, video: Video, next: Video?, i: Int) -> some View {
         VStack(alignment: .leading) {
-            //                                if i == current_playing {
+//            HStack {
+//                if let title {
+//                    MyText(text: title, size: 24, bold: true, alignment: .leading, color: .white)
+//                        .padding(.horizontal)
+//                }
+//            }
+            
             HStack {
                 
                 if !videoMode {
@@ -202,7 +215,10 @@ struct SearchVideoView: View {
                 .padding(.bottom, 10)
                 .frame(width: screenSize.width * 0.15)
             } // end hstack
-
+            //                                }
+            
+            //                                if (abs(i - current_playing) <= 1 && channel == activeChannel) ||
+            //                                    (i == current_playing && abs((Channel.allCases.firstIndex(of: activeChannel) ?? 0) - (Channel.allCases.firstIndex(of: channel) ?? 0)) <= 1) {
             if (abs(i - current_playing) <= 1) {
                 if let manager = viewModel.playerManager {
 
@@ -245,141 +261,125 @@ struct SearchVideoView: View {
                         }  else {
                             VideoThumbnailView(video: video)
                                 .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
+//                                                        VideoLoadingView()
+//                                                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
                         }
                     } // end if
                 }
+            } else if (i == current_playing) {
+                VideoThumbnailView(video: video)
+                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
             } else {
                 VideoLoadingView()
                     .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
             } // end abs if
             
-            
-            HStack(alignment: .top) {
-                MyText(text: video.date ?? "", size: geoWidth * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
-                    .lineLimit(1)
-                    .padding(.leading)
+            VStack(alignment: .center) {
                 
-                Spacer()
-                MyText(text: "\(playerTime.asString) / \(playerDuration.asString)", size: geoWidth * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
-                    .lineLimit(1)
-                    .padding(.trailing)
-            } // end hstack
-            
-            
-            HStack {
+                HStack(alignment: .top) {
+                    MyText(text: video.date ?? "", size: geoWidth * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
+                        .lineLimit(1)
+                        .padding(.leading)
+                    
+                    Spacer()
+                    MyText(text: "\(playerTime.asString) / \(playerDuration.asString)", size: geoWidth * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
+                        .lineLimit(1)
+                        .padding(.trailing)
+                } // end hstack
+//                .frame(width: geoWidth)
                 
-                Button(action: {
-                    withAnimation {
-                        publisherIsTapped = true
-                    }
-                }, label: {
+                
+                VStack {
                     
-                    
-                    HStack(alignment: .center) {
-                        if i == current_playing {
-                            AsyncImage(url: video.author.fileName) { image in
-                                image.resizable()
-                            } placeholder: {
-                                ZStack {
-                                    Color("BackgroundColor")
-                                    MyText(text: "?", size: geoWidth * 0.05, bold: true, alignment: .center, color: .white)
+                    HStack {
+                        
+                        MyText(text: video.title, size: 20, bold: true, alignment: .leading, color: .white)
+                            .lineLimit(1)
+                        
+                        Spacer()
+                        Image(systemName: liked ? "plus.square.fill.on.square.fill" : "plus.square.on.square")
+                            .foregroundColor(liked ? .red : .white)
+                            .font(.system(size: 18, weight: .medium))
+                        //                        .padding(.horizontal)
+                            .onTapGesture {
+                                
+                                DispatchQueue.main.async {
+                                    liked.toggle()
+                                    let impact = UIImpactFeedbackGenerator(style: .light)
+                                    impact.impactOccurred()
+                                    toggleLike(i)
                                 }
+                                
                             }
-                            .frame(width: geoWidth * 0.125, height: geoWidth * 0.125)
-                            .clipShape(RoundedRectangle(cornerRadius: 5)) // Clips the AsyncImage to a rounded
-                            .padding(.leading)
-                            //                                        .animation(.easeOut, value: activeChannel)
-                            //                                        .transition(.opacity)
-                            
-                            MyText(text: video.author.name ?? "Unknown Author", size: geoWidth * 0.04, bold: true, alignment: .leading, color: .white)
+                            .transition(.opacity)
+                            .animation(.easeOut, value: liked)
+                    } // end hstack
+//                    .frame(width: geoWidth)
+                    
+                    HStack {
+                        Button(action: {
+                            withAnimation {
+                                publisherIsTapped = true
+                            }
+                        }, label: {
+                            MyText(text: video.author.name ?? "Unknown Author", size: 16, bold: true, alignment: .leading, color: .gray)
+                                .brightness(0.25)
                                 .padding(0)
-                                .lineLimit(2)
-                            //                                            .animation(.easeOut, value: activeChannel)
-                            //                                            .transition(.opacity)
-                            Spacer()
-                        }
+                                .lineLimit(1)
+                        })
+                        Spacer()
                     }
                     
-                })
+                    
+                }
+                .padding(.vertical, 5)
+//                .frame(width: geoWidth)
+                //            .padding(.horizontal, 15)
                 
-                .zIndex(1)
-                //                                    .padding(.bottom)
-                
-                Spacer()
-                Image(systemName: liked ? "heart.fill" : "heart")
-                    .foregroundColor(liked ? .red : .white)
-                    .font(.system(size: screenSize.width * 0.05, weight: .medium))
-                    .padding(.horizontal)
-                    .onTapGesture {
-                        DispatchQueue.main.async {
-                            liked.toggle()
-                            let impact = UIImpactFeedbackGenerator(style: .light)
-                            impact.impactOccurred()
-                            toggleLike(i)
+                VStack(alignment: .leading) {
+                    
+                    MyText(text: video.bio, size: 16, bold: false, alignment: .leading, color: Color("AccentGray"))
+                        .truncationMode(.tail)
+                        .lineLimit(bioExpanded ? 8 : 2)
+                        .onTapGesture {
+                            bioExpanded.toggle()
                         }
-                    }
-                    .transition(.opacity)
-                    .animation(.easeOut, value: liked)
-            } // end hstack
-            .padding(.vertical, 5)
-            .frame(width: geoWidth)
-            VStack(alignment: .leading) {
-                
-                MyText(text: video.title, size: geoWidth * 0.05, bold: true, alignment: .leading, color: .white)
-                    .lineLimit(2)
-                    .padding(.horizontal, 15)
-                
-                    HStack {
-                        //                                        VStack {
-                        MyText(text: video.bio, size: geoWidth * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
-                            .truncationMode(.tail)
-                            .padding(.horizontal, 15)
-                            .lineLimit(bioExpanded ? 8 : 4)
-                        Spacer()
-                    }
-                    .onTapGesture {
-                        bioExpanded.toggle()
-                    }
-                .frame(maxWidth: geoWidth * 0.9)
-                .padding(.bottom, 5)
-                
-                if let url = video.youtubeURL {
-                    HStack {
-                        FullEpisodeButton(video: video, isPlaying: $isPlaying)
-//                                                    .frame(width: geo.size.width * 0.04)
-                        Spacer()
-                    }
-                    .padding(.vertical, 5)
-                    .padding(.horizontal, 15)
-                }
-                
-                Spacer()
-                //                                Spacer()
-                if i == current_playing {
-                    HStack {
-                        Image(systemName: "arrow.down")
-                            .foregroundColor(Color("AccentGray"))
-                            .font(.system(size: geoWidth * 0.05, weight: .light))
-                            .padding(.leading)
-                        MyText(text: next != nil ? "\(next!.title)" : "Swipe up for more!", size: geoWidth * 0.03, bold: true, alignment: .leading, color: Color("AccentGray"))
-                        Spacer()
-                        
+                        .padding(.vertical, 5)
+                    
+                    HStack (alignment: .center) {
+                        if let _ = video.youtubeURL {
+                            
+                            FullEpisodeButton(video: video, isPlaying: $isPlaying)
+//                                .frame(maxWidth: geoWidth * 0.5, maxHeight: geoHeight * 0.075)
+                                .padding(.trailing, 5)
 
-                        
-                        
+                        }
+                        if let shareURL {
+                            ShareLink(item: shareURL) {
+                                Image(systemName: "square.and.arrow.up")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 18, weight: .medium))
+                            }
+                        }
+                        Spacer()
                     }
-                    .frame(width: geoWidth)
-                }
-            } // end vstack
-            .frame(width: geoWidth)
-
-            
-            
+                    .padding(.vertical, 10)
+                    //                    .padding(.horizontal, 15)
+                    
+                    Spacer()
+                    
+                } // end vstack
+//                .frame(width: geoWidth)
+                
+            }
+            .padding(.horizontal, 10)
         }
         .id(i)
         .frame(width: geoWidth, height: geoHeight)
         .clipped()
         .offset(y: dragOffset)
+            
+            
     }
     
     
@@ -441,6 +441,11 @@ struct SearchVideoView: View {
     
     private func AuthorURL(_ i: Int) -> URL? {
         return viewModel.videos[channel]?[i].author.fileName
+    }
+    
+    private func videoShareURL(_ video: Video) -> URL {
+        let string = "vastlyapp://open-video?id=\(String(video.id.replacingOccurrences(of: " ", with: "%20")))"
+        return URL(string: string) ?? EMPTY_VIDEO.url!
     }
     
     private func trackAVStatus(for video: Video) {

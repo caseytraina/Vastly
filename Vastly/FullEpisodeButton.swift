@@ -15,34 +15,44 @@ struct FullEpisodeButton: View {
     @Binding var isPlaying: Bool
 
     var body: some View {
-        GeometryReader { geo in
+//        GeometryReader { geo in
             Button(action: {
                 clicked = true
                 isPlaying = false
             }, label: {
-                
                 HStack {
+                    
                     Image(systemName: "play.fill")
-                        .font(.system(size: geo.size.width * 0.05))
-                        .foregroundColor(.accentColor)
-                    MyText(text: "Full Episode", size: geo.size.width * 0.04, bold: false, alignment: .leading, color: Color("BackgroundColor"))
+                        .font(.system(size: 18))
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(.white)
+                    
+                    MyText(text: "Full Episode", size: 16, bold: true, alignment: .leading, color: .white)
+                    //                    .brightness(-0.5)
+                    //                    .padding(./*vertical*/, 10)
+//                        .padding(10)
+
+                        .sheet(isPresented: $clicked, onDismiss: {
+                            isPlaying = true
+                            clicked = false
+                        }, content: {
+                            FullEpisodeView(video: video)
+                        })
+                    
                 }
-                .padding(10)
+                .padding(.vertical, 5)
+                .padding(.horizontal, 10)
                 .background(
-                Capsule()
-                    .foregroundColor(Color("AccentGray"))
-    //                .frame(width: geo.size.width, height: geo.size.height)
+                    RoundedRectangle(cornerRadius: 100)
+                        .foregroundColor(.gray)
+                        .opacity(0.25)
                 )
-                .sheet(isPresented: $clicked, onDismiss: {
-                    isPlaying = true
-                    clicked = false
-                }, content: {
-                    FullEpisodeView(video: video)
-                })
                 
-//            .frame(width: geo.size.width, height: geo.size.height)
             })
-        }
+//            .frame(width: geo.size.width, height: geo.size.height)
+
+            
+//        }
     }
 }
 

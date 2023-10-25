@@ -7,6 +7,65 @@
 
 import SwiftUI
 import AVKit
+import MaterialDesignSymbol
+
+enum Page: CaseIterable {
+    
+    case home
+    case search
+    case bookmarks
+    case profile
+    
+    var title: String {
+        switch self {
+            
+        case .home:
+            return "Home"
+        case .search:
+            return "Search"
+        case .bookmarks:
+            return "Bookmarks"
+        case .profile:
+            return "Profile"
+            
+        }
+    }
+    
+    var iconInactive: String {
+        switch self {
+            
+        case .home:
+            return "home"
+        case .search:
+            return "search"
+        case .bookmarks:
+            return "bookmark"
+        case .profile:
+            return "person"
+        }
+    }
+    
+    var iconActive: String {
+        switch self {
+            
+        case .home:
+            return "home-fill"
+        case .search:
+            return "search"
+        case .bookmarks:
+            return "bookmark-fill"
+        case .profile:
+            return "person-fill"
+        }
+    }
+    
+//    var image: UIImage {
+//        let symbol = MaterialDesignSymbol(icon: .home24px, size:25)
+//        symbol.addAttribute(attributeName: .foregroundColor, value: UIColor.red)
+//        let iconImage = symbol.image(size: CGSize(width:25, height:25))
+//    }
+//    
+}
 
 struct HomeView: View {
 //    @EnvironmentObject var viewModel: VideoViewModel
@@ -14,28 +73,35 @@ struct HomeView: View {
     @EnvironmentObject var authModel: AuthViewModel
 
     @State var channel_index = 0
+    @State var activeChannel: Channel = FOR_YOU_CHANNEL
     
+    @State var currentPage: Page = .home
+    
+    @State var isPlaying = true
+    @State var video_indices: [Int]
 //    init(authModel: AuthViewModel) {
 //        _viewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
 //    }
     
+    init(viewModel: VideoViewModel, channel_index: Int = 0, currentPage: Page = .home, isPlaying: Bool = true) {
+        self.channel_index = channel_index
+        self.currentPage = currentPage
+        self.isPlaying = isPlaying
+        self._video_indices = State(initialValue: [Int](repeating: 0, count: viewModel.channels.count))
+
+    }
+    
     var body: some View {
         
         // Create Background + Display Videos
-        
-        ZStack {
-//            LinearGradient(gradient: Gradient(colors: myGradient(channel_index: channel_index)), startPoint: .topLeading, endPoint: .bottom)
-//                .ignoresSafeArea()
-//                .transition(.opacity)
-//                .animation(.easeInOut(duration: 1.0), value: channel_index)
-
-            Color("BackgroundColor")
-                .ignoresSafeArea()
-            
-            if viewModel.isProcessing {
-                LoadingView()
-            } else {
-                ZStack {
+        GeometryReader { geo in
+            ZStack {
+                Color("BackgroundColor")
+                    .ignoresSafeArea()
+                
+                if viewModel.isProcessing || authModel.current_user == nil {
+                    LoadingView()
+                } else {
                     ForEach(0..<viewModel.channels.count) { index in
                         LinearGradient(gradient: Gradient(colors: myGradient(channel_index: index)), startPoint: .topLeading, endPoint: .bottom)
                             .ignoresSafeArea()
@@ -43,20 +109,44 @@ struct HomeView: View {
                             .animation(.easeInOut(duration: 0.75), value: channel_index)
                     }
                     
+                    
+          
+                    
                     VStack {
-                        
-//                        if let openedVideo {
-//
-//                        } else {
-                            NewVideoView(channel_index: $channel_index, viewModel: viewModel)
+                        switch currentPage {
+                            
+                        case .home:
+                            NewVideoView(playing: $isPlaying, channel_index: $channel_index, activeChannel: $activeChannel, viewModel: viewModel, video_indices: $video_indices)
                                 .environmentObject(viewModel)
                                 .environmentObject(authModel)
-//                        }
+                        case .search:
+                            NewSearchBar(all_authors: viewModel.authors, oldPlaying: $isPlaying)
+                                .environmentObject(authModel)
+                                .environmentObject(viewModel)
+                        case .bookmarks:
+                            LikesListView(isPlaying: $isPlaying)
+                                .environmentObject(authModel)
+                                .environmentObject(viewModel)
+                        case .profile:
+                            ProfileView(isPlaying: $isPlaying)
+                                .environmentObject(authModel)
+                                .environmentObject(viewModel)
+                        }
                         
                     }
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    
+                    VStack {
+                        Spacer()
+                        NavBar(selected: $currentPage)
+                            .frame(width: geo.size.width, height: geo.size.width / 5)
+                        //                        .ignoresSafeArea()
+                    }
+                    .ignoresSafeArea()
+                    //                .frame(width: screenSize.width, height: screenSize.height)
                 }
-
             }
+            
         }
 
         

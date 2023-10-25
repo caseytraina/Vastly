@@ -71,7 +71,7 @@ func videoWatched(from start: Date, to end: Date, for video: Video, time: Double
     
     if realTime > 3 {
         userViewedRef.setData([
-            "createdAt": Date(),
+            "createdAt": Timestamp(date: Date()),
             "watchTime": watchTime,
             "watchPercentage": percentage,
             "inChannel": watchedIn.id

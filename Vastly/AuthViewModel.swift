@@ -182,7 +182,7 @@ class AuthViewModel: ObservableObject {
         
         do {
             try await userLikedRef.setData([
-                "createdAt": Date()
+                "createdAt": Timestamp(date: Date())
             ])
             
             try await videoRef.updateData([
@@ -317,7 +317,10 @@ class AuthViewModel: ObservableObject {
             // TODO: this can be removed when enough people have logged in to the app and data
             // has been moved over
             // migrate old likes schema to new likes
-            let likedVideos = try await docRef.collection("likedVideos").getDocuments().documents
+            let likedVideos = try await docRef.collection("likedVideos")
+                .order(by: "createdAt", descending: true)
+                .limit(to: 100)
+                .getDocuments().documents
             let newLikedDocumentIds = likedVideos.map{ v in v.documentID }
 //            
 //            if let oldLikes = data?["liked_videos"] as? [String] ?? nil {
@@ -333,7 +336,9 @@ class AuthViewModel: ObservableObject {
 //            }
             
             // migrate old views schema to new views
-            let viewedVideos = try await docRef.collection("viewedVideos").limit(to: 100).getDocuments().documents
+            let viewedVideos = try await docRef.collection("viewedVideos")
+                .order(by: "createdAt", descending: true)
+                .limit(to: 100).getDocuments().documents
             let newViewedDocumentIds = viewedVideos.map{ v in v.documentID }
             
 //            if let oldViews = data?["viewed_videos"] as? [String] ?? nil {

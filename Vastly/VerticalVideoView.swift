@@ -334,10 +334,8 @@ struct VerticalVideoView: View {
                 //            .padding(.horizontal, 15)
                 
                 VStack(alignment: .leading) {
-                    
-                    MyText(text: video.bio, size: 16, bold: false, alignment: .leading, color: .gray)
-                        .truncationMode(.tail)
-                        .lineLimit(bioExpanded ? 8 : 2)
+                    SeeMoreText(text: video.bio, size: 16, bold: false, alignment: .leading, color: .gray, expanded: $bioExpanded)
+//                        .truncationMode(.tail)
                         .brightness(0.4)
                         .onTapGesture {
                             withAnimation {

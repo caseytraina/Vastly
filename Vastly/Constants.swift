@@ -22,6 +22,7 @@ let VIDEO_WIDTH = screenSize.width
 let VIDEO_HEIGHT = screenSize.width * (9/16)
 
 let IMAGEKIT_ENDPOINT = "https://ik.imagekit.io/4ni2tyc01/Firebase/"
+let TTS_IMAGEKIT_ENDPOINT = "https://ik.imagekit.io/4ni2tyc01/TTS/"
 
 let PUBLIC_KEY = "public_t9txC8byE5HU/lmM06QRbNpw7CU="
 

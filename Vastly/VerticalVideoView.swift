@@ -466,12 +466,14 @@ struct VerticalVideoView: View {
     
     private func play(_ i: Int) {
         if isPlaying && channel == activeChannel {
-            viewModel.playerManager?.getPlayer(for: getVideo(i)).play()
+            viewModel.playerManager?.play(for: getVideo(i))
         }
     }
     
     private func pause(_ i: Int) {
-        viewModel.playerManager?.getPlayer(for: getVideo(i)).pause()
+        if channel == activeChannel {
+            viewModel.playerManager?.pause(for: getVideo(i))
+        }
     }
     
     private func AuthorURL(_ i: Int) -> URL? {
@@ -483,7 +485,7 @@ struct VerticalVideoView: View {
 
         if let player = viewModel.playerManager?.getPlayer(for: video) {
             statusObserver = AnyCancellable(
-                (player.currentItem?
+                (player.items().last?
                     .publisher(for: \.status)
                     .sink { status in
                         switch status {
@@ -550,14 +552,16 @@ struct VerticalVideoView: View {
         }
     }
     
-    private func observePlayer(to player: AVPlayer) {
+    private func observePlayer(to player: AVQueuePlayer) {
                 
-//        DispatchQueue.global(qos: .userInitiated).async {
-        print("Attached observer to \(player.currentItem)")
+        if let item = player.currentItem {
             
-        player.currentItem?.asset.loadValuesAsynchronously(forKeys: ["duration"]) {
+            //        DispatchQueue.global(qos: .userInitiated).async {
+            print("Attached observer to \(item)")
+            
+            item.asset.loadValuesAsynchronously(forKeys: ["duration"]) {
                 DispatchQueue.main.async {
-                    let duration = player.currentItem?.asset.duration
+                    let duration = player.items().last?.asset.duration
                     self.playerDuration = duration ?? CMTime(value: 0, timescale: 1000)
                     
                     timeObserverToken = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1000), queue: .main) { time in
@@ -567,27 +571,33 @@ struct VerticalVideoView: View {
                     }
                 }
             }
-        
-        print("Started Observing Video")
-        
-        if let endObserverToken = endObserverToken {
-            NotificationCenter.default.removeObserver(endObserverToken)
-            self.endObserverToken = nil
-        }
-        
-        endObserverToken = NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime,
-            object: player.currentItem,
-            queue: .main
-        ) { _ in
-            recent_change = true
-            playSound()
-            videoCompleted(for: getVideo(current_playing), with: authModel.user, profile: authModel.current_user)
-            player.seek(to: CMTime.zero)
-
-            player.pause()
-            current_playing += 1;
-//            recent_change = false
+            
+            print("Started Observing Video")
+            
+            if let endObserverToken = endObserverToken {
+                NotificationCenter.default.removeObserver(endObserverToken)
+                self.endObserverToken = nil
+            }
+            
+            endObserverToken = NotificationCenter.default.addObserver(
+                forName: .AVPlayerItemDidPlayToEndTime,
+                object: item,
+                queue: .main
+            ) { _ in
+                
+                if item == player.items().last {
+                    //            if player.currentItem == player.items().last {
+                    recent_change = true
+                    playSound()
+                    videoCompleted(for: getVideo(current_playing), with: authModel.user, profile: authModel.current_user)
+                    print("VIDEO ENDED: \(player.items().last)")
+                    item.seek(to: CMTime.zero)
+                    
+                    player.pause()
+                    current_playing += 1;
+                    //            }
+                }
+            }
         }
     }
     

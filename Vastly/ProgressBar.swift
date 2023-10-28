@@ -108,15 +108,15 @@ struct ProgressBar: View {
         let trueValue = Double(drag.translation.width / UIScreen.main.bounds.width)
 //        self.value = dragStart + trueValue
         // Get the total duration of the video
-        guard let duration = viewModel.playerManager?.getPlayer(for: video).currentItem?.duration else { return }
-        guard let currentTime = viewModel.playerManager?.getPlayer(for: video).currentTime().seconds else { return }
+        guard let duration = viewModel.playerManager?.getPlayer(for: video).items().last?.duration else { return }
+        guard let currentTime = viewModel.playerManager?.getPlayer(for: video).items().last?.currentTime().seconds else { return }
 
         // Calculate the new time based on the proportion of the video's duration
 //        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
         let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
 
         // Seek to the new time in the video
-        viewModel.playerManager?.getPlayer(for: video).seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
+        viewModel.playerManager?.getPlayer(for: video).items().last?.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
 //        dragStart = self.value
         dragStart = self.value
     }
@@ -130,15 +130,15 @@ struct ProgressBar: View {
         let trueValue = Double(drag.translation.width / UIScreen.main.bounds.width)
 //        self.value = dragStart + trueValue
         // Get the total duration of the video
-        guard let duration = viewModel.playerManager?.getPlayer(for: video).currentItem?.duration else { return }
-        guard let currentTime = viewModel.playerManager?.getPlayer(for: video).currentTime().seconds else { return }
+        guard let duration = viewModel.playerManager?.getPlayer(for: video).items().last?.duration else { return }
+        guard let currentTime = viewModel.playerManager?.getPlayer(for: video).items().last?.currentTime().seconds else { return }
 
         // Calculate the new time based on the proportion of the video's duration
 //        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
         let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
 
         // Seek to the new time in the video
-        viewModel.playerManager?.getPlayer(for: video).seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
+        viewModel.playerManager?.getPlayer(for: video).items().last?.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
 
     }
     

@@ -127,7 +127,7 @@ class VideoViewModel: ObservableObject {
         var video = Video(
             id: id,
             title:  dataDict["title"] as? String ?? "No title found",
-            author: self.authors.first(where: { $0.text_id == dataDict["author"] as! String }) ?? EMPTY_AUTHOR,
+            author: self.authors.first(where: { $0.text_id == dataDict["author"] as? String ?? "" }) ?? EMPTY_AUTHOR,
             bio: dataDict["bio"] as? String ?? "",
             date: dataDict["date"] as? String ?? "", // assuming you meant "date" here
             channels: dataDict["channels"] as? [String] ?? [],

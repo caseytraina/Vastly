@@ -136,7 +136,7 @@ struct NewVideoView: View {
                                              profile: authModel.current_user,
                                              watchedIn: activeChannel)
                                 
-                                let duration = viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).currentTime().seconds
+                                let duration = viewModel.playerManager?.getPlayer(for: getVideo(i: video_indices[channel_index], in: previous_channel)).items().last?.currentTime().seconds
                                 
                                 viewModel.playerManager?.changeToChannel(to: newChannel, shouldPlay: playing, newIndex: video_indices[channel_index])
                                 
@@ -264,7 +264,7 @@ struct NewVideoView: View {
                     
                     if newIndex < viewModel.videos[activeChannel]?.count ?? 0 {
                         let previousVideo = getVideo(i: previous_playing, in: activeChannel)
-                        let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
+                        let duration = viewModel.playerManager?.getPlayer(for: previousVideo).items().last?.currentTime().seconds
 
                         videoClicked(for: viewModel.videos[activeChannel]?[newIndex] ?? EMPTY_VIDEO,
                                      with: authModel.user,
@@ -273,7 +273,7 @@ struct NewVideoView: View {
                         videoWatched(from: startTime,
                                      to: endTime,
                                      for: previousVideo,
-                                     time: (viewModel.playerManager?.getPlayer(for: previousVideo).currentItem!.duration.seconds) ?? 0.0,
+                                     time: (viewModel.playerManager?.getPlayer(for: previousVideo).items().last!.duration.seconds) ?? 0.0,
                                      watched: duration,
                                      with: authModel.user,
                                      profile: authModel.current_user,
@@ -314,18 +314,22 @@ struct NewVideoView: View {
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
                     DispatchQueue.main.async {
                         updateMetadata()
+                        viewModel.playerManager?.isInBackground = false
+                        
                     }
                     print("Available again")
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataWillBecomeUnavailableNotification)) { _ in
                     DispatchQueue.main.async {
                         updateMetadata()
+                        viewModel.playerManager?.isInBackground = true
                     }
                     print("From Away")
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
                     DispatchQueue.main.async {
                         updateMetadata()
+                        viewModel.playerManager?.isInBackground = true
                     }
                     print("From Background")
                 }

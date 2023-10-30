@@ -116,5 +116,115 @@
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CF1D0E20-DCB7-4C65-9170-267FFC9144B2"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Vastly/VideoObserver.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
+            landmarkName = "play(for:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "90B9D008-3E5F-470B-A78B-34701D8C0DA1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Vastly/VerticalVideoView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "589"
+            endingLineNumber = "589"
+            landmarkName = "observePlayer(to:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "90B9D008-3E5F-470B-A78B-34701D8C0DA1 - c6d3c8ae28a1447a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 @Sendable (Foundation.Notification) -&gt; () in Vastly.VerticalVideoView.observePlayer(to: __C.AVQueuePlayer) -&gt; ()"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/caseytraina/Downloads/Vastly/Vastly/VerticalVideoView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "586"
+                  endingLineNumber = "586"
+                  offsetFromSymbolStart = "300">
+               </Location>
+               <Location
+                  uuid = "90B9D008-3E5F-470B-A78B-34701D8C0DA1 - c6d3c8ae28a147bc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 @Sendable (Foundation.Notification) -&gt; () in Vastly.VerticalVideoView.observePlayer(to: __C.AVQueuePlayer) -&gt; ()"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/caseytraina/Downloads/Vastly/Vastly/VerticalVideoView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "588"
+                  endingLineNumber = "588"
+                  offsetFromSymbolStart = "300">
+               </Location>
+               <Location
+                  uuid = "90B9D008-3E5F-470B-A78B-34701D8C0DA1 - c6d3c8ae28a147fe"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 @Sendable (Foundation.Notification) -&gt; () in Vastly.VerticalVideoView.observePlayer(to: __C.AVQueuePlayer) -&gt; ()"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/caseytraina/Downloads/Vastly/Vastly/VerticalVideoView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "590"
+                  endingLineNumber = "590"
+                  offsetFromSymbolStart = "756">
+               </Location>
+               <Location
+                  uuid = "90B9D008-3E5F-470B-A78B-34701D8C0DA1 - c6d3c8ae28a147fe"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 @Sendable (Foundation.Notification) -&gt; () in Vastly.VerticalVideoView.observePlayer(to: __C.AVQueuePlayer) -&gt; ()"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/caseytraina/Downloads/Vastly/Vastly/VerticalVideoView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "590"
+                  endingLineNumber = "590"
+                  offsetFromSymbolStart = "688">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "69B0E53C-F1FB-478F-93E3-D2332DF3EB5C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Vastly/VerticalVideoView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "591"
+            endingLineNumber = "591"
+            landmarkName = "observePlayer(to:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

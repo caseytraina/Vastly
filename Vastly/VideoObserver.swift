@@ -26,6 +26,8 @@ class VideoPlayerManager: ObservableObject {
         }
     }
     
+    @State var CurrentVideo: Video?
+    
     var commandCenter: MPRemoteCommandCenter?
     
     @Published var queue: [Video]?
@@ -247,7 +249,9 @@ class VideoPlayerManager: ObservableObject {
     }
     
     func updateQueue(with videos: [Video]) {
+        self.pauseCurrentVideo()
         self.queue = videos
+//        self.playCurrentVideo()
     }
 
     // Function to update static metadata

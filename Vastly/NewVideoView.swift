@@ -93,11 +93,13 @@ struct NewVideoView: View {
                                                 }
                                                 .frame(width: screenSize.width, height: screenSize.height * 0.8)
                                             } else {
-                                                VerticalVideoView(activeChannel: $activeChannel, current_playing: $video_indices[channel_index], isPlaying: $playing, dragOffset: $dragOffset, channel: channel, publisherIsTapped: $publisherIsTapped)
-                                                    .environmentObject(viewModel)
-                                                    .environmentObject(authModel)
-                                                    .frame(width: screenSize.width, height: screenSize.height * 0.8)
-                                                    .id(channel)
+                                                if let vids = viewModel.videos[channel] {
+                                                    VerticalVideoView(activeChannel: $activeChannel, current_playing: $video_indices[channel_index], isPlaying: $playing, dragOffset: $dragOffset, channel: channel, publisherIsTapped: $publisherIsTapped, vids: vids)
+                                                        .environmentObject(viewModel)
+                                                        .environmentObject(authModel)
+                                                        .frame(width: screenSize.width, height: screenSize.height * 0.8)
+                                                        .id(channel)
+                                                }
                                             }
                                             
                                         } else {
@@ -348,7 +350,7 @@ struct NewVideoView: View {
 //                            .animation(.easeOut, value: publisherIsTapped)
                 }
                 if let openedVideo {
-                    NavigationLink("", destination: SingleVideoView(video: openedVideo)
+                    NavigationLink("", destination: SingleVideoView(isActive: $isShareLinkActive, video: openedVideo)
                         .environmentObject(viewModel)
                         .environmentObject(authModel), isActive: $isShareLinkActive)
                     .hidden()

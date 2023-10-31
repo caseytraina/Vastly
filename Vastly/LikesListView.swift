@@ -18,6 +18,17 @@ struct LikesListView: View {
     
     @Binding var isPlaying: Bool
     
+    @State var dummyChannel = FOR_YOU_CHANNEL
+    
+    @State var dummyPublisher = false
+    
+    @State var dragOffset = 0.0
+    @State var cur = 0
+    
+    @State var isLinkActive = false
+    
+    @State var current_video = EMPTY_VIDEO
+    
     var body: some View {
         ZStack {
             Color("BackgroundColor")
@@ -41,23 +52,46 @@ struct LikesListView: View {
                         .font(.system(size: 32))
                         .brightness(0.5)
                 } else {
+                    NavigationLink(destination:
+                        SingleVideoView(isActive: $isLinkActive, video: current_video)
+                           .environmentObject(authModel)
+                           .environmentObject(viewModel)
+//                                VerticalVideoView(activeChannel: $dummyChannel, current_playing: $cur, isPlaying: $isPlaying, dragOffset: $dragOffset, channel: FOR_YOU_CHANNEL, publisherIsTapped: $dummyPublisher, vids: viewModel.authModel.liked_videos)
+
+//                                    .background(Color("BackgroundColor"))
+//                    //                                    .frame(width: screenSize.width, height: screenSize.height)
+//                                    .navigationBarItems(leading:
+//                                        HStack {
+//                                        MyText(text: "Likes", size: 18, bold: true, alignment: .leading, color: .white)
+//                                            .padding(.horizontal)
+//                                        }
+//                                    )
+
+                        
+                    , isActive: $isLinkActive) {
+                        EmptyView()
+                    }
                     
                     ScrollView {
-                        ForEach(viewModel.authModel.liked_videos.reversed().indices) { i in
+                        ForEach(viewModel.authModel.liked_videos) { video in
                             
-                            NavigationLink(destination: {
-                                SingleVideoView(video: viewModel.authModel.liked_videos[i])
-                                    .environmentObject(authModel)
-                                    .environmentObject(viewModel)
-                                
+
+                            
+                            Button(action: {
+//                                viewModel.playerManager?.updateQueue(with: viewModel.authModel.liked_videos)
+//                                viewModel.playerManager?.changeToIndex(to: i, shouldPlay: true)
+//                                cur = i
+                                current_video = video
+                                viewModel.playerManager?.pauseCurrentVideo()
+                                isLinkActive = true
                             }, label: {
                                 HStack {
-                                    AsyncImage(url: getThumbnail(video: viewModel.authModel.liked_videos[i])) { mainImage in
+                                    AsyncImage(url: getThumbnail(video: video)) { mainImage in
                                         mainImage.resizable()
                                             .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
                                     } placeholder: {
                                         
-                                        AsyncImage(url: viewModel.authModel.liked_videos[i].author.fileName) { image in
+                                        AsyncImage(url: video.author.fileName) { image in
                                             image.resizable()
                                                 .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
                                         } placeholder: {
@@ -78,9 +112,9 @@ struct LikesListView: View {
                                     }
                                     
                                     VStack(alignment: .leading) {
-                                        MyText(text: "\(viewModel.authModel.liked_videos[i].title)", size: screenSize.width * 0.035, bold: true, alignment: .leading, color: .white)
+                                        MyText(text: "\(video.title)", size: screenSize.width * 0.035, bold: true, alignment: .leading, color: .white)
                                             .lineLimit(2)
-                                        MyText(text: "\(viewModel.authModel.liked_videos[i].author.name ?? "")", size: screenSize.width * 0.035, bold: false, alignment: .leading, color: Color("AccentGray"))
+                                        MyText(text: "\(video.author.name ?? "")", size: screenSize.width * 0.035, bold: false, alignment: .leading, color: Color("AccentGray"))
                                             .lineLimit(1)
                                     }
                                     Spacer()
@@ -102,12 +136,39 @@ struct LikesListView: View {
             }
         }
         .onAppear {
-            Task {
-                await viewModel.fetchLikedVideos()
-                print("INIT: got liked videos.")
-                
+            if viewModel.likedVideosProcessing {
+                Task {
+                    await viewModel.fetchLikedVideos()
+                    print("INIT: got liked videos.")
+                    
+                }
             }
         }
+//        .gesture(DragGesture()
+//            .onChanged { event in
+//                dragOffset = event.translation.height
+//
+//            }
+//            .onEnded { event in
+//                let vel = event.predictedEndTranslation.height
+//                let distance = event.translation.height
+//                
+//                if vel <= -screenSize.height/4 || distance <= -screenSize.height/2 {
+//                    if cur + 1 <= viewModel.authModel.liked_videos.count {
+//                        cur += 1
+//                        
+//                    }
+//                } else if vel >= screenSize.height/4 || distance >= screenSize.height/2 {
+//                    if cur > 0 {
+//                        cur -= 1
+//                        
+//                    }
+//                }
+//                dragOffset = 0
+//            })
+        
+        
+
     }
     
     private func getThumbnail(video: Video) -> URL? {

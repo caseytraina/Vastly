@@ -80,9 +80,6 @@ struct SearchVideoView: View {
                         .scrollDisabled(true)
         //                    .id(activeChannel)
                         .clipped()
-                    
-
-                    
                         .onAppear {
                             viewModel.playerManager?.updateQueue(with: vids)
                             isPlaying = true
@@ -179,7 +176,7 @@ struct SearchVideoView: View {
             ) // end gesture
             .navigationBarItems(leading:
                 HStack {
-                    MyText(text: "Search for \"\(query)\"", size: screenSize.width * 0.05, bold: true, alignment: .leading, color: .white)
+                MyText(text: query == "" ? "" : "Search for \"\(query)\"", size: screenSize.width * 0.05, bold: true, alignment: .leading, color: .white)
                     .padding(.horizontal)
                 }
             )

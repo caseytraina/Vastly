@@ -177,7 +177,7 @@ class AuthViewModel: ObservableObject {
         let userLikedRef = userRef.collection("likedVideos").document(video.id)
         
         DispatchQueue.main.async {
-            self.liked_videos.append(video)
+            self.liked_videos.insert(video, at: 0)
         }
         
         do {

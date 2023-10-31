@@ -38,6 +38,8 @@ struct NewSearchBar: View {
     
     @Binding var oldPlaying: Bool
 
+    @FocusState private var searchIsFocused: Bool
+
     init(all_authors: [Author], oldPlaying: Binding<Bool>) {
         self.all_authors = all_authors
         _controller = StateObject(wrappedValue: NewAlgoliaController(all_authors: all_authors))
@@ -57,26 +59,26 @@ struct NewSearchBar: View {
                 Color("BackgroundColor")
                     .ignoresSafeArea()
                 VStack {
-                    TextField("Search...",text: $text)
+                    TextField("Search your favorite topics, shows, interests...",text: $text)
                         .textFieldStyle(GradientTextFieldBackground(systemImageString: "magnifyingglass"))
 //                        .focused($textFocused)
                         .frame(width: geo.size.width * 0.9)
                         .padding(.top)
-                        .onSubmit {
-                            Task {
-                                await authModel.addToSearch(text)
-                            }
-                        }
+                        .focused($searchIsFocused)
+//                        .onSubmit {
+//                            Task {
+//                                await authModel.addToSearch(text)
+//                            }
+//                        }
                     //                    List(controller.videos) { video in
                     if text.isEmpty {
-                        MyText(text: "Search your favorite topics, shows, interests, or episodes above!", size: 18, bold: true, alignment: .center, color: .white)
-                            .padding()
                         VStack {
 
                             if let queries = authModel.searchQueries {
                                 
                                 HStack {
                                     MyText(text: "Recent Searches", size: 18, bold: true, alignment: .center, color: .white)
+                                        .padding()
                                     Spacer()
                                 }
                                 
@@ -128,8 +130,7 @@ struct NewSearchBar: View {
                                     NavigationLink(destination: SearchVideoView(query: text, vids: $controller.videos, current_playing: $current, isPlaying: $isPlaying, publisherIsTapped: $dummyPubTapped)
                                         .environmentObject(authModel)
                                         .environmentObject(viewModel)
-                                        .background(Color("BackgroundColor")
-                                                   ),
+                                        .background(Color("BackgroundColor")),
                                                    isActive: $isLinkActive) {
                                         EmptyView()
                                     }
@@ -139,9 +140,9 @@ struct NewSearchBar: View {
                                         oldPlaying = false
                                         isLinkActive = true
                                         
-                                        Task {
-                                            await authModel.addToSearch(text)
-                                        }
+//                                        Task {
+//                                            await authModel.addToSearch(text)
+//                                        }
 
                                         
                                     }, label: {
@@ -187,10 +188,11 @@ struct NewSearchBar: View {
                             .scrollDismissesKeyboard(.immediately)
 
 
-
 //                            .frame(maxHeight: geo.size.height * 0.4)
                         }
+                        
                     }
+
                     Spacer()
                 }
 
@@ -199,6 +201,14 @@ struct NewSearchBar: View {
                 }
                 
             } //end ZStack
+            .onTapGesture {
+                if searchIsFocused {
+                    searchIsFocused.toggle()
+                    Task {
+                        await authModel.addToSearch(text)
+                    }
+                }
+            }
 //            .onTapGesture {
 //                textFocused = false
 //            }

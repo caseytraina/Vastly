@@ -172,10 +172,13 @@ struct SingleVideoView: View {
                                 
                                 Button(action: {
                                     DispatchQueue.main.async {
-                                        isActive.toggle()
+                                        if videoIsLiked() {
+                                            isActive.toggle()
+                                            viewModel.playerManager?.pause(for: video)
+
+                                        }
                                         let impact = UIImpactFeedbackGenerator(style: .light)
                                         impact.impactOccurred()
-                                        viewModel.playerManager?.pause(for: video)
                                         toggleLike()
                                     }
                                 }, label: {
@@ -227,9 +230,10 @@ struct SingleVideoView: View {
 //                    .position(x: screenSize.width/2, y: screenSize.height/3)
                     .onChange(of: isPlaying) { newPlaying in
                         if newPlaying {
-                            viewModel.playerManager?.getPlayer(for: video).play()
+                            viewModel.playerManager?.play(for: video)
+//                            viewModel.playerManager?.getPlayer(for: video).play()
                         } else {
-                            viewModel.playerManager?.getPlayer(for: video).pause()
+                            viewModel.playerManager?.pause(for: video)
                         }
                     }
                 }
@@ -241,6 +245,9 @@ struct SingleVideoView: View {
             viewModel.playerManager?.play(for: video)
 //            viewModel.playerManager?.getPlayer(for: video).play()
             shareURL = videoShareURL(video)
+        }
+        .onDisappear {
+            viewModel.playerManager?.pause(for: video)
         }
     }
     

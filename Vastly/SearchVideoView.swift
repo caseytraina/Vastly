@@ -428,12 +428,12 @@ struct SearchVideoView: View {
     
     private func play(_ i: Int) {
 //        if isPlaying {
-        viewModel.playerManager?.getPlayer(for: getVideo(i)).play()
+        viewModel.playerManager?.play(for: getVideo(i))
 //        }
     }
     
     private func pause(_ i: Int) {
-        viewModel.playerManager?.getPlayer(for: getVideo(i)).pause()
+        viewModel.playerManager?.pause(for: getVideo(i))
     }
     
     private func AuthorURL(_ i: Int) -> URL? {

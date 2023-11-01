@@ -572,17 +572,17 @@ struct VerticalVideoView: View {
                 object: item,
                 queue: .main
             ) { _ in
-                
+                print("Something ended: \(item)")
                 if item == player.items().last {
                     //            if player.currentItem == player.items().last {
+                    player.pause()
+                    item.seek(to: CMTime.zero)
                     recent_change = true
                     playSound()
                     videoCompleted(for: getVideo(current_playing), with: authModel.user, profile: authModel.current_user)
-                    print("VIDEO ENDED: \(player.items().last)")
-                    item.seek(to: CMTime.zero)
-                    
-                    player.pause()
                     current_playing += 1;
+                    print("VIDEO ENDED: \(player.items().last)")
+                    
                     //            }
                 }
             }

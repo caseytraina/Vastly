@@ -392,8 +392,7 @@ class VideoViewModel: ObservableObject {
         if let viewed_videos = self.authModel.current_user?.viewedVideos {
             let db = Firestore.firestore()
             let ref = db.collection("videos")
-            
-            for id in viewed_videos.reversed() {
+            for id in viewed_videos {
                 do {
                     let doc = try await ref.document(id).getDocument()
                     if doc.exists {

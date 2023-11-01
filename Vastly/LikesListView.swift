@@ -56,17 +56,6 @@ struct LikesListView: View {
                         SingleVideoView(isActive: $isLinkActive, video: current_video)
                            .environmentObject(authModel)
                            .environmentObject(viewModel)
-//                                VerticalVideoView(activeChannel: $dummyChannel, current_playing: $cur, isPlaying: $isPlaying, dragOffset: $dragOffset, channel: FOR_YOU_CHANNEL, publisherIsTapped: $dummyPublisher, vids: viewModel.authModel.liked_videos)
-
-//                                    .background(Color("BackgroundColor"))
-//                    //                                    .frame(width: screenSize.width, height: screenSize.height)
-//                                    .navigationBarItems(leading:
-//                                        HStack {
-//                                        MyText(text: "Likes", size: 18, bold: true, alignment: .leading, color: .white)
-//                                            .padding(.horizontal)
-//                                        }
-//                                    )
-
                         
                     , isActive: $isLinkActive) {
                         EmptyView()
@@ -74,8 +63,6 @@ struct LikesListView: View {
                     
                     ScrollView {
                         ForEach(viewModel.authModel.liked_videos) { video in
-                            
-
                             
                             Button(action: {
 //                                viewModel.playerManager?.updateQueue(with: viewModel.authModel.liked_videos)

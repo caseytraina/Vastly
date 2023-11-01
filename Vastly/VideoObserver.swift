@@ -37,7 +37,11 @@ class VideoPlayerManager: ObservableObject {
         }
     }
     
-    @Published var isInBackground = false
+    @Published var isInBackground = false {
+        didSet {
+            print("background value changed: \(self.isInBackground)")
+        }
+    }
     
     // initialize players as well as channel_videos and the command center. The command center must be setup once.
     // the channel_videos is for ease-of-use.
@@ -66,12 +70,12 @@ class VideoPlayerManager: ObservableObject {
                 player.replaceCurrentItem(with: item)
             }
             
-//            if isInBackground && player.items().count == 1 {
-//                if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
-//                    let intro = AVPlayerItem(url: url)
-//                    player.insert(intro, after: nil)
-//                }
-//            }
+            if isInBackground && player.items().count == 1 {
+                if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
+                    let intro = AVPlayerItem(url: url)
+                    player.insert(intro, after: nil)
+                }
+            }
             
             return player
         } else {
@@ -125,7 +129,6 @@ class VideoPlayerManager: ObservableObject {
     // pauses the video.
     func pause(for video: Video) {
         let queuePlayer = getPlayer(for: video)
-        
         if isInBackground {
             queuePlayer.pause()
         } else {
@@ -141,7 +144,7 @@ class VideoPlayerManager: ObservableObject {
         if isInBackground {
             queuePlayer.play()
         } else {
-            if queuePlayer.items().count > 1 {
+            if queuePlayer.currentItem != queuePlayer.items().last {
                 queuePlayer.advanceToNextItem()
             }
             queuePlayer.play()

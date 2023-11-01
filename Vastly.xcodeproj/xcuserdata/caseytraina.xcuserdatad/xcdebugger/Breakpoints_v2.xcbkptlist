@@ -126,8 +126,8 @@
             filePath = "Vastly/VideoObserver.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "141"
-            endingLineNumber = "141"
+            startingLineNumber = "144"
+            endingLineNumber = "144"
             landmarkName = "play(for:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -213,17 +213,160 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "69B0E53C-F1FB-478F-93E3-D2332DF3EB5C"
+            uuid = "93B1FBA4-41B7-46A6-AC1D-24372E549552"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Vastly/VerticalVideoView.swift"
+            filePath = "Vastly/VideoFailedView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "579"
-            endingLineNumber = "579"
-            landmarkName = "observePlayer(to:)"
+            startingLineNumber = "19"
+            endingLineNumber = "19"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "90920B46-3B37-4854-AAC1-4C4A075AC495"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Vastly/AuthViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "355"
+            endingLineNumber = "355"
+            landmarkName = "fetch(docRef:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "90920B46-3B37-4854-AAC1-4C4A075AC495 - 9eca2bd740b21c17"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #7 @Swift.MainActor @Sendable () -&gt; () in Vastly.AuthViewModel.fetch(docRef: __C.FIRDocumentReference) async throws -&gt; Vastly.Profile"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/caseytraina/Downloads/Vastly/Vastly/AuthViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "382"
+                  endingLineNumber = "382"
+                  offsetFromSymbolStart = "96">
+               </Location>
+               <Location
+                  uuid = "90920B46-3B37-4854-AAC1-4C4A075AC495 - 34ee87ab2a2db5b1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(9) suspend resume partial function for Vastly.AuthViewModel.fetch(docRef: __C.FIRDocumentReference) async throws -&gt; Vastly.Profile"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/caseytraina/Downloads/Vastly/Vastly/AuthViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "356"
+                  endingLineNumber = "356"
+                  offsetFromSymbolStart = "2316">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0123FCEA-5524-4AE0-8B4C-484FCE61E243"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Vastly/AuthViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "330"
+            endingLineNumber = "330"
+            landmarkName = "fetch(docRef:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6594E24D-47FF-455D-8995-95912FA61B0B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Vastly/AuthViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "341"
+            endingLineNumber = "341"
+            landmarkName = "fetch(docRef:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "71DEA245-4E95-430F-A3AF-8B25FEA12E8C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Vastly/AuthViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "338"
+            endingLineNumber = "338"
+            landmarkName = "fetch(docRef:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "71DEA245-4E95-430F-A3AF-8B25FEA12E8C - 34ee87ab2a2db4a9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(9) suspend resume partial function for Vastly.AuthViewModel.fetch(docRef: __C.FIRDocumentReference) async throws -&gt; Vastly.Profile"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/caseytraina/Downloads/Vastly/Vastly/AuthViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "364"
+                  endingLineNumber = "364"
+                  offsetFromSymbolStart = "772">
+               </Location>
+               <Location
+                  uuid = "71DEA245-4E95-430F-A3AF-8B25FEA12E8C - 34ee87ab2a2db4a9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(9) suspend resume partial function for Vastly.AuthViewModel.fetch(docRef: __C.FIRDocumentReference) async throws -&gt; Vastly.Profile"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/caseytraina/Downloads/Vastly/Vastly/AuthViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "364"
+                  endingLineNumber = "364"
+                  offsetFromSymbolStart = "756">
+               </Location>
+               <Location
+                  uuid = "71DEA245-4E95-430F-A3AF-8B25FEA12E8C - 34ee87ab2a2db4a9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(9) suspend resume partial function for Vastly.AuthViewModel.fetch(docRef: __C.FIRDocumentReference) async throws -&gt; Vastly.Profile"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/caseytraina/Downloads/Vastly/Vastly/AuthViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "364"
+                  endingLineNumber = "364"
+                  offsetFromSymbolStart = "748">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

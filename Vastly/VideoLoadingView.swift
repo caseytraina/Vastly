@@ -19,18 +19,6 @@ struct VideoLoadingView: View {
                     MyText(text: "Vastly", size: geo.size.width * 0.05, bold: true, alignment: .center, color: .accentColor)
 //                    MyText(text: "We'll be right with you", size: geo.size.width * 0.03, bold: false, alignment: .center, color: Color("AccentGray"))
                     MyText(text: "Loading...", size: geo.size.width * 0.05, bold: true, alignment: .center, color: .white)
-
-//                    ProgressView()
-//                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-//                        .scaleEffect(2, anchor: .center)
-//                        .rotationEffect(.degrees(isAnimating ? 360 : 0))
-//                        .animation(Animation.linear(duration: 2).repeatForever(autoreverses: false))
-//                        .onAppear {
-//                            isAnimating = true
-//                        }
-//                        .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
-
-
                 }
             }
         }

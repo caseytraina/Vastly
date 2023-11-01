@@ -330,7 +330,7 @@ struct NewVideoView: View {
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
                     DispatchQueue.main.async {
-                        updateMetadata()
+//                        updateMetadata()
                         viewModel.playerManager?.isInBackground = true
                     }
                     print("From Background")

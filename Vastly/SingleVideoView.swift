@@ -241,9 +241,7 @@ struct SingleVideoView: View {
             
         }
         .onAppear {
-//            isPlaying = false
             viewModel.playerManager?.play(for: video)
-//            viewModel.playerManager?.getPlayer(for: video).play()
             shareURL = videoShareURL(video)
         }
         .onDisappear {

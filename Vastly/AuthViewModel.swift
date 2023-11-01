@@ -55,7 +55,6 @@ class AuthViewModel: ObservableObject {
 
                     Task { [self] in
                         await self?.configureUser(self?.user?.phoneNumber ?? self?.user?.email ?? "")
-//                        self?.viewModel = VideoViewModel(authModel: self ?? AuthViewModel())
                     }
 
                     var AMP_Array: [AnyHashable] = []
@@ -287,9 +286,7 @@ class AuthViewModel: ObservableObject {
         
         let db = Firestore.firestore()
         let storageRef = db.collection("users").document(current_user?.phoneNumber ?? current_user?.email ?? "")
-        
-        
-        
+
         do {
             
             let docs = try await storageRef.collection("searchHistory").whereField("query", isEqualTo: query).getDocuments().documents
@@ -322,70 +319,37 @@ class AuthViewModel: ObservableObject {
                 .limit(to: 100)
                 .getDocuments().documents
             let newLikedDocumentIds = likedVideos.map{ v in v.documentID }
-//            
-//            if let oldLikes = data?["liked_videos"] as? [String] ?? nil {
-//                for like in oldLikes {
-//                    if !newLikedDocumentIds.contains(where: {$0 == like }) {
-//                        let userLikedRef = docRef.collection("likedVideos").document(like)
-//                        try await userLikedRef.setData([
-//                            "createdAt": Date()
-//                        ])
-//                    }
-//                    
-//                }
-//            }
             
             // migrate old views schema to new views
             let viewedVideos = try await docRef.collection("viewedVideos")
                 .order(by: "createdAt", descending: true)
-                .limit(to: 100).getDocuments().documents
+                .limit(to: 100)
+                .getDocuments().documents
             let newViewedDocumentIds = viewedVideos.map{ v in v.documentID }
-            
-//            if let oldViews = data?["viewed_videos"] as? [String] ?? nil {
-//                for view in oldViews {
-//                    if !newViewedDocumentIds.contains(where: {$0 == view }) {
-//                        let userViewedRef = docRef.collection("viewedVideos").document(view)
-//                        try await userViewedRef.setData([
-//                            "createdAt": Date()
-//                        ])
-//                    }
-//                    
-//                }
-//            }
             
             // migrate old views schema to new views
             let searchDocs = try await docRef.collection("searchHistory")
                 .order(by: "createdAt", descending: true)
-                .limit(to: 6).getDocuments().documents
+                .limit(to: 6)
+                .getDocuments().documents
             var searchQueries: [String] = []
             
             for doc in searchDocs {
-                do {
-                    let data = try doc.data()
-                    
-                    let query = data["query"] as! String
-                    
-                    if (self.searchQueries != nil) {
-                        if !(self.searchQueries!.contains(where: {$0 == query})) {
-                            DispatchQueue.main.async {
-                                self.searchQueries?.append(query)
-                            }
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            self.searchQueries = [query]
-                        }
+                let data = doc.data()
+                
+                let query = data["query"] as! String
+                
+                searchQueries.append(query)
+            }
+            
+            if (self.searchQueries != nil) {
+                for query in searchQueries {
+                    DispatchQueue.main.async {
+                        self.searchQueries?.append(query)
                     }
-                    
-                    if !(self.searchQueries?.contains(where: {$0 == data["query"] as! String}) ?? false) {
-                        DispatchQueue.main.async {
-                            self.searchQueries?.append(data["query"] as! String)
-                        }
-                    }
-                    
-                } catch {
-                    print("error getting query: \(error)")
                 }
+            } else {
+                self.searchQueries = searchQueries
             }
             
             

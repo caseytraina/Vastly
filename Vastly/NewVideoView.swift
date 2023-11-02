@@ -84,30 +84,35 @@ struct NewVideoView: View {
                                 HStack {
                                     
                                     ForEach(viewModel.channels, id: \.self) { channel in
-                                        if abs((viewModel.channels.firstIndex(of: activeChannel) ?? 0) - (viewModel.channels.firstIndex(of: channel) ?? 0)) <= 1 {
-
-                                            if (viewModel.videos[channel] ?? []).isEmpty {
+//                                        if abs((viewModel.channels.firstIndex(of: activeChannel) ?? 0) - (viewModel.channels.firstIndex(of: channel) ?? 0)) <= 1 {
+                                        if let vids = viewModel.videos[channel] {
+                                            if vids.isEmpty {
                                                 ZStack {
                                                     Color("BackgroundColor")
-                                                    MyText(text: "It seems you've seen all these videos. Try a new channel!", size: screenSize.width * 0.05, bold: true, alignment: .center, color: .white)
+                                                    MyText(text: "Hold tight... We're finding more videos!", size: screenSize.width * 0.05, bold: true, alignment: .center, color: .white)
                                                 }
                                                 .frame(width: screenSize.width, height: screenSize.height * 0.8)
                                             } else {
-                                                if let vids = viewModel.videos[channel] {
-                                                    VerticalVideoView(activeChannel: $activeChannel, current_playing: $video_indices[channel_index], isPlaying: $playing, dragOffset: $dragOffset, channel: channel, publisherIsTapped: $publisherIsTapped, vids: vids)
-                                                        .environmentObject(viewModel)
-                                                        .environmentObject(authModel)
-                                                        .frame(width: screenSize.width, height: screenSize.height * 0.8)
-                                                        .id(channel)
-                                                }
+                                                VerticalVideoView(activeChannel: $activeChannel, current_playing: $video_indices[channel_index], isPlaying: $playing, dragOffset: $dragOffset, channel: channel, publisherIsTapped: $publisherIsTapped, vids: vids)
+                                                    .environmentObject(viewModel)
+                                                    .environmentObject(authModel)
+                                                    .frame(width: screenSize.width, height: screenSize.height * 0.8)
+                                                    .id(channel)
                                             }
-                                            
                                         } else {
-                                            Color("BackgroundColor")
-                                                .frame(width: screenSize.width, height: screenSize.height * 0.8)
-//                                                    .blur(radius: channel == activeChannel ? 0 : 3)
-                                                .id(channel)
+                                            ZStack {
+                                                Color("BackgroundColor")
+                                                MyText(text: "It seems you've seen all these videos. Try a new channel!", size: screenSize.width * 0.05, bold: true, alignment: .center, color: .white)
+                                            }
+                                            .frame(width: screenSize.width, height: screenSize.height * 0.8)
                                         }
+//
+//                                        } else {
+//                                            Color("BackgroundColor")
+//                                                .frame(width: screenSize.width, height: screenSize.height * 0.8)
+////                                                    .blur(radius: channel == activeChannel ? 0 : 3)
+//                                                .id(channel)
+//                                        }
                                         
                                     } //end for each
                                     

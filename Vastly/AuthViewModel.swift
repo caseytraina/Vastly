@@ -316,14 +316,14 @@ class AuthViewModel: ObservableObject {
             // migrate old likes schema to new likes
             let likedVideos = try await docRef.collection("likedVideos")
                 .order(by: "createdAt", descending: true)
-                .limit(to: 100)
+                .limit(to: 25)
                 .getDocuments().documents
             let newLikedDocumentIds = likedVideos.map{ v in v.documentID }
             
             // migrate old views schema to new views
             let viewedVideos = try await docRef.collection("viewedVideos")
                 .order(by: "createdAt", descending: true)
-                .limit(to: 100)
+                .limit(to: 50)
                 .getDocuments().documents
             let newViewedDocumentIds = viewedVideos.map{ v in v.documentID }
             

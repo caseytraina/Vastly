@@ -62,14 +62,15 @@ class VideoViewModel: ObservableObject {
             await self.generateShapedForYou(max: 10)
             // We do this at the end so we can analyze the liked and viewed videos
             print("INIT: got for you videos.")
-
-            // For you page must have completed loading before letting user into the app
             DispatchQueue.main.async {
                 self.isProcessing = false
             }
-            
             await self.getVideos()
             print("Got videos.")
+            // For you page must have completed loading before letting user into the app
+
+            
+
             
             print("Processed videos.")
         }
@@ -256,6 +257,9 @@ class VideoViewModel: ObservableObject {
                             let video = self.resultToVideo(id: unfilteredVideo.first?.key ?? UUID().uuidString, data: unfilteredVideo.first?.value)
                             
                             if let video {
+                                if channel.id == "Finance & Investing" {
+                                    print("FINANCE VIDEO FROM ADDED: \(video.id)")
+                                }
                                 newVideos.append(video)
                             }
                             
@@ -263,13 +267,14 @@ class VideoViewModel: ObservableObject {
                         
                         if self.videos[channel] == nil {
                             DispatchQueue.main.async {
-                                self.videos[channel] = newVideos
+                                self.videos[channel] = newVideos.shuffled()
                             }
                         } else {
                             DispatchQueue.main.async {
                                 for video in newVideos {
                                     self.videos[channel]?.append(video)
                                 }
+                                self.videos[channel] = self.videos[channel]?.shuffled()
                             }
                         }
                     }
@@ -361,10 +366,13 @@ class VideoViewModel: ObservableObject {
                     
                     let vid = resultToVideo(id: id, data: unfilteredVideo)
                     
+                    if ((vid?.channels.contains("Finance & Investing")) != nil) {
+                        print("FINANCE VIDEO FROM FY: \(vid?.id)")
+                    }
+                    
                     if let vid {
                         finalVideos.append(vid)
                     }
-                    
                 } catch {
                     print("error looking up videos: \(error)")
                 }
@@ -449,6 +457,12 @@ class VideoViewModel: ObservableObject {
                                 DispatchQueue.main.async {
                                     self.authModel.liked_videos.append(video)
                                 }
+                            }
+                        }
+                        
+                        if self.authModel.liked_videos.count > 5 {
+                            DispatchQueue.main.async {
+                                self.likedVideosProcessing = false
                             }
                         }
                         

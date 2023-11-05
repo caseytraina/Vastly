@@ -321,7 +321,7 @@ struct NewVideoView: View {
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
                     DispatchQueue.main.async {
                         updateMetadata()
-                        viewModel.playerManager?.isInBackground = false
+//                        viewModel.playerManager?.isInBackground = false
                         
                     }
                     print("Available again")
@@ -329,14 +329,14 @@ struct NewVideoView: View {
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataWillBecomeUnavailableNotification)) { _ in
                     DispatchQueue.main.async {
                         updateMetadata()
-                        viewModel.playerManager?.isInBackground = true
+//                        viewModel.playerManager?.isInBackground = true
                     }
                     print("From Away")
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
                     DispatchQueue.main.async {
 //                        updateMetadata()
-                        viewModel.playerManager?.isInBackground = true
+//                        viewModel.playerManager?.isInBackground = true
                     }
                     print("From Background")
                 }

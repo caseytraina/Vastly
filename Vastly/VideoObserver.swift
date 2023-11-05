@@ -113,6 +113,10 @@ class VideoPlayerManager: ObservableObject {
             }
         }
     }
+    
+    func updateBackgroundState(isInBackground: Bool) {
+        self.isInBackground = isInBackground
+    }
 
 //    // This function ensures that a player for a given video has been created.
 //    func prepareToPlay(_ video: Video) {

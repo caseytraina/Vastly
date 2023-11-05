@@ -126,8 +126,8 @@
             filePath = "Vastly/VideoObserver.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "144"
-            endingLineNumber = "144"
+            startingLineNumber = "148"
+            endingLineNumber = "148"
             landmarkName = "play(for:)"
             landmarkType = "7">
          </BreakpointContent>

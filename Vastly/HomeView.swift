@@ -72,6 +72,8 @@ struct HomeView: View {
     @EnvironmentObject var viewModel: VideoViewModel
     @EnvironmentObject var authModel: AuthViewModel
 
+    @Environment(\.scenePhase) private var scenePhase
+    
     @State var channel_index = 0
     @State var activeChannel: Channel = FOR_YOU_CHANNEL
     
@@ -83,10 +85,8 @@ struct HomeView: View {
 //        _viewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
 //    }
     
-    init(viewModel: VideoViewModel, channel_index: Int = 0, currentPage: Page = .home, isPlaying: Bool = true) {
-        self.channel_index = channel_index
-        self.currentPage = currentPage
-        self.isPlaying = isPlaying
+    init(viewModel: VideoViewModel) {
+
         self._video_indices = State(initialValue: [Int](repeating: 0, count: viewModel.channels.count))
 
     }
@@ -135,6 +135,19 @@ struct HomeView: View {
                         
                     }
                     .frame(width: geo.size.width, height: geo.size.height)
+                    .onChange(of: scenePhase) { newScenePhase in
+                        switch newScenePhase {
+                        case .active:
+//                            viewModel.updateBackgroundState(isInBackground: false)
+                            viewModel.playerManager?.updateBackgroundState(isInBackground: false)
+                        case .background:
+//                            videoPlayerManager.updateBackgroundState(isInBackground: true)
+                            viewModel.playerManager?.updateBackgroundState(isInBackground: true)
+
+                        default:
+                            break
+                        }
+                    }
                     
                     VStack {
                         Spacer()

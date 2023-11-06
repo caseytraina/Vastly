@@ -38,6 +38,8 @@ struct NewSearchBar: View {
     
     @Binding var oldPlaying: Bool
 
+    @FocusState private var searchIsFocused: Bool
+
     init(all_authors: [Author], oldPlaying: Binding<Bool>) {
         self.all_authors = all_authors
         _controller = StateObject(wrappedValue: NewAlgoliaController(all_authors: all_authors))
@@ -57,26 +59,26 @@ struct NewSearchBar: View {
                 Color("BackgroundColor")
                     .ignoresSafeArea()
                 VStack {
-                    TextField("Search...",text: $text)
+                    TextField("Search your favorite topics, shows, interests...",text: $text)
                         .textFieldStyle(GradientTextFieldBackground(systemImageString: "magnifyingglass"))
 //                        .focused($textFocused)
                         .frame(width: geo.size.width * 0.9)
                         .padding(.top)
-                        .onSubmit {
-                            Task {
-                                await authModel.addToSearch(text)
-                            }
-                        }
+                        .focused($searchIsFocused)
+//                        .onSubmit {
+//                            Task {
+//                                await authModel.addToSearch(text)
+//                            }
+//                        }
                     //                    List(controller.videos) { video in
                     if text.isEmpty {
-                        MyText(text: "Search your favorite topics, shows, interests, or episodes above!", size: 18, bold: true, alignment: .center, color: .white)
-                            .padding()
                         VStack {
 
                             if let queries = authModel.searchQueries {
                                 
                                 HStack {
                                     MyText(text: "Recent Searches", size: 18, bold: true, alignment: .center, color: .white)
+                                        .padding()
                                     Spacer()
                                 }
                                 
@@ -128,19 +130,19 @@ struct NewSearchBar: View {
                                     NavigationLink(destination: SearchVideoView(query: text, vids: $controller.videos, current_playing: $current, isPlaying: $isPlaying, publisherIsTapped: $dummyPubTapped)
                                         .environmentObject(authModel)
                                         .environmentObject(viewModel)
-                                        .background(Color("BackgroundColor")
-                                                   ),
+                                        .background(Color("BackgroundColor")),
                                                    isActive: $isLinkActive) {
                                         EmptyView()
                                     }
                                                                         
                                     Button(action: {
                                         current = controller.videos.firstIndex(where:  { $0.id == video.id}) ?? 0
-                                        
+                                        oldPlaying = false
                                         isLinkActive = true
-                                        Task {
-                                            await authModel.addToSearch(text)
-                                        }
+                                        
+//                                        Task {
+//                                            await authModel.addToSearch(text)
+//                                        }
 
                                         
                                     }, label: {
@@ -186,10 +188,11 @@ struct NewSearchBar: View {
                             .scrollDismissesKeyboard(.immediately)
 
 
-
 //                            .frame(maxHeight: geo.size.height * 0.4)
                         }
+                        
                     }
+
                     Spacer()
                 }
 
@@ -198,6 +201,14 @@ struct NewSearchBar: View {
                 }
                 
             } //end ZStack
+            .onTapGesture {
+                if searchIsFocused {
+                    searchIsFocused.toggle()
+                    Task {
+                        await authModel.addToSearch(text)
+                    }
+                }
+            }
 //            .onTapGesture {
 //                textFocused = false
 //            }
@@ -209,7 +220,7 @@ struct NewSearchBar: View {
             controller.search(for: newText)
         }
         .onAppear {
-            oldPlaying = false
+//            oldPlaying = false
         }
     } // end body
     
@@ -229,7 +240,6 @@ class NewAlgoliaController: ObservableObject {
 
     
     init(all_authors: [Author]) {
-        
         self.client = SearchClient(appID: "JDJU8ZVIM4", apiKey: "6eb916eda40c8a7b7f2c116b80e72a27")
         self.index = client.index(withName: "ios_app_videos")
         self.all_authors = all_authors
@@ -246,7 +256,7 @@ class NewAlgoliaController: ObservableObject {
         
         let urlStringUnkept: String = IMAGEKIT_ENDPOINT + fixedPath + "?tr=f-auto"
         var urlString = urlStringUnkept
-        
+
         print(urlString)
         if let url = URL(string: urlString ?? "") {
             return url
@@ -291,25 +301,13 @@ class NewAlgoliaController: ObservableObject {
                                     url: self.getVideoURL(from: decoded.url ?? "") ?? EMPTY_VIDEO.url,
                                     youtubeURL: decoded.youtubeURL ?? "")
                                 
-                                
-                                
                                 print("Data Title: \(video.title)")
                                 DispatchQueue.main.async {
                                     self.videos.append(video)
                                 }
                                 
                             } else if path.contains("authors") {
-                                
-//                                let author = Author(
-//                                    id: UUID(),
-//                                    text_id: hit.objectID.rawValue,
-//                                    name: decoded.name,
-//                                    bio: decoded.bio,
-//                                    fileName: EXAMPLE_AUTHOR.fileName,
-//                                    website: decoded.website,
-//                                    apple: decoded.apple,
-//                                    spotify: decoded.spotify)
-                                
+
                                 let author = self.all_authors.first(where:  { $0.text_id == hit.objectID.rawValue})
                                 if let author {
                                     DispatchQueue.main.async {
@@ -321,16 +319,13 @@ class NewAlgoliaController: ObservableObject {
                     } catch {
                         print("Error parsing hits: \(error)")
                     }
-                    
                 }
                   print("Response: \(response)")
             } else if case .failure (let error) = result {
                   print("Error searching: \(error)")
             }
         }
-        
     }
-
 }
     
 

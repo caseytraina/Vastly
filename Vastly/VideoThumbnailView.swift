@@ -25,7 +25,6 @@ struct VideoThumbnailView: View {
                         .blur(radius: 1)
                 } placeholder: {
                     Color("BackgroundColor")
-                        
                 }
                 VStack {
                     MyText(text: "Vastly", size: geo.size.width * 0.05, bold: true, alignment: .center, color: .accentColor)

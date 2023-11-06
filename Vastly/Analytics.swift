@@ -62,7 +62,7 @@ func videoClicked(for video: Video, with user: User?, profile: Profile?, watched
 
 func videoWatched(from start: Date, to end: Date, for video: Video, time: Double,
                   watched: Double?, with user: User?, profile: Profile?, viewModel: VideoViewModel, watchedIn: Channel) {
-    let watchTime = min(watched ?? 10000.0, end.timeIntervalSince(start).magnitude)
+    let watchTime = watched ?? end.timeIntervalSince(start).magnitude
     let realTime = watchTime >= time ? time : watchTime
     let percentage = ceil((realTime/time) * 100)
     
@@ -72,9 +72,9 @@ func videoWatched(from start: Date, to end: Date, for video: Video, time: Double
     let videoRef = db.collection("videos").document(video.id)
     let userViewedRef = userRef.collection("viewedVideos").document(video.id)
     
-    if realTime > 3 {
+    if realTime > 3 { // CHECK ID OR TITLE
         userViewedRef.setData([
-            "createdAt": Date(),
+            "createdAt": Timestamp(date: Date()),
             "watchTime": watchTime,
             "watchPercentage": percentage,
             "inChannel": watchedIn.id
@@ -82,7 +82,7 @@ func videoWatched(from start: Date, to end: Date, for video: Video, time: Double
         videoRef.updateData([
             "viewedCount": FieldValue.increment(Int64(1))
         ])
-        viewModel.viewed_videos.append(video)
+        viewModel.viewed_videos.insert(video, at: 0)// append(video)
     }
     
     var properties = commonProperties(video: video, user: user, profile: profile)

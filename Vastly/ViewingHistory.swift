@@ -20,7 +20,8 @@ struct ViewingHistory: View {
     
     @Binding var isPlaying: Bool
     @State var isAnimating = true
-    
+    @State var isLinkActive = false
+
     var body: some View {
         ZStack {
             Color("BackgroundColor")
@@ -47,10 +48,17 @@ struct ViewingHistory: View {
                     ScrollView {
                         ForEach(viewModel.viewed_videos) { video in
                             
-                            NavigationLink(destination: {
-                                SingleVideoView(video: video)
+                            NavigationLink(isActive: $isLinkActive, destination: {
+                                SingleVideoView(isActive: $isLinkActive, video: video)
                                     .environmentObject(authModel)
                                     .environmentObject(viewModel)
+                                
+                            }, label: {
+                                EmptyView()
+                            })
+                            
+                            
+                            Button(action: {
                                 
                             }, label: {
                                 HStack {
@@ -95,6 +103,7 @@ struct ViewingHistory: View {
                                     
                                 }
                             })
+                            
                         }
                     }
                     .frame(maxWidth: screenSize.width * 0.95, maxHeight: screenSize.height * 0.65)
@@ -107,8 +116,10 @@ struct ViewingHistory: View {
         }
         .onAppear {
             Task {
-                await viewModel.fetchViewedVideos()
-                print("INIT: got viewed videos.")
+                if viewModel.viewedVideosProcessing {
+                    await viewModel.fetchViewedVideos()
+                    print("INIT: got viewed videos.")
+                }
                 
             }
         }

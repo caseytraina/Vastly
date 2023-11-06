@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AVKit
+import MaterialDesignSymbol
 
 enum Page: CaseIterable {
     
@@ -34,11 +35,11 @@ enum Page: CaseIterable {
         switch self {
             
         case .home:
-            return "house"
+            return "home"
         case .search:
-            return "magnifyingglass"
+            return "search"
         case .bookmarks:
-            return "book.pages"
+            return "bookmark"
         case .profile:
             return "person"
         }
@@ -48,42 +49,52 @@ enum Page: CaseIterable {
         switch self {
             
         case .home:
-            return "house.fill"
+            return "home-fill"
         case .search:
-            return "magnifyingglass"
+            return "search"
         case .bookmarks:
-            return "book.pages.fill"
+            return "bookmark-fill"
         case .profile:
-            return "person.fill"
+            return "person-fill"
         }
     }
     
+//    var image: UIImage {
+//        let symbol = MaterialDesignSymbol(icon: .home24px, size:25)
+//        symbol.addAttribute(attributeName: .foregroundColor, value: UIColor.red)
+//        let iconImage = symbol.image(size: CGSize(width:25, height:25))
+//    }
+//    
 }
 
 struct HomeView: View {
     @EnvironmentObject var viewModel: CatalogModel
     @EnvironmentObject var authModel: AuthViewModel
 
+    @Environment(\.scenePhase) private var scenePhase
+    
     @State var channel_index = 0
+    @State var activeChannel: Channel = FOR_YOU_CHANNEL
     
     @State var currentPage: Page = .home
     
     @State var isPlaying = true
-    
+    @State var video_indices: [Int]
 //    init(authModel: AuthViewModel) {
 //        _viewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
 //    }
+    
+    init(viewModel: VideoViewModel) {
+
+        self._video_indices = State(initialValue: [Int](repeating: 0, count: viewModel.channels.count))
+
+    }
     
     var body: some View {
         
         // Create Background + Display Videos
         GeometryReader { geo in
             ZStack {
-                //            LinearGradient(gradient: Gradient(colors: myGradient(channel_index: channel_index)), startPoint: .topLeading, endPoint: .bottom)
-                //                .ignoresSafeArea()
-                //                .transition(.opacity)
-                //                .animation(.easeInOut(duration: 1.0), value: channel_index)
-                
                 Color("BackgroundColor")
                     .ignoresSafeArea()
                 
@@ -97,13 +108,14 @@ struct HomeView: View {
                             .animation(.easeInOut(duration: 0.75), value: channel_index)
                     }
                     
+                    
+          
+                    
                     VStack {
                         switch currentPage {
                             
                         case .home:
-//                            NewVideoView(playing: $isPlaying, channel_index: $channel_index, viewModel: viewModel)
-//                                .environmentObject(viewModel)
-//                                .environmentObject(authModel)
+//NewVideoView(playing: $isPlaying, channel_index: $channel_index, activeChannel: $activeChannel, viewModel: viewModel, video_indices: $video_indices)
                             CatalogVideoView(playing: $isPlaying,
                                              channel_index: $channel_index,
                                              viewModel: viewModel)
@@ -125,6 +137,21 @@ struct HomeView: View {
                         
                     }
                     .frame(width: geo.size.width, height: geo.size.height)
+                    .onChange(of: scenePhase) { newScenePhase in
+                        switch newScenePhase {
+                        case .active:
+//                            viewModel.updateBackgroundState(isInBackground: false)
+                            viewModel.playerManager?.updateBackgroundState(isInBackground: false)
+                            print("SCENE: ACTIVE")
+                        case .background:
+//                            videoPlayerManager.updateBackgroundState(isInBackground: true)
+                            viewModel.playerManager?.updateBackgroundState(isInBackground: true)
+                            print("SCENE: BACKGROUND")
+
+                        default:
+                            break
+                        }
+                    }
                     
                     VStack {
                         Spacer()

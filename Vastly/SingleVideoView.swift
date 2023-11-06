@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreMedia
+import AVKit
 
 struct SingleVideoView: View {
     
@@ -14,6 +15,8 @@ struct SingleVideoView: View {
     @EnvironmentObject var viewModel: VideoViewModel
     
     @State var channel: Channel = FOR_YOU_CHANNEL
+    
+    @Binding var isActive: Bool
     
     var video: Video
     
@@ -28,6 +31,10 @@ struct SingleVideoView: View {
     @State var videoMode = true
     
     @State var isPlaying = true
+    @State var publisherIsTapped = false
+    @State var bioExpanded = false
+
+    @State var shareURL: URL?
     ///ik-thumbnail.jpg
     ///
     ///
@@ -39,14 +46,29 @@ struct SingleVideoView: View {
 //                .ignoresSafeArea()
             GeometryReader { geo in
                 VStack(alignment: .leading) {
+
+                    HStack(alignment: .center) {
+                        MyText(text: video.title, size: 20, bold: true, alignment: .leading, color: .gray)
+                            .brightness(0.4)
+                            .lineLimit(2)
+                        Spacer()
+                        Toggle(isOn: $videoMode) {
+                            
+                        }
+                        .toggleStyle(AudioToggleStyle(color: channel.color))
+                        .padding(10)
+                        .frame(width: screenSize.width * 0.1)
+                    }
+                    .padding(.horizontal)
+                    
                     ZStack {
                         
                         ZStack {
-                            FullscreenVideoPlayer(videoMode: $videoMode, video: video, activeChannel: $active)
+                            FullscreenVideoPlayer(videoMode: $videoMode, video: video, activeChannel: $channel)
                                 .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                 .padding(0)
                                 .environmentObject(viewModel)
-                            
+
                             if !videoMode {
                                 AudioOverlay(author: video.author, video: video, playing: $isPlaying)
                                     .environmentObject(viewModel)
@@ -59,73 +81,181 @@ struct SingleVideoView: View {
                                     .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                             }
                         }
-                        
-                        //                        if i == current_playing {
-                        
-                        ProgressBar(value: $playerProgress, activeChannel: $active, video: video, isPlaying: $isPlaying)
-                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                            
+                        ProgressBar(value: $playerProgress, activeChannel: $channel, video: video, isPlaying: $isPlaying)
+                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)
                             .padding(0)
                             .environmentObject(viewModel)
-                        //                        }
                     } // end vstack
-                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
-                    
-                    HStack {
-                        MyText(text: getInfo(field: .title), size: geo.size.width * 0.045, bold: true, alignment:
-                                .leading, color: .white)
-                        .lineLimit(3)
-                        .truncationMode(.tail)
-                        .frame(alignment: .leading)
-                        Spacer()
-                        Image(systemName: videoIsLiked() ? "heart.fill" : "heart")
-                            .foregroundColor(videoIsLiked() ? .red : .white)
-                            .font(.system(size: screenSize.width * 0.05, weight: .medium))
-                            .padding()
-                            .onTapGesture {
-                                DispatchQueue.main.async {
-                                    toggleLike()
-                                }
-                            }
-                            .transition(.opacity)
-                            .animation(.easeOut)
-                    }
-                    
-                    HStack() {
-                        MyText(text: getInfo(field: .author), size: geo.size.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
-                            .truncationMode(.tail)
-                            .lineLimit(1)
-                        Spacer()
-                        MyText(text: getInfo(field: .date), size: geo.size.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
+                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)
+            
+                
+                    VStack(alignment: .center) {
                         
-                    }
-                    .padding(.bottom)
-                    
-                    MyText(text: getInfo(field: .bio), size: geo.size.width * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
-                        .truncationMode(.tail)
-                        .lineLimit(8)
-                        .padding(.bottom, geo.size.height * 0.05)
-                    
-                    
-                }
-                .position(x: screenSize.width/2, y: screenSize.height/3)
-                .onChange(of: isPlaying) { newPlaying in
-                    if newPlaying {
-                        viewModel.playerManager?.getPlayer(for: video).play()
-                    } else {
-                        viewModel.playerManager?.getPlayer(for: video).pause()
+                        HStack(alignment: .top) {
+                            MyText(text: playerTime.asString, size: 12, bold: false, alignment: .leading, color: .gray)
+                                .lineLimit(1)
+                                .brightness(0.4)
+                            
+                            Spacer()
+                            MyText(text: playerDuration.asString, size: 12, bold: false, alignment: .leading, color: .gray)
+                                .lineLimit(1)
+                                .brightness(0.4)
+                        } // end hstack
+                        .frame(width: PROGRESS_BAR_WIDTH)
+                        //                .frame(width: geoWidth)
+                        
+                        HStack {
+                            
+                            
+                            Button(action: {
+                                withAnimation {
+                                    publisherIsTapped = true
+                                }
+                            }, label: {
+                                
+                                
+                                HStack(alignment: .center) {
+                                    AsyncImage(url: video.author.fileName) { image in
+                                        image.resizable()
+                                    } placeholder: {
+                                        ZStack {
+                                            Color("BackgroundColor")
+                                        }
+                                    }
+                                    .frame(width: geo.size.width * 0.125, height: geo.size.width * 0.125)
+                                    .clipShape(RoundedRectangle(cornerRadius: 5)) // Clips the AsyncImage to a rounded
+                                    //                                        .animation(.easeOut, value: activeChannel)
+                                    //                                        .transition(.opacity)
+                                    VStack(alignment: .leading) {
+                                        MyText(text: video.author.name ?? "Unknown Author", size: 16, bold: true, alignment: .leading, color: .gray)
+                                            .lineLimit(1)
+                                            .brightness(0.4)
+                                        MyText(text: video.date ?? "", size: 12, bold: false, alignment: .leading, color: .gray)
+                                            .lineLimit(1)
+                                            .brightness(0.4)
+                                        
+                                    }
+                                    //                                            .animation(.easeOut, value: activeChannel)
+                                    //                                            .transition(.opacity)
+                                    Spacer()
+                                    
+                                }
+                                
+                            })
+                            
+                            Spacer()
+                        } // end hstack
+                        
+                        //                .frame(width: geoWidth)
+                        //            .padding(.horizontal, 15)
+                        
+                        VStack(alignment: .leading) {
+                            SeeMoreText(text: video.bio, size: 16, bold: false, alignment: .leading, color: .gray, expanded: $bioExpanded)
+                            //                        .truncationMode(.tail)
+                                .brightness(0.4)
+                                .onTapGesture {
+                                    withAnimation {
+                                        bioExpanded.toggle()
+                                    }
+                                }
+                                .padding(.vertical, 5)
+                            
+                            HStack (alignment: .center) {
+                                if let _ = video.youtubeURL {
+                                    
+                                    FullEpisodeButton(video: video, isPlaying: $isPlaying)
+                                    //                                .frame(maxWidth: geoWidth * 0.5, maxHeight: geoHeight * 0.075)
+                                        .padding(.trailing, 5)
+                                    
+                                }
+                                
+                                Button(action: {
+                                    DispatchQueue.main.async {
+                                        if videoIsLiked() {
+                                            isActive.toggle()
+                                            viewModel.playerManager?.pause(for: video)
+
+                                        }
+                                        let impact = UIImpactFeedbackGenerator(style: .light)
+                                        impact.impactOccurred()
+                                        toggleLike()
+                                    }
+                                }, label: {
+                                    if let image = UIImage(named: videoIsLiked() ? "bookmark-fill" : "bookmark") {
+                                        Image(uiImage: image)
+                                            .renderingMode(.template)
+                                            .foregroundColor(videoIsLiked() ? .white : .white)
+                                            .font(.system(size: 18, weight: .medium))
+                                            .frame(width: 24, height: 24)
+                                            .transition(.opacity)
+                                            .animation(.easeOut, value: videoIsLiked())
+                                            .padding(5)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 15)
+                                                    .foregroundStyle(.gray)
+                                                    .opacity(0.25)
+                                            )
+                                    }
+                                })
+                                .padding(.trailing, 5)
+                                
+                                
+                                if let shareURL {
+                                    ShareLink(item: shareURL) {
+                                        Image(systemName: "square.and.arrow.up")
+                                            .foregroundColor(.white)
+                                            .font(.system(size: 18, weight: .medium))
+                                            .frame(width: 24, height: 24)
+                                            .padding(5)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 15)
+                                                    .foregroundStyle(.gray)
+                                                    .opacity(0.25)
+                                            )
+                                    }
+                                    .padding(.trailing, 5)
+                                }
+                                Spacer()
+                            }
+                            .padding(.vertical, 10)
+                            //                    .padding(.horizontal, 15)
+                            
+                            Spacer()
+                            
+                        } // end vstack
+                        
+                        
+                    } // end vstack
+//                    .position(x: screenSize.width/2, y: screenSize.height/3)
+                    .onChange(of: isPlaying) { newPlaying in
+                        if newPlaying {
+                            viewModel.playerManager?.play(for: video)
+//                            viewModel.playerManager?.getPlayer(for: video).play()
+                        } else {
+                            viewModel.playerManager?.pause(for: video)
+                        }
                     }
                 }
             }
             
         }
         .onAppear {
-//            isPlaying = false
-            viewModel.playerManager?.getPlayer(for: video).play()
+            viewModel.playerManager?.play(for: video)
+            shareURL = videoShareURL(video)
+        }
+        .onDisappear {
+            viewModel.playerManager?.pause(for: video)
         }
     }
     
     enum Field {
         case channel, title, bio, author, date
+    }
+    
+    private func videoShareURL(_ video: Video) -> URL {
+        let string = "vastlyapp://open-video?id=\(String(video.id.replacingOccurrences(of: " ", with: "%20")))"
+        return URL(string: string) ?? EMPTY_VIDEO.url!
     }
     
     private func getInfo(field: Field) -> String {
@@ -171,6 +301,55 @@ struct SingleVideoView: View {
             }
         }
     }
+    
+    private func observePlayer(to player: AVQueuePlayer) {
+                
+        if let item = player.currentItem {
+            
+            //        DispatchQueue.global(qos: .userInitiated).async {
+            print("Attached observer to \(item)")
+            
+            item.asset.loadValuesAsynchronously(forKeys: ["duration"]) {
+                DispatchQueue.main.async {
+                    let duration = player.items().last?.asset.duration
+                    self.playerDuration = duration ?? CMTime(value: 0, timescale: 1000)
+                    
+                    timeObserverToken = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1000), queue: .main) { time in
+                        self.playerTime = time
+                        self.playerProgress = time.seconds / (duration?.seconds ?? 1.0)
+                    }
+                }
+            }
+            
+            print("Started Observing Video")
+//            
+//            if let endObserverToken = endObserverToken {
+//                NotificationCenter.default.removeObserver(endObserverToken)
+//                self.endObserverToken = nil
+//            }
+//
+//            endObserverToken = NotificationCenter.default.addObserver(
+//                forName: .AVPlayerItemDidPlayToEndTime,
+//                object: item,
+//                queue: .main
+//            ) { _ in
+//                
+//                if item == player.items().last {
+//                    //            if player.currentItem == player.items().last {
+//                    recent_change = true
+//                    playSound()
+//                    videoCompleted(for: getVideo(current_playing), with: authModel.user, profile: authModel.current_user)
+//                    print("VIDEO ENDED: \(player.items().last)")
+//                    item.seek(to: CMTime.zero)
+//                    
+//                    player.pause()
+//                    current_playing += 1;
+//                    //            }
+//                }
+//            }
+        }
+    }
+    
     
     private func myGradient(channel_index: Int) -> [Color] {
         

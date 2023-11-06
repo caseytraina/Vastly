@@ -8,6 +8,8 @@
 import SwiftUI
 import CoreMedia
 
+let PROGRESS_BAR_WIDTH = screenSize.width * 0.95
+
 struct ProgressBar: View {
     
     @Binding var value: Double
@@ -32,18 +34,18 @@ struct ProgressBar: View {
                 Spacer()
                 ZStack(alignment: .leading) {
                     
-                    Rectangle().frame(width: geometry.size.width , height: PROGRESS_BAR_HEIGHT)
+                    RoundedRectangle(cornerRadius: 5).frame(width: PROGRESS_BAR_WIDTH , height: PROGRESS_BAR_HEIGHT)
                         .opacity(0.3)
                         .foregroundColor(Color("AccentGray"))
     //                if video.id == viewModel.playerManager?.getCurrentVideo()?.id {
-                        Rectangle().frame(width: min(abs(geometry.size.width * CGFloat(self.value)), geometry.size.width), height: PROGRESS_BAR_HEIGHT)
+                    RoundedRectangle(cornerRadius: 5).frame(width: min(abs(PROGRESS_BAR_WIDTH * CGFloat(self.value)), PROGRESS_BAR_WIDTH), height: PROGRESS_BAR_HEIGHT)
                             .foregroundColor(activeChannel.color)
 
                     
                         Circle()
                             .foregroundColor(activeChannel.color)
                             .frame(width: geometry.size.height * 2 * (beingDragged ? 2 : 1), height: PROGRESS_BAR_HEIGHT * 2 * (beingDragged ? 2 : 1))
-                            .position(x: CGFloat(self.value) * geometry.size.width, y: PROGRESS_BAR_HEIGHT / 2)
+                            .position(x: CGFloat(self.value) * PROGRESS_BAR_WIDTH, y: PROGRESS_BAR_HEIGHT / 2)
 //                            .gesture(
 //                                DragGesture()
 //                                    .updating($dragState) { drag, state, transaction in
@@ -56,7 +58,7 @@ struct ProgressBar: View {
 
     //                }
                 }
-                .frame(width: geometry.size.width, height: PROGRESS_BAR_HEIGHT)
+                .frame(width: PROGRESS_BAR_WIDTH, height: PROGRESS_BAR_HEIGHT)
 //                .background(
 //                    Rectangle()  // The larger hitbox
 //                        .fill(Color.clear) // Make it invisible
@@ -106,15 +108,15 @@ struct ProgressBar: View {
         let trueValue = Double(drag.translation.width / UIScreen.main.bounds.width)
 //        self.value = dragStart + trueValue
         // Get the total duration of the video
-        guard let duration = viewModel.playerManager?.getPlayer(for: video).currentItem?.duration else { return }
-        guard let currentTime = viewModel.playerManager?.getPlayer(for: video).currentTime().seconds else { return }
+        guard let duration = viewModel.playerManager?.getPlayer(for: video).items().last?.duration else { return }
+        guard let currentTime = viewModel.playerManager?.getPlayer(for: video).items().last?.currentTime().seconds else { return }
 
         // Calculate the new time based on the proportion of the video's duration
 //        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
         let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
 
         // Seek to the new time in the video
-        viewModel.playerManager?.getPlayer(for: video).seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
+        viewModel.playerManager?.getPlayer(for: video).items().last?.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
 //        dragStart = self.value
         dragStart = self.value
     }
@@ -128,15 +130,15 @@ struct ProgressBar: View {
         let trueValue = Double(drag.translation.width / UIScreen.main.bounds.width)
 //        self.value = dragStart + trueValue
         // Get the total duration of the video
-        guard let duration = viewModel.playerManager?.getPlayer(for: video).currentItem?.duration else { return }
-        guard let currentTime = viewModel.playerManager?.getPlayer(for: video).currentTime().seconds else { return }
+        guard let duration = viewModel.playerManager?.getPlayer(for: video).items().last?.duration else { return }
+        guard let currentTime = viewModel.playerManager?.getPlayer(for: video).items().last?.currentTime().seconds else { return }
 
         // Calculate the new time based on the proportion of the video's duration
 //        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
         let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
 
         // Seek to the new time in the video
-        viewModel.playerManager?.getPlayer(for: video).seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
+        viewModel.playerManager?.getPlayer(for: video).items().last?.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
 
     }
     

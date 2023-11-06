@@ -22,19 +22,9 @@ struct ProfileView: View {
                 ZStack {
                     Color("BackgroundColor")
                         .ignoresSafeArea()
-//                    LinearGradient(gradient: Gradient(colors: myGradient(channel_index: 0)), startPoint: .topLeading, endPoint: .bottom)
-//                        .ignoresSafeArea()
+
                     VStack {
-//
-//                        Image(systemName: "person.circle")
-//                            .foregroundColor(.white)
-//                            .font(.system(size: geo.size.width * 0.2, weight: .light))
-//                            .padding()
-                        
-//                        MyText(text: "\(authModel.current_user?.firstName?.capitalized.first ?? "V")\(authModel.current_user?.lastName?.capitalized.first ?? "V")", size: geo.size.width * 0.2, bold: true, alignment: .leading, color: .white)
-//                            .padding()
-//
-                        
+
                         Circle()
                             .fill(Color.white)  // Fill color for the circle
                             .frame(width: geo.size.width*0.3, height: geo.size.width*0.3)  // Size of the circle

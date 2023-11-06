@@ -16,7 +16,7 @@ import MediaPlayer
 
 class VideoPlayerManager: ObservableObject {
     
-    @Published var players: [String: AVPlayer] = [:]
+    @Published var players: [String: AVQueuePlayer] = [:]
     @Published var loadingStates: [String: Bool] = [:]
     
     var current_index: Int = 0
@@ -26,6 +26,8 @@ class VideoPlayerManager: ObservableObject {
         }
     }
     
+    @State var CurrentVideo: Video?
+    
     var commandCenter: MPRemoteCommandCenter?
     
     @Published var queue: [Video]?
@@ -34,6 +36,13 @@ class VideoPlayerManager: ObservableObject {
             queue = videos[activeChannel]
         }
     }
+    
+    @Published var isInBackground = false {
+        didSet {
+            print("background value changed: \(self.isInBackground)")
+        }
+    }
+    
     // initialize players as well as channel_videos and the command center. The command center must be setup once.
     // the channel_videos is for ease-of-use.
     
@@ -44,42 +53,59 @@ class VideoPlayerManager: ObservableObject {
         queue = videos[activeChannel]
         setupCommandCenter()
 //        current_index = x/UserDefaults.standard.integer(forKey: "current_index")
-
     }
     
-    // To limit memory, this function no longer does anything except update the value of videos.
-    func updatePlayers(videos: [Channel: [Video]]) {
-        players = [:] // clear previous players
-        self.videos = videos
-        for channel in videos.keys {
-            if let vids = videos[channel] {
-                for video in vids {
-//                    let player = AVPlayer()
-//                    player.automaticallyWaitsToMinimizeStalling = false
-//                    player.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-//                    players[video.id] = player
-                }
-            }
-        }
-    }
+
     
     // This function returns the AVPlayer for a given video by matching its UUID to one in the players array. If one does not exist, it is created and returned.
-    func getPlayer(for video: Video) -> AVPlayer {
+    
+    // The video plays with the text to speech for the title and author before starting the video
+    func getPlayer(for video: Video) -> AVQueuePlayer {
         if let player = players[video.id] {
             if player.currentItem == nil {
-                let item = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
-                item.preferredPeakBitRate = 4000000
-                item.preferredPeakBitRateForExpensiveNetworks = 3000000
+
+                let vid = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
+                player.insert(vid, after: nil)
                 
-                player.replaceCurrentItem(with: item)
+                if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
+                    let intro = AVPlayerItem(url: url)
+                    player.insert(intro, after: nil)
+                }
+
+                players[video.id] = player
             }
+            
+            if isInBackground && player.items().count == 1 {
+                if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
+                    let intro = AVPlayerItem(url: url)
+                    player.insert(intro, after: nil)
+                }
+            }
+            
             return player
         } else {
-            let player = AVPlayer(url: video.url ?? URL(string: "www.google.com")!)
-
+            var items: [AVPlayerItem] = []
+//            let player = AVPlayer(url: video.url ?? URL(string: "www.google.com")!)
+//            if video.text {
+//            if isInBackground {
+            if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
+                let intro = AVPlayerItem(url: url)
+                items.append(intro)
+            }
+//            }
+            
+            let vid = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
+            items.append(vid)
+//            let player = AVPlayer(url: url ?? URL(string: "www.google.com")!)
+            let player = AVQueuePlayer(items: items)
+//            player.actionAtItemEnd
+            
+//            let player = AVPlayer(url: url ?? URL(string: "www.google.com"))
             players[video.id] = player
+                
             return player
         }
+            
     }
     
     // This function loops through the existing players and pauses them except for the one given.
@@ -92,12 +118,16 @@ class VideoPlayerManager: ObservableObject {
             }
         }
     }
-
-    // This function ensures that a player for a given video has been created.
-    func prepareToPlay(_ video: Video) {
-        let item = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
-        getPlayer(for: video).replaceCurrentItem(with: item)
+    
+    func updateBackgroundState(isInBackground: Bool) {
+        self.isInBackground = isInBackground
     }
+
+//    // This function ensures that a player for a given video has been created.
+//    func prepareToPlay(_ video: Video) {
+//        let item = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
+//        getPlayer(for: video).replaceCurrentItem(with: item)
+//    }
 
     // This function deletes an AVPlayer, clearing memory after it has been used. AVPlayers are expensive to create and slow down the app.
     func deletePlayer(_ video: Video) {
@@ -107,13 +137,27 @@ class VideoPlayerManager: ObservableObject {
 
     // pauses the video.
     func pause(for video: Video) {
-        getPlayer(for: video).pause()
+        let queuePlayer = getPlayer(for: video)
+        if isInBackground {
+            queuePlayer.pause()
+        } else {
+//            queuePlayer.advanceToNextItem()
+            queuePlayer.pause()
+        }
     }
     
     // plays the video.
     func play(for video: Video) {
-        getPlayer(for: video).play()
-
+        
+        let queuePlayer = getPlayer(for: video)
+        if isInBackground {
+            queuePlayer.play()
+        } else {
+            if queuePlayer.currentItem != queuePlayer.items().last {
+                queuePlayer.advanceToNextItem()
+            }
+            queuePlayer.play()
+        }
     }
 
     // this function initializes the physical command center controls.
@@ -217,7 +261,9 @@ class VideoPlayerManager: ObservableObject {
     }
     
     func updateQueue(with videos: [Video]) {
+        self.pauseCurrentVideo()
         self.queue = videos
+//        self.playCurrentVideo()
     }
 
     // Function to update static metadata
@@ -325,19 +371,21 @@ class VideoPlayerManager: ObservableObject {
     
     func seekForward(by increment: Double) {
         if let video = self.getCurrentVideo() {
-            let player = self.getPlayer(for: video)
-            let currentTime = player.currentTime().seconds
-            player.seek(to: CMTime(seconds: currentTime + increment, preferredTimescale: 1)) // skip forward by 15 seconds
-            self.updateNowPlayingInfo(for: video)
+            if let player = self.getPlayer(for: video).items().last {
+                let currentTime = player.currentTime().seconds
+                player.seek(to: CMTime(seconds: currentTime + increment, preferredTimescale: 1)) // skip forward by 15 seconds
+                self.updateNowPlayingInfo(for: video)
+            }
         }
     }
     
     func seekBackward(by increment: Double) {
         if let video = self.getCurrentVideo() {
-            let player = self.getPlayer(for: video)
-            let currentTime = player.currentTime().seconds
-            player.seek(to: CMTime(seconds: currentTime - increment, preferredTimescale: 1)) // skip forward by 15 seconds
-            self.updateNowPlayingInfo(for: video)
+            if let player = self.getPlayer(for: video).items().last {
+                let currentTime = player.currentTime().seconds
+                player.seek(to: CMTime(seconds: currentTime - increment, preferredTimescale: 1)) // skip forward by 15 seconds
+                self.updateNowPlayingInfo(for: video)
+            }
         }
     }
     

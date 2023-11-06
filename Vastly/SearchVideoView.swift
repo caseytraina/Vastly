@@ -80,9 +80,6 @@ struct SearchVideoView: View {
                         .scrollDisabled(true)
         //                    .id(activeChannel)
                         .clipped()
-                    
-
-                    
                         .onAppear {
                             viewModel.playerManager?.updateQueue(with: vids)
                             isPlaying = true
@@ -179,7 +176,7 @@ struct SearchVideoView: View {
             ) // end gesture
             .navigationBarItems(leading:
                 HStack {
-                    MyText(text: "Search for \"\(query)\"", size: screenSize.width * 0.05, bold: true, alignment: .leading, color: .white)
+                MyText(text: query == "" ? "" : "Search for \"\(query)\"", size: screenSize.width * 0.05, bold: true, alignment: .leading, color: .white)
                     .padding(.horizontal)
                 }
             )
@@ -431,12 +428,12 @@ struct SearchVideoView: View {
     
     private func play(_ i: Int) {
 //        if isPlaying {
-        viewModel.playerManager?.getPlayer(for: getVideo(i)).play()
+        viewModel.playerManager?.play(for: getVideo(i))
 //        }
     }
     
     private func pause(_ i: Int) {
-        viewModel.playerManager?.getPlayer(for: getVideo(i)).pause()
+        viewModel.playerManager?.pause(for: getVideo(i))
     }
     
     private func AuthorURL(_ i: Int) -> URL? {

@@ -200,12 +200,7 @@ struct VerticalVideoView: View {
                 .padding(.trailing)
             }
             .padding(.horizontal, 10)
-            
-
-            //                                }
-            
-            //                                if (abs(i - current_playing) <= 1 && channel == activeChannel) ||
-            //                                    (i == current_playing && abs((Channel.allCases.firstIndex(of: activeChannel) ?? 0) - (Channel.allCases.firstIndex(of: channel) ?? 0)) <= 1) {
+                        
             if (abs(i - current_playing) <= 1 && channel == activeChannel) {
                 if let manager = viewModel.playerManager {
 
@@ -491,10 +486,7 @@ struct VerticalVideoView: View {
                         case .failed:
                             // Handle failed status
                             videoFailed = true
-//                            viewModel.videos[activeChannel]?.remove(at: current_playing)
-//                            videoListNum -= 1
-//                            print("DELETED")
-//                            nextVideo()
+
                             isLoaded = false
                         @unknown default:
                             // Handle other unknown cases

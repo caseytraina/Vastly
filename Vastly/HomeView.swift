@@ -140,9 +140,11 @@ struct HomeView: View {
                         case .active:
 //                            viewModel.updateBackgroundState(isInBackground: false)
                             viewModel.playerManager?.updateBackgroundState(isInBackground: false)
+                            print("SCENE: ACTIVE")
                         case .background:
 //                            videoPlayerManager.updateBackgroundState(isInBackground: true)
                             viewModel.playerManager?.updateBackgroundState(isInBackground: true)
+                            print("SCENE: BACKGROUND")
 
                         default:
                             break

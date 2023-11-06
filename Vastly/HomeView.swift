@@ -68,7 +68,7 @@ enum Page: CaseIterable {
 }
 
 struct HomeView: View {
-    @EnvironmentObject var viewModel: CatalogModel
+    @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
 
     @Environment(\.scenePhase) private var scenePhase
@@ -117,7 +117,7 @@ struct HomeView: View {
                         case .home:
 //NewVideoView(playing: $isPlaying, channel_index: $channel_index, activeChannel: $activeChannel, viewModel: viewModel, video_indices: $video_indices)
                             CatalogVideoView(playing: $isPlaying,
-                                             channel_index: $channel_index,
+                                             channelIndex: $channel_index,
                                              viewModel: viewModel)
                                 .environmentObject(viewModel)
                                 .environmentObject(authModel)

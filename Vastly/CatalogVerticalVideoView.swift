@@ -89,12 +89,13 @@ struct CatalogVerticalVideoView: View {
                         }
 
                         if channel == activeChannel {
+                            let current_playing = self.viewModel.catalog.currentVideoIndex()
                             
                             withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(current_playing, anchor: .top)
                             }
                             
-                            previous = current_playing
+//                            previous = current_playing
                             trackAVStatus(for: getVideo(current_playing))
                             play(current_playing)
                             viewModel.playerManager?.pauseAllOthers(except: getVideo(current_playing))
@@ -102,7 +103,7 @@ struct CatalogVerticalVideoView: View {
                         }
 
                     }
-                    .onChange(of: current_playing) { newIndex in
+                    .onChange(of: self.viewModel.catalog.currentVideo) { newIndex in
                         if channel == activeChannel {
                             
                             if newIndex >= vids.count {

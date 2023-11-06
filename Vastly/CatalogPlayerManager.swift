@@ -18,6 +18,12 @@ class CatalogPlayerManager: ObservableObject {
     @Published var players: [String: AVPlayer] = [:]
     var commandCenter: MPRemoteCommandCenter?
     @Published var catalog: Catalog
+    @Published var isInBackground = false {
+        didSet {
+            print("background value changed: \(self.isInBackground)")
+        }
+    }
+    
     init(_ catalog: Catalog) {
         print("INIT: Catalog Player Manager")
         self.catalog = catalog
@@ -40,6 +46,9 @@ class CatalogPlayerManager: ObservableObject {
             players[video.id] = player
             return player
         }
+    }
+    func updateBackgroundState(isInBackground: Bool) {
+        self.isInBackground = isInBackground
     }
     
     // pauses the video.
@@ -210,7 +219,7 @@ class CatalogPlayerManager: ObservableObject {
 
     // This function returns the current video.
     func getCurrentVideo() -> Video? {
-        return self.catalog.currentVideo()
+        return self.catalog.currentVideo
     }
 
     // This function plays the next video in the currently active channel.

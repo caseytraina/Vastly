@@ -157,6 +157,10 @@ class Catalog {
         return self.catalog[self.currentChannelIndex]
     }
     
+    func currentVideoIndex() -> Int? {
+        return currentChannel()?.currentVideoIndex
+    }
+    
     func peekPreviousChannel() -> ChannelVideos? {
         return channelHistory.last
     }

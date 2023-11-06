@@ -116,8 +116,10 @@ struct ViewingHistory: View {
         }
         .onAppear {
             Task {
-                await viewModel.fetchViewedVideos()
-                print("INIT: got viewed videos.")
+                if viewModel.viewedVideosProcessing {
+                    await viewModel.fetchViewedVideos()
+                    print("INIT: got viewed videos.")
+                }
                 
             }
         }

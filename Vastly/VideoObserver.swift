@@ -63,11 +63,16 @@ class VideoPlayerManager: ObservableObject {
     func getPlayer(for video: Video) -> AVQueuePlayer {
         if let player = players[video.id] {
             if player.currentItem == nil {
-                let item = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
-                item.preferredPeakBitRate = 4000000
-                item.preferredPeakBitRateForExpensiveNetworks = 3000000
+
+                let vid = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
+                player.insert(vid, after: nil)
                 
-                player.replaceCurrentItem(with: item)
+                if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
+                    let intro = AVPlayerItem(url: url)
+                    player.insert(intro, after: nil)
+                }
+
+                players[video.id] = player
             }
             
             if isInBackground && player.items().count == 1 {
@@ -112,6 +117,10 @@ class VideoPlayerManager: ObservableObject {
                 }
             }
         }
+    }
+    
+    func updateBackgroundState(isInBackground: Bool) {
+        self.isInBackground = isInBackground
     }
 
 //    // This function ensures that a player for a given video has been created.

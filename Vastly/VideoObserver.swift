@@ -18,7 +18,9 @@ class VideoPlayerManager: ObservableObject {
     
     @Published var players: [String: AVQueuePlayer] = [:]
     @Published var loadingStates: [String: Bool] = [:]
-    
+    @Published var queue: [Video]?
+    @Published var isInBackground = false
+
     var current_index: Int = 0
     var activeChannel: Channel = FOR_YOU_CHANNEL {
         didSet {
@@ -30,18 +32,15 @@ class VideoPlayerManager: ObservableObject {
     
     var commandCenter: MPRemoteCommandCenter?
     
-    @Published var queue: [Video]?
     @Published var videos: [Channel: [Video]] {
         didSet {
             queue = videos[activeChannel]
         }
     }
     
-    @Published var isInBackground = false {
-        didSet {
-            print("background value changed: \(self.isInBackground)")
-        }
-    }
+//    
+//    @State private var timeObserverToken: Any?
+//    @State private var endObserverToken: Any?
     
     // initialize players as well as channel_videos and the command center. The command center must be setup once.
     // the channel_videos is for ease-of-use.
@@ -75,12 +74,12 @@ class VideoPlayerManager: ObservableObject {
                 players[video.id] = player
             }
             
-            if isInBackground && player.items().count == 1 {
-                if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
-                    let intro = AVPlayerItem(url: url)
-                    player.insert(intro, after: nil)
-                }
-            }
+//            if isInBackground && player.items().count == 1 {
+//                if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
+//                    let intro = AVPlayerItem(url: url)
+//                    player.insert(intro, after: nil)
+//                }
+//            }
             
             return player
         } else {
@@ -96,11 +95,9 @@ class VideoPlayerManager: ObservableObject {
             
             let vid = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
             items.append(vid)
-//            let player = AVPlayer(url: url ?? URL(string: "www.google.com")!)
-            let player = AVQueuePlayer(items: items)
-//            player.actionAtItemEnd
             
-//            let player = AVPlayer(url: url ?? URL(string: "www.google.com"))
+            let player = AVQueuePlayer(items: items)
+            
             players[video.id] = player
                 
             return player
@@ -129,35 +126,28 @@ class VideoPlayerManager: ObservableObject {
 //        getPlayer(for: video).replaceCurrentItem(with: item)
 //    }
 
-    // This function deletes an AVPlayer, clearing memory after it has been used. AVPlayers are expensive to create and slow down the app.
-    func deletePlayer(_ video: Video) {
-        getPlayer(for: video).pause()
-        self.players[video.id] = nil
-    }
-
     // pauses the video.
     func pause(for video: Video) {
         let queuePlayer = getPlayer(for: video)
-        if isInBackground {
-            queuePlayer.pause()
-        } else {
-//            queuePlayer.advanceToNextItem()
-            queuePlayer.pause()
-        }
+        queuePlayer.pause()
+//        if isInBackground {
+//            queuePlayer.pause()
+//        } else {
+////            queuePlayer.advanceToNextItem()
+//            queuePlayer.pause()
+//        }
     }
     
     // plays the video.
     func play(for video: Video) {
         
         let queuePlayer = getPlayer(for: video)
-        if isInBackground {
-            queuePlayer.play()
-        } else {
+        if !isInBackground {
             if queuePlayer.currentItem != queuePlayer.items().last {
                 queuePlayer.advanceToNextItem()
             }
-            queuePlayer.play()
         }
+        queuePlayer.play()
     }
 
     // this function initializes the physical command center controls.
@@ -188,7 +178,7 @@ class VideoPlayerManager: ObservableObject {
         // Set up command center targets
         commandCenter.playCommand.addTarget { [weak self] _ in
             self?.playCurrentVideo()
-            self?.pauseAllOthers(except: self?.getCurrentVideo() ?? EMPTY_VIDEO)
+//            self?.pauseAllOthers(except: self?.getCurrentVideo() ?? EMPTY_VIDEO)
             self?.updateNowPlayingInfo(for: self?.getCurrentVideo() ?? EMPTY_VIDEO)
             print("Successful Lockscreen action: Play")
             return .success

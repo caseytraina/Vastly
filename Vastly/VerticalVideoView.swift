@@ -91,11 +91,6 @@ struct VerticalVideoView: View {
                     .scrollDisabled(true)
                     .clipped()
                     .onAppear {
-//                        if abs((viewModel.channels.firstIndex(of: activeChannel) ?? 0) - (viewModel.channels.firstIndex(of: channel) ?? 0)) <= 1 {
-//                            videoListNum = 15
-//                        } else {
-//                            videoListNum = 1
-//                        }
 
                         if channel == activeChannel {
                             
@@ -120,29 +115,18 @@ struct VerticalVideoView: View {
                             } else {
                                 
                                 recent_change = true
-//                                videoListNum = min(vids.count, videoListNum)
-                                
                                 trackAVStatus(for: getVideo(newIndex))
-                                
                                 withAnimation(.easeOut(duration: 0.125)) {
                                     proxy.scrollTo(newIndex, anchor: .top)
                                 }
-                                
                                 DispatchQueue.main.async {
                                     liked = false
                                     liked = videoIsLiked(current_playing)
                                 }
-                                
-//                                if newIndex >= videoListNum - 2 {
-//                                    videoListNum = min(videoListNum + 15, vids.count)
-//                                }
-                                
+
                                 previous = newIndex
                             }
-                            
                             shareURL = videoShareURL(getVideo(current_playing))
-                                                     
-
                         }
                     }
                     .onChange(of: activeChannel) { newChannel in
@@ -534,7 +518,7 @@ struct VerticalVideoView: View {
     
     private func observePlayer(to player: AVQueuePlayer) {
                 
-        if let item = player.currentItem {
+        if let item = player.items().last {
             
             //        DispatchQueue.global(qos: .userInitiated).async {
             print("Attached observer to \(item)")
@@ -565,6 +549,7 @@ struct VerticalVideoView: View {
                 queue: .main
             ) { _ in
                 print("Something ended: \(item)")
+//                if player.items().count == 1 || item != player.items().first {
                 if item == player.items().last {
                     //            if player.currentItem == player.items().last {
                     player.pause()

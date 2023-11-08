@@ -87,11 +87,7 @@ struct CatalogVideoView: View {
                                         if abs((viewModel.channels.firstIndex(of: activeChannel) ?? 0) - (viewModel.channels.firstIndex(of: channel) ?? 0)) <= 1 {
                                             
                                             if (viewModel.videos[channel] ?? []).isEmpty {
-                                                ZStack {
-                                                    Color("BackgroundColor")
-                                                    MyText(text: "It seems you've seen all these videos. Try a new channel!", size: screenSize.width * 0.05, bold: true, alignment: .center, color: .white)
-                                                }
-                                                .frame(width: screenSize.width, height: screenSize.height * 0.8)
+                                                emptyVideos()
                                             } else {
                                                 CatalogVerticalVideoView(activeChannel: $activeChannel,
                                                                          activeVideo: activeVideo(),
@@ -123,46 +119,10 @@ struct CatalogVideoView: View {
                                 }
                             }
                             .onChange(of: activeChannel) { newChannel in
-                                if channelIndex != viewModel.channels.firstIndex(where: {$0.id == newChannel.id}) ?? 0 {
-                                    channelIndex = viewModel.channels.firstIndex(where: {$0.id == newChannel.id}) ?? 0
-                                }
-                                
-                                endTime = Date()
-                                
-                                let impact = UIImpactFeedbackGenerator(style: .medium)
-                                impact.impactOccurred()
-                                
-                                viewModel.playerManager?.changeToChannel(to: newChannel, shouldPlay: playing)
-                                
-                                let currentVideo = viewModel.catalog.currentVideo()
-                                let previousVideo = viewModel.catalog.peekPreviousVideo()
-                                let previousChannel = viewModel.catalog.peekPreviousChannel()
-                                
-                                // TODO: move this into the catalog
-                                channelClicked(for: newChannel, with: authModel.user)
-                                videoClicked(for: currentVideo,
-                                             with: authModel.user,
-                                             profile: authModel.current_user,
-                                             watchedIn: activeChannel)
-                                
-                                let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
-                                
-                                videoWatched(
-                                    from: startTime,
-                                    to: endTime,
-                                    for: previousVideo,
-                                    time: duration ?? 0.0,
-                                    watched: duration,
-                                    with: authModel.user,
-                                    profile: authModel.current_user,
-                                    viewModel: viewModel,
-                                    watchedIn: previousChannel?.channel)
-                                startTime = Date()
-                                updateMetadata()
+                                channelChanged(newChannel)
                                 withAnimation(.easeOut(duration: 0.125)) {
                                     proxy.scrollTo(newChannel, anchor: .leading)
                                 }
-                                
                             }
                             .frame(width: screenSize.width, height: screenSize.height * 0.8)
                             .gesture(DragGesture()
@@ -174,13 +134,11 @@ struct CatalogVideoView: View {
                                         } else {
                                             dragType = .vertical
                                             dragOffset = event.translation.height
-                                            //                                    offset = CGSize(width: 0, height: event.translation.height)
                                         }
                                     } else if dragType == .horizontal {
                                         offset = CGSize(width: event.translation.width, height: 0)
                                     } else if dragType == .vertical {
                                         dragOffset = event.translation.height
-                                        //                                offset = CGSize(width: 0, height: event.translation.height)
                                     }
                                 })
                                     .onEnded({ event in
@@ -209,16 +167,8 @@ struct CatalogVideoView: View {
                                             
                                             if vel <= -screenSize.height/4 || distance <= -screenSize.height/2 {
                                                 viewModel.catalog.nextVideo()
-                                                //                                                    if video_indices[channel_index] + 1 <= viewModel.videos[activeChannel]?.count ?? 1000 {
-                                                //                                                        video_indices[channel_index] += 1
-                                                //
-                                                //                                                    }
                                             } else if vel >= screenSize.height/4 || distance >= screenSize.height/2 {
                                                 viewModel.catalog.previousVideo()
-                                                //                                                    if video_indices[channel_index] > 0 {
-                                                //                                                        video_indices[channel_index] -= 1
-                                                //
-                                                //                                                    }
                                             }
                                         }
                                         dragType = .unknown
@@ -235,7 +185,6 @@ struct CatalogVideoView: View {
                             await handleIncomingURL(incomingURL)
                         }
                     }
-                    
                 }
                 
                 .onChange(of: channelIndex) { newIndex in
@@ -249,7 +198,6 @@ struct CatalogVideoView: View {
                     endTime = Date()
                     updateMetadata()
                     
-//                    viewModel.playerManager?.changeToIndex(to: newIndex, shouldPlay: playing)
                     let previousVideo = viewModel.catalog.peekPreviousVideo()
                     let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
                     videoClicked(for: viewModel.catalog.currentVideo ?? EMPTY_VIDEO,
@@ -268,25 +216,13 @@ struct CatalogVideoView: View {
                     
                     
                     viewModel.playerManager?.playCurrentVideo()
-                    
-                    
                     let impact = UIImpactFeedbackGenerator(style: .light)
                     impact.impactOccurred()
                     
                     startTime = Date()
-//                    previous_playing = newIndex
                 }
                 .onAppear {
                     startTime = Date()
-//                    if let queue = viewModel.videos[activeChannel] {
-//                        if queue.count > video_indices[channel_index] {
-                            
-//                            videoClicked(for: queue[video_indices[channel_index]] ?? EMPTY_VIDEO,
-//                                         with: authModel.user,
-//                                         profile: authModel.current_user,
-//                                         watchedIn: activeChannel)
-//                        }
-//                    }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
                     DispatchQueue.main.async {
@@ -338,6 +274,52 @@ struct CatalogVideoView: View {
         
     }
     
+    private func emptyVideos() -> some View {
+        ZStack {
+            Color("BackgroundColor")
+            MyText(text: "It seems you've seen all these videos. Try a new channel!", size: screenSize.width * 0.05, bold: true, alignment: .center, color: .white)
+        }
+        .frame(width: screenSize.width, height: screenSize.height * 0.8)
+    }
+    
+    private func channelChanged(newChannel: Channel) {
+        channelIndex = self.viewModel.catalog.currentChannelIndex
+        endTime = Date()
+        
+        let impact = UIImpactFeedbackGenerator(style: .medium)
+        impact.impactOccurred()
+        
+        viewModel.playerManager?.changeToChannel(to: newChannel, shouldPlay: playing)
+        
+        let currentVideo = viewModel.catalog.currentVideo!
+        // This must be a value since we changed to a new channel
+        let previousVideo = viewModel.catalog.peekPreviousVideo()!
+        let previousChannel = viewModel.catalog.peekPreviousChannel()!
+        
+        // TODO: move this into the catalog
+        channelClicked(for: newChannel, with: authModel.user)
+        videoClicked(for: currentVideo,
+                     with: authModel.user,
+                     profile: authModel.current_user,
+                     watchedIn: activeChannel)
+        
+        let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
+        
+        videoWatched(
+            from: startTime,
+            to: endTime,
+            for: previousVideo,
+            time: duration ?? 0.0,
+            watched: duration,
+            with: authModel.user,
+            profile: authModel.current_user,
+            viewModel: viewModel,
+            watchedIn: previousChannel.channel)
+        startTime = Date()
+        updateMetadata()
+        
+    }
+    
     private func updateMetadata() {
         if let video = viewModel.playerManager?.getCurrentVideo() {
             viewModel.playerManager?.updateNowPlayingInfo(for: video)
@@ -372,7 +354,7 @@ struct CatalogVideoView: View {
             return
         }
         
-        if let video = self.viewModel.getVideo(id: videoId) {
+        if let video = self.viewModel.catalog.getVideo(id: videoId) {
             print("Finished querying video.")
             playing = false
             openedVideo = video

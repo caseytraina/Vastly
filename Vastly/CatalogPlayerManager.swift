@@ -31,7 +31,7 @@ class CatalogPlayerManager: ObservableObject {
     }
     
     // This function returns the AVPlayer for a video on the fly
-    private func getPlayer(for video: Video) -> AVPlayer {
+    func getPlayer(for video: Video) -> AVPlayer {
         if let player = players[video.id] {
             if player.currentItem == nil {
                 let item = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)

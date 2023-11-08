@@ -262,7 +262,7 @@ class CatalogViewModel: ObservableObject {
     @Published var catalog: Catalog = Catalog()
     // This is private, channels should be accessed via the catalog, this
     // is only used to populate the catalog
-    private var channels: [Channel] = [FOR_YOU_CHANNEL]
+    var channels: [Channel] = [FOR_YOU_CHANNEL]
     
     var authors: [Author] = []
     

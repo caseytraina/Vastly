@@ -9,6 +9,7 @@ import SwiftUI
 import AVFoundation
 
 struct CatalogVideoView: View {
+    
     enum DragType {
         case unknown
         case vertical
@@ -18,11 +19,11 @@ struct CatalogVideoView: View {
     @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
     
-    @State var activeChannel: Channel
+    @State var activeChannel: Channel = FOR_YOU_CHANNEL
     @Binding var playing: Bool
     
     @Binding var channelIndex: Int
-    @Binding var videoIndex: Int
+//    @Binding var videoIndex: Int
     //    @State var video_indices: [Int]
     //    @State var current_trending = 0
     
@@ -52,16 +53,16 @@ struct CatalogVideoView: View {
     @State var isShareLinkActive = false
     @State private var openedVideo: Video?
     
-    init(playing: Binding<Bool>,
-         channelIndex: Binding<Int>,
-         viewModel: CatalogViewModel) {
-        self._playing = playing
-        self._channelIndex = channelIndex
-        //        self._video_indices = State(initialValue: [Int](repeating: 0, count: viewModel.channels.count))
-    }
+//    init(playing: Binding<Bool>,
+//         channelIndex: Binding<Int>,
+//         viewModel: CatalogViewModel) {
+//        self._playing = playing
+//        self._channelIndex = channelIndex
+//        //        self._video_indices = State(initialValue: [Int](repeating: 0, count: viewModel.channels.count))
+//    }
     
     func activeVideo() -> Video? {
-        return self.viewModel.catalog.currentVideo
+        return self.viewModel.catalog.currentVideo ?? nil
 //        return self.activeChannel.currentVideo
     }
     
@@ -72,33 +73,33 @@ struct CatalogVideoView: View {
                     Carousel(isPlaying: $playing,
                              selected: $activeChannel,
                              channel_index: $channelIndex)
-                    .environmentObject(viewModel)
-                    .environmentObject(authModel)
-                    .frame(height: screenSize.height*0.075)
-                    .frame(width: screenSize.width)
-                    .ignoresSafeArea()
-                    .padding(.vertical)
+                        .environmentObject(viewModel)
+                        .environmentObject(authModel)
+                        .frame(height: screenSize.height*0.075)
+                        .frame(width: screenSize.width)
+                        .ignoresSafeArea()
+                        .padding(.vertical)
                     Spacer()
                     ZStack {
                         ScrollViewReader { proxy in
                             ScrollView (.horizontal, showsIndicators: false) {
                                 HStack {
+                                    
                                     ForEach(viewModel.channels, id: \.self) { channel in
                                         if abs((viewModel.channels.firstIndex(of: activeChannel) ?? 0) - (viewModel.channels.firstIndex(of: channel) ?? 0)) <= 1 {
                                             
-                                            if (viewModel.videos[channel] ?? []).isEmpty {
+                                            if viewModel.catalog.catalog[channelIndex].videos.isEmpty {
+//                                            if (viewModel.videos[channel] ?? []).isEmpty {
                                                 emptyVideos()
                                             } else {
                                                 CatalogVerticalVideoView(activeChannel: $activeChannel,
-                                                                         activeVideo: activeVideo(),
                                                                          isPlaying: $playing,
                                                                          dragOffset: $dragOffset,
-                                                                         channel: channel,
                                                                          publisherIsTapped: $publisherIsTapped)
-                                                .environmentObject(viewModel)
-                                                .environmentObject(authModel)
-                                                .frame(width: screenSize.width, height: screenSize.height * 0.8)
-                                                .id(channel)
+                                                    .environmentObject(viewModel)
+                                                    .environmentObject(authModel)
+                                                    .frame(width: screenSize.width, height: screenSize.height * 0.8)
+                                                    .id(channel)
                                             }
                                             
                                         } else {
@@ -119,62 +120,15 @@ struct CatalogVideoView: View {
                                 }
                             }
                             .onChange(of: activeChannel) { newChannel in
-                                channelChanged(newChannel)
+                                channelChanged(newChannel: newChannel)
                                 withAnimation(.easeOut(duration: 0.125)) {
                                     proxy.scrollTo(newChannel, anchor: .leading)
                                 }
                             }
                             .frame(width: screenSize.width, height: screenSize.height * 0.8)
                             .gesture(DragGesture()
-                                .onChanged({ event in
-                                    if dragType == .unknown {
-                                        if abs(event.translation.width/screenSize.width) > abs(event.translation.height/screenSize.height)*5 {
-                                            dragType = .horizontal
-                                            offset = CGSize(width: event.translation.width, height: 0)
-                                        } else {
-                                            dragType = .vertical
-                                            dragOffset = event.translation.height
-                                        }
-                                    } else if dragType == .horizontal {
-                                        offset = CGSize(width: event.translation.width, height: 0)
-                                    } else if dragType == .vertical {
-                                        dragOffset = event.translation.height
-                                    }
-                                })
-                                    .onEnded({ event in
-                                        if abs(event.translation.width/screenSize.width) > abs(event.translation.height/screenSize.height) {
-                                            // horizontal
-                                            
-                                            let vel = event.predictedEndTranslation.width
-                                            let distance = event.translation.width
-                                            
-                                            if vel <= -screenSize.width/2 || distance <= -screenSize.width/2 {
-                                                if viewModel.catalog.nextChannel() {
-                                                    // TODO: Remove this internal channel index
-                                                    channelIndex += 1
-                                                }
-                                            } else if vel >= screenSize.width/2 || distance >= screenSize.width/2 {
-                                                if viewModel.catalog.previousChannel() {
-                                                    channelIndex -= 1
-                                                }
-                                            }
-                                            
-                                        } else {
-                                            //vertical
-                                            
-                                            let vel = event.predictedEndTranslation.height
-                                            let distance = event.translation.height
-                                            
-                                            if vel <= -screenSize.height/4 || distance <= -screenSize.height/2 {
-                                                viewModel.catalog.nextVideo()
-                                            } else if vel >= screenSize.height/4 || distance >= screenSize.height/2 {
-                                                viewModel.catalog.previousVideo()
-                                            }
-                                        }
-                                        dragType = .unknown
-                                        offset = CGSize(width: 0, height: 0)
-                                        dragOffset = 0
-                                    })
+                                .onChanged(onDragChanged)
+                                .onEnded(onDragEnded)
                             )
                         }
                     }
@@ -188,39 +142,39 @@ struct CatalogVideoView: View {
                 }
                 
                 .onChange(of: channelIndex) { newIndex in
-                    if activeChannel != viewModel.channels[newIndex] {
-                        activeChannel = viewModel.channels[newIndex]
-                    }
+//                    if activeChannel != viewModel.channels[newIndex] {
+                    activeChannel = viewModel.channels[newIndex]
+//                    }
                     updateMetadata()
                 }
                 
-                .onChange(of: viewModel.catalog.currentVideo) { newVideo in
-                    endTime = Date()
-                    updateMetadata()
-                    
-                    let previousVideo = viewModel.catalog.peekPreviousVideo()
-                    let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
-                    videoClicked(for: viewModel.catalog.currentVideo ?? EMPTY_VIDEO,
-                                 with: authModel.user,
-                                 profile: authModel.current_user,
-                                 watchedIn: activeChannel)
-                    videoWatched(from: startTime,
-                                 to: endTime,
-                                 for: previousVideo,
-                                 time: duration ?? 0.0,
-                                 watched: duration,
-                                 with: authModel.user,
-                                 profile: authModel.current_user,
-                                 viewModel: viewModel,
-                                 watchedIn: activeChannel)
-                    
-                    
-                    viewModel.playerManager?.playCurrentVideo()
-                    let impact = UIImpactFeedbackGenerator(style: .light)
-                    impact.impactOccurred()
-                    
-                    startTime = Date()
-                }
+//                .onChange(of: viewModel.catalog.currentVideo) { newVideo in
+//                    endTime = Date()
+//                    updateMetadata()
+//                    
+//                    let previousVideo = viewModel.catalog.peekPreviousVideo()!
+//                    let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
+//                    videoClicked(for: viewModel.catalog.currentVideo ?? EMPTY_VIDEO,
+//                                 with: authModel.user,
+//                                 profile: authModel.current_user,
+//                                 watchedIn: activeChannel)
+//                    videoWatched(from: startTime,
+//                                 to: endTime,
+//                                 for: previousVideo,
+//                                 time: duration ?? 0.0,
+//                                 watched: duration,
+//                                 with: authModel.user,
+//                                 profile: authModel.current_user,
+//                                 viewModel: viewModel,
+//                                 watchedIn: activeChannel)
+//                    
+//                    
+//                    viewModel.playerManager?.playCurrentVideo()
+//                    let impact = UIImpactFeedbackGenerator(style: .light)
+//                    impact.impactOccurred()
+//                    
+//                    startTime = Date()
+//                }
                 .onAppear {
                     startTime = Date()
                 }
@@ -251,8 +205,10 @@ struct CatalogVideoView: View {
                 }
                 
                 if publisherIsTapped {
-                    AuthorProfileView(author: viewModel.catalog.currentVideo.author,
-                                      publisherIsTapped: $publisherIsTapped)
+                    if let video = viewModel.catalog.currentVideo {
+                        AuthorProfileView(author: video.author,
+                                          publisherIsTapped: $publisherIsTapped)
+                    }
                 }
                 if let openedVideo {
                     NavigationLink("", destination: SingleVideoView(video: openedVideo)
@@ -273,6 +229,62 @@ struct CatalogVideoView: View {
         )
         
     }
+    
+    private func onDragChanged(_ event: DragGesture.Value) {
+        if dragType == .unknown {
+            if abs(event.translation.width/screenSize.width) > abs(event.translation.height/screenSize.height)*5 {
+                dragType = .horizontal
+                offset = CGSize(width: event.translation.width, height: 0)
+            } else {
+                dragType = .vertical
+                dragOffset = event.translation.height
+            }
+        } else if dragType == .horizontal {
+            offset = CGSize(width: event.translation.width, height: 0)
+        } else if dragType == .vertical {
+            dragOffset = event.translation.height
+        }
+    }
+        
+    private func onDragEnded(_ event: DragGesture.Value) {
+        
+        if abs(event.translation.width/screenSize.width) > abs(event.translation.height/screenSize.height) {
+            // horizontal
+            
+            let vel = event.predictedEndTranslation.width
+            let distance = event.translation.width
+            
+            if vel <= -screenSize.width/2 || distance <= -screenSize.width/2 {
+                if (viewModel.catalog.nextChannel() != nil) {
+                    // TODO: Remove this internal channel index
+                    channelIndex += 1
+                }
+            } else if vel >= screenSize.width/2 || distance >= screenSize.width/2 {
+                if (viewModel.catalog.previousChannel() != nil) {
+                    channelIndex -= 1
+                }
+            }
+            
+        } else {
+            //vertical
+            
+            let vel = event.predictedEndTranslation.height
+            let distance = event.translation.height
+            
+            if vel <= -screenSize.height/4 || distance <= -screenSize.height/2 {
+                viewModel.catalog.nextVideo()
+                
+                
+            } else if vel >= screenSize.height/4 || distance >= screenSize.height/2 {
+                viewModel.catalog.previousVideo()
+            }
+        }
+        dragType = .unknown
+        offset = CGSize(width: 0, height: 0)
+        dragOffset = 0
+        
+    }
+        
     
     private func emptyVideos() -> some View {
         ZStack {

@@ -91,11 +91,6 @@ struct VerticalVideoView: View {
                     .scrollDisabled(true)
                     .clipped()
                     .onAppear {
-//                        if abs((viewModel.channels.firstIndex(of: activeChannel) ?? 0) - (viewModel.channels.firstIndex(of: channel) ?? 0)) <= 1 {
-//                            videoListNum = 15
-//                        } else {
-//                            videoListNum = 1
-//                        }
 
                         if channel == activeChannel {
                             

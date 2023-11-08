@@ -97,10 +97,11 @@ struct HomeView: View {
                         switch currentPage {
                         case .home:
                             CatalogVideoView(playing: $isPlaying,
-                                             channelIndex: $channelIndex,
-                                             viewModel: viewModel)
+                                             channelIndex: $channelIndex
+                                             )
                                 .environmentObject(viewModel)
                                 .environmentObject(authModel)
+                            
                         case .search:
                             NewSearchBar(all_authors: viewModel.authors, oldPlaying: $isPlaying)
                                 .environmentObject(authModel)

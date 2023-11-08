@@ -74,7 +74,11 @@ struct UnprocessedVideo: Codable {
     
 }
 
-struct Video: Identifiable {
+struct Video: Identifiable, Equatable {
+    static func == (lhs: Video, rhs: Video) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     let id: String
     let title: String
     let author: Author

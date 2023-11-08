@@ -56,6 +56,16 @@ class CatalogPlayerManager: ObservableObject {
         getPlayer(for: video).pause()
     }
     
+    func pauseAllOthers(except video: Video) {
+        DispatchQueue.main.async {
+            for player in self.players {
+                if player.key != video.id {
+                    player.value.pause()
+                }
+            }
+        }
+    }
+    
     // plays the video.
     func play(for video: Video) {
         getPlayer(for: video).play()

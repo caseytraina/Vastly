@@ -73,26 +73,12 @@ struct HomeView: View {
 
     @Environment(\.scenePhase) private var scenePhase
     
-    @State var channel_index = 0
+    @State var channelIndex = 0
     @State var activeChannel: Channel = FOR_YOU_CHANNEL
-    
     @State var currentPage: Page = .home
-    
     @State var isPlaying = true
-    @State var video_indices: [Int]
-//    init(authModel: AuthViewModel) {
-//        _viewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
-//    }
-    
-    init(viewModel: VideoViewModel) {
-
-        self._video_indices = State(initialValue: [Int](repeating: 0, count: viewModel.channels.count))
-
-    }
     
     var body: some View {
-        
-        // Create Background + Display Videos
         GeometryReader { geo in
             ZStack {
                 Color("BackgroundColor")
@@ -101,23 +87,17 @@ struct HomeView: View {
                 if viewModel.isProcessing || authModel.current_user == nil {
                     LoadingView()
                 } else {
-                    ForEach(0..<viewModel.channels.count) { index in
-                        LinearGradient(gradient: Gradient(colors: myGradient(channel_index: index)), startPoint: .topLeading, endPoint: .bottom)
+                    ForEach(Array(viewModel.catalog.channels().enumerated()), id: \.offset) { index, channel in
+                        LinearGradient(gradient: Gradient(colors: myGradient(channel)), startPoint: .topLeading, endPoint: .bottom)
                             .ignoresSafeArea()
-                            .opacity(channel_index == index ? 1 : 0)
-                            .animation(.easeInOut(duration: 0.75), value: channel_index)
+                            .opacity(channelIndex == index ? 1 : 0)
+                            .animation(.easeInOut(duration: 0.75), value: channelIndex)
                     }
-                    
-                    
-          
-                    
                     VStack {
                         switch currentPage {
-                            
                         case .home:
-//NewVideoView(playing: $isPlaying, channel_index: $channel_index, activeChannel: $activeChannel, viewModel: viewModel, video_indices: $video_indices)
                             CatalogVideoView(playing: $isPlaying,
-                                             channelIndex: $channel_index,
+                                             channelIndex: $channelIndex,
                                              viewModel: viewModel)
                                 .environmentObject(viewModel)
                                 .environmentObject(authModel)
@@ -160,32 +140,19 @@ struct HomeView: View {
                         //                        .ignoresSafeArea()
                     }
                     .ignoresSafeArea()
-                    //                .frame(width: screenSize.width, height: screenSize.height)
                 }
             }
-            
         }
-
-        
-        
     }
-    // Creates Gradient
-    private func myGradient(channel_index: Int) -> [Color] {
-        
-//        let background = Color(red: 18.0/255, green: 18.0/255, blue: 18.0/255)
-//        let background = Color("BackgroundColor")
+
+    private func myGradient(_ channel: Channel) -> [Color] {
         let background = Color.black
-
-        let channel_color = viewModel.channels[channel_index].color.opacity(0.8)
-
-//        let purple = Color(red: 0.3803921568627451, green: 0.058823529411764705, blue: 0.4980392156862745)
-        var gradient: [Color] = [channel_color]
-        
+        let channelColor = channel.color.opacity(0.8)
+        var gradient: [Color] = [channelColor]
         for _ in 0..<5 {
             gradient.append(background)
         }
         return gradient
     }
-
 }
 

@@ -61,7 +61,8 @@ struct CatalogVideoView: View {
     }
     
     func activeVideo() -> Video? {
-        return self.activeChannel.currentVideo()
+        return self.viewModel.catalog.currentVideo
+//        return self.activeChannel.currentVideo
     }
     
     var body: some View {
@@ -371,7 +372,7 @@ struct CatalogVideoView: View {
             return
         }
         
-        if let video = await viewModel.getVideo(id: videoId) {
+        if let video = self.viewModel.getVideo(id: videoId) {
             print("Finished querying video.")
             playing = false
             openedVideo = video
@@ -382,22 +383,4 @@ struct CatalogVideoView: View {
         
         
     }
-    
-    private func getVideo(i: Int, in channel: Channel) -> Video {
-        
-        var video = EMPTY_VIDEO
-        
-        if let vids = viewModel.videos[channel] {
-            if i < vids.count && !vids.isEmpty {
-                video = vids[i]
-            }
-        }
-        return video
-    }
 }
-
-//struct NewVideoView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        NewVideoView()
-//    }
-//}

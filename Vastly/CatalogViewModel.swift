@@ -81,6 +81,14 @@ class ChannelVideos {
         }
     }
     
+    func peekNextVideo() -> Video? {
+        if hasNextVideo() {
+            return self.videos[self.currentVideoIndex + 1]
+        } else {
+            return nil
+        }
+    }
+    
     func previousVideo() -> Video? {
         if hasPreviousVideo() {
             self.currentVideoIndex -= 1
@@ -131,6 +139,7 @@ class Catalog {
     var channelHistory: [ChannelVideos] = []
     
     @Published var currentVideo: Video?
+    @Published var currentChannel: ChannelVideos?
     
     var currentChannelIndex = 0
     
@@ -141,6 +150,10 @@ class Catalog {
         self.catalog.append(channelVideos)
     }
     
+    func channels() -> [Channel] {
+        return self.catalog.map { channelVideos in channelVideos.channel }
+    }
+    
     func hasNextChannel() -> Bool {
         let totalChannels = self.catalog.count
         return self.currentChannelIndex < (totalChannels - 1)
@@ -149,16 +162,9 @@ class Catalog {
     func hasPreviousChannel() -> Bool {
         return self.currentChannelIndex > 0
     }
-    
-    func currentChannel() -> ChannelVideos? {
-        if self.catalog.isEmpty {
-            return nil
-        }
-        return self.catalog[self.currentChannelIndex]
-    }
-    
+      
     func currentVideoIndex() -> Int? {
-        return currentChannel()?.currentVideoIndex
+        return currentChannel?.currentVideoIndex
     }
     
     func peekPreviousChannel() -> ChannelVideos? {
@@ -169,7 +175,8 @@ class Catalog {
         if hasNextChannel() {
             self.updateChannelHistory()
             self.currentChannelIndex += 1
-            return currentChannel()
+            self.currentChannel = self.catalog[self.currentChannelIndex]
+            return self.currentChannel
         } else {
             return nil
         }
@@ -179,7 +186,8 @@ class Catalog {
         if hasPreviousChannel() {
             self.updateChannelHistory()
             self.currentChannelIndex -= 1
-            return currentChannel()
+            self.currentChannel = self.catalog[self.currentChannelIndex]
+            return self.currentChannel
         } else {
             return nil
         }
@@ -187,10 +195,14 @@ class Catalog {
     
     func nextVideo() -> Video? {
         self.updateVideoHistory()
-        if let nextVideo = currentChannel()?.nextVideo() {
+        if let nextVideo = currentChannel?.nextVideo() {
             currentVideo = nextVideo
         }
         return currentVideo
+    }
+    
+    func peekNextVideo() -> Video? {
+        currentChannel?.peekNextVideo()
     }
     
     func peekPreviousVideo() -> Video? {
@@ -201,7 +213,7 @@ class Catalog {
     // To peek at the last video played across everything, use `peekPreviousVideo`
     func previousVideo() -> Video? {
         self.updateVideoHistory()
-        if let previousVideo = currentChannel()?.previousVideo() {
+        if let previousVideo = currentChannel?.previousVideo() {
             currentVideo = previousVideo
         }
         return currentVideo
@@ -209,7 +221,7 @@ class Catalog {
     
     func changeToVideoIndex(_ index: Int) {
         self.updateVideoHistory()
-        self.currentChannel()?.changeToVideoIndex(index)
+        self.currentChannel?.changeToVideoIndex(index)
     }
     
     func changeToChannel(_ channel: Channel) {
@@ -218,11 +230,12 @@ class Catalog {
         }) {
             self.updateChannelHistory()
             self.currentChannelIndex = newChannelIndex
+            self.currentChannel = self.catalog[newChannelIndex]
         }
     }
     
     func updateChannelHistory() {
-        if let currentChannel = currentChannel() {
+        if let currentChannel = currentChannel {
             channelHistory.append(currentChannel)
         }
     }
@@ -233,15 +246,24 @@ class Catalog {
         }
     }
     
-    func getVideo(id: String) {
-        
+    func getVideo(id: String) -> Video? {
+        var foundVideo: Video? = nil
+        self.catalog.forEach { channelVideos in
+            foundVideo = channelVideos.videos.first(where: { video in
+                return video.id == id
+            })
+        }
+        return foundVideo
     }
 }
 
 class CatalogViewModel: ObservableObject {
     @Published var isProcessing: Bool
     @Published var catalog: Catalog = Catalog()
-    @Published var channels: [Channel] = [FOR_YOU_CHANNEL]
+    // This is private, channels should be accessed via the catalog, this
+    // is only used to populate the catalog
+    private var channels: [Channel] = [FOR_YOU_CHANNEL]
+    
     var authors: [Author] = []
     
     @Published var viewedVideosProcessing: Bool = true
@@ -275,8 +297,8 @@ class CatalogViewModel: ObservableObject {
         var forYou = ChannelVideos(channel: FOR_YOU_CHANNEL,
                                    user: self.authModel.current_user,
                                    authors: self.authors)
-//        forYou = await self.generateShapedForYou(max: 20, channelVideos: forYou)
-//        self.catalog.addChannel(forYou)
+        forYou = await self.generateShapedForYou(max: 20, channelVideos: forYou)
+        self.catalog.addChannel(forYou)
         
         for channel in self.channels {
             do {

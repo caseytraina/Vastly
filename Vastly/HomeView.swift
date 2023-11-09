@@ -69,6 +69,7 @@ enum Page: CaseIterable {
 
 struct HomeView: View {
     @EnvironmentObject var viewModel: CatalogViewModel
+    @EnvironmentObject var videoViewModel: VideoViewModel
     @EnvironmentObject var authModel: AuthViewModel
 
     @Environment(\.scenePhase) private var scenePhase
@@ -106,14 +107,17 @@ struct HomeView: View {
                             NewSearchBar(all_authors: viewModel.authors, oldPlaying: $isPlaying)
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
+                                .environmentObject(videoViewModel)
                         case .bookmarks:
                             LikesListView(isPlaying: $isPlaying)
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
+                                .environmentObject(videoViewModel)
                         case .profile:
                             ProfileView(isPlaying: $isPlaying)
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
+                                .environmentObject(videoViewModel)
                         }
                         
                     }

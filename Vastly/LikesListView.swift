@@ -10,7 +10,7 @@ import SwiftUI
 struct LikesListView: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var videoViewModel: VideoViewModel
     
     @State var isAnimating = false
     @State var processed = false
@@ -47,7 +47,7 @@ struct LikesListView: View {
                 }
                 Spacer()
 
-                if (viewModel.likedVideosProcessing) {
+                if (videoViewModel.likedVideosProcessing) {
                     ProgressView()
                         .font(.system(size: 32))
                         .brightness(0.5)
@@ -55,21 +55,21 @@ struct LikesListView: View {
                     NavigationLink(destination:
                         SingleVideoView(isActive: $isLinkActive, video: current_video)
                            .environmentObject(authModel)
-                           .environmentObject(viewModel)
+                           .environmentObject(videoViewModel)
                         
                     , isActive: $isLinkActive) {
                         EmptyView()
                     }
                     
                     ScrollView {
-                        ForEach(viewModel.authModel.liked_videos) { video in
+                        ForEach(videoViewModel.authModel.liked_videos) { video in
                             
                             Button(action: {
 //                                viewModel.playerManager?.updateQueue(with: viewModel.authModel.liked_videos)
 //                                viewModel.playerManager?.changeToIndex(to: i, shouldPlay: true)
 //                                cur = i
                                 current_video = video
-                                viewModel.playerManager?.pauseCurrentVideo()
+                                videoViewModel.playerManager?.pauseCurrentVideo()
                                 isLinkActive = true
                             }, label: {
                                 HStack {
@@ -123,9 +123,9 @@ struct LikesListView: View {
             }
         }
         .onAppear {
-            if viewModel.likedVideosProcessing {
+            if videoViewModel.likedVideosProcessing {
                 Task {
-                    await viewModel.fetchLikedVideos()
+                    await videoViewModel.fetchLikedVideos()
                     print("INIT: got liked videos.")
                     
                 }
@@ -172,7 +172,7 @@ struct LikesListView: View {
 //        let background = Color(red: 18.0/255, green: 18.0/255, blue: 18.0/255)
         let background = Color(red: 5/255, green: 5/255, blue: 5/255)
 
-        let channel_color = viewModel.channels[channel_index].color.opacity(0.8)
+        let channel_color = videoViewModel.channels[channel_index].color.opacity(0.8)
 
 //        let purple = Color(red: 0.3803921568627451, green: 0.058823529411764705, blue: 0.4980392156862745)
         var gradient: [Color] = [channel_color]

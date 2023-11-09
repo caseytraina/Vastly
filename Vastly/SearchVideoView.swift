@@ -15,7 +15,8 @@ import AudioToolbox
 
 struct SearchVideoView: View {
     
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var videoViewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
 
     var query: String
@@ -81,19 +82,19 @@ struct SearchVideoView: View {
         //                    .id(activeChannel)
                         .clipped()
                         .onAppear {
-                            viewModel.playerManager?.updateQueue(with: vids)
+                            videoViewModel.playerManager?.updateQueue(with: vids)
                             isPlaying = true
 
                             withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(current_playing, anchor: .top)
                             }
                             
-                            viewModel.playerManager?.changeToIndex(to: current_playing, shouldPlay: isPlaying)
-                            viewModel.playerManager?.updateNowPlayingInfo(for: getVideo(current_playing))
+                            videoViewModel.playerManager?.changeToIndex(to: current_playing, shouldPlay: isPlaying)
+                            videoViewModel.playerManager?.updateNowPlayingInfo(for: getVideo(current_playing))
                             
                             previous = current_playing
                             trackAVStatus(for: getVideo(current_playing))
-                            viewModel.playerManager?.pauseAllOthers(except: getVideo(current_playing))
+                            videoViewModel.playerManager?.pauseAllOthers(except: getVideo(current_playing))
                             shareURL = videoShareURL(getVideo(current_playing))
 //                            play(current_playing)
 
@@ -113,8 +114,8 @@ struct SearchVideoView: View {
                                 
                                 trackAVStatus(for: getVideo(newIndex))
                                 
-                                viewModel.playerManager?.changeToIndex(to: newIndex, shouldPlay: isPlaying)
-                                viewModel.playerManager?.updateNowPlayingInfo(for: getVideo(newIndex))
+                                videoViewModel.playerManager?.changeToIndex(to: newIndex, shouldPlay: isPlaying)
+                                videoViewModel.playerManager?.updateNowPlayingInfo(for: getVideo(newIndex))
 
 //                                pause(previous)
 //                                play(newIndex)
@@ -437,7 +438,7 @@ struct SearchVideoView: View {
     }
     
     private func AuthorURL(_ i: Int) -> URL? {
-        return viewModel.videos[channel]?[i].author.fileName
+        return videoViewModel.videos[channel]?[i].author.fileName
     }
     
     private func videoShareURL(_ video: Video) -> URL {

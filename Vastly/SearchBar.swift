@@ -11,7 +11,7 @@ import AlgoliaSearchClient
 struct NewSearchBar: View {
     
     @EnvironmentObject var authModel: AuthViewModel
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var videoViewModel: VideoViewModel
 
     var all_authors: [Author]
     
@@ -127,7 +127,7 @@ struct NewSearchBar: View {
                                 ForEach(controller.videos) { video in
                                     NavigationLink(destination: SearchVideoView(query: text, vids: $controller.videos, current_playing: $current, isPlaying: $isPlaying, publisherIsTapped: $dummyPubTapped)
                                         .environmentObject(authModel)
-                                        .environmentObject(viewModel)
+                                        .environmentObject(videoViewModel)
                                         .background(Color("BackgroundColor")),
                                                    isActive: $isLinkActive) {
                                         EmptyView()
@@ -148,7 +148,7 @@ struct NewSearchBar: View {
                                         //                                   })
                                         HStack(alignment: .center) {
                                             
-                                            AsyncImage(url: viewModel.getThumbnail(video: video), content: { image in
+                                            AsyncImage(url: videoViewModel.getThumbnail(video: video), content: { image in
                                                 image
                                                     .resizable()
                                                     .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)

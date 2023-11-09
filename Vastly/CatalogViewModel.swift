@@ -130,7 +130,9 @@ class ChannelVideos {
 }
 
 class Catalog {
-    var catalog: [ChannelVideos] = []
+    // This should be kept private, we access the catalog via the public
+    // funcs below
+    private var catalog: [ChannelVideos] = []
     // Keep an internal track of the history of videos that we have
     // consumed, so we can track state and transitions
     // if they change channel for example, we want to know the last video
@@ -152,6 +154,13 @@ class Catalog {
     
     func channels() -> [Channel] {
         return self.catalog.map { channelVideos in channelVideos.channel }
+    }
+    
+    func videosForChannel(_ channel: Channel) -> [Video] {
+        let channel = self.catalog.first(where: { channelVideos in
+            return channelVideos.channel == channel
+        })
+        return channel?.videos ?? []
     }
     
     func hasNextChannel() -> Bool {

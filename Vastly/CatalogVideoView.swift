@@ -88,8 +88,7 @@ struct CatalogVideoView: View {
                                     ForEach(viewModel.channels, id: \.self) { channel in
                                         if abs((viewModel.channels.firstIndex(of: activeChannel) ?? 0) - (viewModel.channels.firstIndex(of: channel) ?? 0)) <= 1 {
                                             
-                                            if viewModel.catalog.catalog[channelIndex].videos.isEmpty {
-//                                            if (viewModel.videos[channel] ?? []).isEmpty {
+                                            if viewModel.catalog.videosForChannel(channel).isEmpty {
                                                 emptyVideos()
                                             } else {
                                                 CatalogVerticalVideoView(activeChannel: $activeChannel,
@@ -211,9 +210,9 @@ struct CatalogVideoView: View {
                     }
                 }
                 if let openedVideo {
-                    NavigationLink("", destination: SingleVideoView(video: openedVideo)
+                    NavigationLink("", destination: SingleVideoView(isActive: $isShareLinkActive, video: openedVideo))
                         .environmentObject(viewModel)
-                        .environmentObject(authModel), isActive: $isShareLinkActive)
+                        .environmentObject(authModel)
                     .hidden()
                 }
             }

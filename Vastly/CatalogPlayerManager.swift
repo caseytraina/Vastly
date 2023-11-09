@@ -27,7 +27,7 @@ class CatalogPlayerManager: ObservableObject {
     init(_ catalog: Catalog) {
         print("INIT: Catalog Player Manager")
         self.catalog = catalog
-        setupCommandCenter()
+//        setupCommandCenter()
     }
     
     // This function returns the AVPlayer for a video on the fly

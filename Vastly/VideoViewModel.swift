@@ -65,7 +65,7 @@ class VideoViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self.isProcessing = false
             }
-            await self.getVideos()
+//            await self.getVideos()
             print("Got videos.")
             // For you page must have completed loading before letting user into the app
 

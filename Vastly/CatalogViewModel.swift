@@ -205,9 +205,9 @@ class Catalog {
     func nextVideo() -> Video? {
         self.updateVideoHistory()
         if let nextVideo = currentChannel?.nextVideo() {
-            currentVideo = nextVideo
+            self.currentVideo = nextVideo
         }
-        return currentVideo
+        return self.currentVideo
     }
     
     func peekNextVideo() -> Video? {
@@ -231,6 +231,8 @@ class Catalog {
     func changeToVideoIndex(_ index: Int) {
         self.updateVideoHistory()
         self.currentChannel?.changeToVideoIndex(index)
+        let vid = self.currentChannel?.currentVideo()
+        self.currentVideo = vid
     }
     
     func changeToChannel(_ channel: Channel) {
@@ -240,6 +242,7 @@ class Catalog {
             self.updateChannelHistory()
             self.currentChannelIndex = newChannelIndex
             self.currentChannel = self.catalog[newChannelIndex]
+            self.changeToVideoIndex(0)
         }
     }
     
@@ -272,7 +275,6 @@ class CatalogViewModel: ObservableObject {
     // This is private, channels should be accessed via the catalog, this
     // is only used to populate the catalog
     var channels: [Channel] = [FOR_YOU_CHANNEL]
-    
     var authors: [Author] = []
     
     @Published var viewedVideosProcessing: Bool = true
@@ -309,7 +311,8 @@ class CatalogViewModel: ObservableObject {
         forYou = await self.generateShapedForYou(max: 20, channelVideos: forYou)
         self.catalog.addChannel(forYou)
         
-        for channel in self.channels {
+        // Ignore the "FOR YOU" channel
+        for channel in self.channels.dropFirst() {
             do {
                 let channelVideos = ChannelVideos(channel: channel, user: self.authModel.current_user, authors: authors)
                 

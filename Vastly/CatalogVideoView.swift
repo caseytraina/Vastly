@@ -140,12 +140,12 @@ struct CatalogVideoView: View {
                     }
                 }
                 
-                .onChange(of: channelIndex) { newIndex in
-//                    if activeChannel != viewModel.channels[newIndex] {
-                    activeChannel = viewModel.channels[newIndex]
-//                    }
-                    updateMetadata()
-                }
+//                .onChange(of: channelIndex) { newIndex in
+////                    if activeChannel != viewModel.channels[newIndex] {
+//                    activeChannel = viewModel.channels[newIndex]
+////                    }
+//                    updateMetadata()
+//                }
                 
 //                .onChange(of: viewModel.catalog.currentVideo) { newVideo in
 //                    endTime = Date()
@@ -301,34 +301,36 @@ struct CatalogVideoView: View {
         impact.impactOccurred()
         
         viewModel.playerManager?.changeToChannel(to: newChannel, shouldPlay: playing)
+        let catalog = viewModel.catalog
+        catalog.changeToChannel(newChannel)
         
-        let currentVideo = viewModel.catalog.currentVideo!
-        // This must be a value since we changed to a new channel
-        let previousVideo = viewModel.catalog.peekPreviousVideo()!
-        let previousChannel = viewModel.catalog.peekPreviousChannel()!
-        
-        // TODO: move this into the catalog
-        channelClicked(for: newChannel, with: authModel.user)
-        videoClicked(for: currentVideo,
-                     with: authModel.user,
-                     profile: authModel.current_user,
-                     watchedIn: activeChannel)
-        
-        let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
-        
-        videoWatched(
-            from: startTime,
-            to: endTime,
-            for: previousVideo,
-            time: duration ?? 0.0,
-            watched: duration,
-            with: authModel.user,
-            profile: authModel.current_user,
-            viewModel: viewModel,
-            watchedIn: previousChannel.channel)
-        startTime = Date()
-        updateMetadata()
-        
+        if let currentVideo = catalog.currentVideo {
+            // This must be a value since we changed to a new channel
+            let previousVideo = catalog.peekPreviousVideo()!
+            let previousChannel = catalog.peekPreviousChannel()!
+            
+            // TODO: move this into the catalog
+            channelClicked(for: newChannel, with: authModel.user)
+            videoClicked(for: currentVideo,
+                         with: authModel.user,
+                         profile: authModel.current_user,
+                         watchedIn: activeChannel)
+            
+            let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
+            
+            videoWatched(
+                from: startTime,
+                to: endTime,
+                for: previousVideo,
+                time: duration ?? 0.0,
+                watched: duration,
+                with: authModel.user,
+                profile: authModel.current_user,
+                viewModel: viewModel,
+                watchedIn: previousChannel.channel)
+            startTime = Date()
+            updateMetadata()
+        }
     }
     
     private func updateMetadata() {

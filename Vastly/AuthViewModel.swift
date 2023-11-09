@@ -37,8 +37,6 @@ class AuthViewModel: ObservableObject {
     @Published var liked_videos: [Video] = []
     @Published var searchQueries: [String]?
 
-//    var viewModel: VideoViewModel?
-    
     init() {
         listenToAuthState()
     }

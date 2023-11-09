@@ -31,8 +31,6 @@ struct NewSearchBar: View {
     @State var isLinkActive = false
     @FocusState private var textFocused: Bool
     
-//    var viewModel: VideoViewModel
-    
     @StateObject var controller: NewAlgoliaController
     @State var text = ""
     

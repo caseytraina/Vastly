@@ -83,29 +83,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct VastlyApp: App {
   // register app delegate for Firebase setup
   @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @StateObject var authModel = AuthViewModel()
-//    @StateObject var videoViewModel = VideoViewModel()
-//    @StateObject var playerManager = VideoPlayerManager(videos: VideoViewMode)
-    
-    
+  @StateObject var authModel = AuthViewModel()
     
   var body: some Scene {
     WindowGroup {
       NavigationView {
           LaunchAnimation(authModel: authModel)
               .environmentObject(authModel)
-//              .onOpenURL { URL in
-//                  // Process the URL
-//                  handleIncomingURL(URL)
-//              }
-//              .environmentObject(videoViewModel)
-//              .environmentObject(playerManager)
-
       }
     }
-      
   }
-    
-
-    
 }

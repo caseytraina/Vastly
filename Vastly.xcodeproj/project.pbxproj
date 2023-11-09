@@ -99,8 +99,6 @@
 		0291702A2AB376B100ADF426 /* AlgoliaSearchClient in Frameworks */ = {isa = PBXBuildFile; productRef = 029170292AB376B100ADF426 /* AlgoliaSearchClient */; };
 		0294DEA52A7987370073994D /* VideoThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0294DEA42A7987370073994D /* VideoThumbnailView.swift */; };
 		029AEAAD2A852791002A09DF /* Carousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029AEAAC2A852791002A09DF /* Carousel.swift */; };
-		029AEAAF2A853755002A09DF /* VerticalVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029AEAAE2A853754002A09DF /* VerticalVideoView.swift */; };
-		029AEAB12A858649002A09DF /* NewVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029AEAB02A858649002A09DF /* NewVideoView.swift */; };
 		029B70582A9C3C5700ECA74B /* Amplitude in Frameworks */ = {isa = PBXBuildFile; productRef = 029B70572A9C3C5700ECA74B /* Amplitude */; };
 		02B4382F2AA8DC9F001E41A4 /* Blow.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 02B4382E2AA8DC9F001E41A4 /* Blow.aiff */; };
 		02B438302AA8DC9F001E41A4 /* Blow.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 02B4382E2AA8DC9F001E41A4 /* Blow.aiff */; };
@@ -201,8 +199,6 @@
 		029295332A27B231001EE121 /* Vastly.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Vastly.entitlements; sourceTree = "<group>"; };
 		0294DEA42A7987370073994D /* VideoThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoThumbnailView.swift; sourceTree = "<group>"; };
 		029AEAAC2A852791002A09DF /* Carousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carousel.swift; sourceTree = "<group>"; };
-		029AEAAE2A853754002A09DF /* VerticalVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalVideoView.swift; sourceTree = "<group>"; };
-		029AEAB02A858649002A09DF /* NewVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewVideoView.swift; sourceTree = "<group>"; };
 		02B4382E2AA8DC9F001E41A4 /* Blow.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Blow.aiff; sourceTree = "<group>"; };
 		02B9372E2AB9F5D100AEB1F4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Vastly/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		02BCA9402A37D3280069E49A /* VideoObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoObserver.swift; sourceTree = "<group>"; };
@@ -365,8 +361,6 @@
 				023EE7782A0ADF36004E09DD /* ContentView.swift */,
 				02DEC7422AC4A83000F4B5D0 /* LaunchAnimation.swift */,
 				023EE7A52A0ADF6D004E09DD /* HomeView.swift */,
-				029AEAB02A858649002A09DF /* NewVideoView.swift */,
-				029AEAAE2A853754002A09DF /* VerticalVideoView.swift */,
 				025649A32A11FF4700C442AE /* LoadingView.swift */,
 				02C5CCD22A4A25EC00C7280E /* TutorialView.swift */,
 				02583E1F2A1B462A008CDA59 /* VideoLoadingView.swift */,
@@ -665,7 +659,6 @@
 				025649A42A11FF4700C442AE /* LoadingView.swift in Sources */,
 				02611E532AA7797D007029BB /* FullEpisodeButton.swift in Sources */,
 				02583E222A1D736C008CDA59 /* FullscreenVideoPlayer.swift in Sources */,
-				029AEAB12A858649002A09DF /* NewVideoView.swift in Sources */,
 				02583E0B2A19EA4B008CDA59 /* NamePromptView.swift in Sources */,
 				02583E152A1AF88B008CDA59 /* PasswordConfirmView.swift in Sources */,
 				021E5A922A69BB9D00B120CD /* PageIndicator.swift in Sources */,
@@ -680,7 +673,6 @@
 				02BCA9412A37D3280069E49A /* VideoObserver.swift in Sources */,
 				023EE7C52A0B1E96004E09DD /* MyText.swift in Sources */,
 				02C5CCD12A4A04C900C7280E /* Analytics.swift in Sources */,
-				029AEAAF2A853755002A09DF /* VerticalVideoView.swift in Sources */,
 				02FC35342A71B2360075C2B6 /* VideoFailedView.swift in Sources */,
 				02CB38792A7839810065F626 /* LikesListView.swift in Sources */,
 				02781AA12AB8A56C0068E246 /* SearchVideoView.swift in Sources */,

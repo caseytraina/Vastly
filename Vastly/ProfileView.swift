@@ -10,7 +10,7 @@ import SwiftUI
 struct ProfileView: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogViewModel
     
     @State var isAnimating = false
     

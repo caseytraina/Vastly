@@ -10,7 +10,7 @@ import SwiftUI
 // The user begins in this view. If there exists a user, then the user enters the video flow, otherwise they are onboarded.
 struct ContentView: View {
     @EnvironmentObject private var authModel: AuthViewModel
-    @EnvironmentObject private var viewModel: VideoViewModel
+    @EnvironmentObject private var viewModel: CatalogViewModel
     var body: some View {
         Group {
             if authModel.user != nil {

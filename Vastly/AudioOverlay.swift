@@ -20,7 +20,7 @@ struct AudioOverlay: View {
 //    @State var currentDuration: CMTime =
 //    @State var totalDuration: CMTime
     
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogViewModel
     
     @Binding var playing: Bool
     

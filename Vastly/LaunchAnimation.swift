@@ -12,7 +12,7 @@ import AVKit
 struct LaunchAnimation: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
-    @StateObject var viewModel: VideoViewModel
+    @StateObject var viewModel: CatalogViewModel
     
     @State var player: AVPlayer = AVPlayer(url: Bundle.main.url(forResource: "launchAnimation", withExtension: "mp4")!)
     @State private var endObserverToken: Any?
@@ -20,7 +20,7 @@ struct LaunchAnimation: View {
     @State var completed = false
     
     init(authModel: AuthViewModel) {
-        _viewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
+        _viewModel = StateObject(wrappedValue: CatalogViewModel(authModel: authModel))
 //        let playerItem =
     }
     
@@ -82,7 +82,7 @@ struct LaunchAnimation: View {
 
 struct LaunchScreenPlayer: UIViewControllerRepresentable {
     
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogViewModel
     
     @Binding var player: AVPlayer
     

@@ -12,7 +12,7 @@ import MediaPlayer
 
 struct FullscreenVideoPlayer: UIViewControllerRepresentable {
     
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogViewModel
     
 //    var player: AVPlayer?
     @Binding var videoMode: Bool

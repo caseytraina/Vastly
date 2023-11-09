@@ -9,7 +9,7 @@ import SwiftUI
 
 struct Carousel: View {
     
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
 //
     @State var isNavigationActive = false

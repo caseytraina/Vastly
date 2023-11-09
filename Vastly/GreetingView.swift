@@ -19,7 +19,6 @@ struct GreetingView: View {
     @State var isActive = true
     @State var selected: [String] = []
     @EnvironmentObject private var authModel: AuthViewModel
-//    @EnvironmentObject var viewModel: VideoViewModel
 
     var body: some View {
         GeometryReader { geo in

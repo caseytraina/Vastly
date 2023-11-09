@@ -16,7 +16,6 @@ struct NamePromptView: View {
     var typeOfAccount: AccountType
     
     @EnvironmentObject private var authModel: AuthViewModel
-//    @EnvironmentObject var viewModel: VideoViewModel
 
     var body: some View {
 

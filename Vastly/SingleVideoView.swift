@@ -12,7 +12,7 @@ import AVKit
 struct SingleVideoView: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogViewModel
     
     @State var channel: Channel = FOR_YOU_CHANNEL
     

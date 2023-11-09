@@ -19,7 +19,6 @@ struct PhoneLogin: View {
 //    var password: String = ""
     @State var code: String = ""
     @EnvironmentObject private var authModel: AuthViewModel
-//    @EnvironmentObject var viewModel: VideoViewModel
 
     @State var successful = true
 //    @State var isEditing = true

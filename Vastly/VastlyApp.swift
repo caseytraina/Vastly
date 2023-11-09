@@ -85,7 +85,6 @@ struct VastlyApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject var authModel = AuthViewModel()
 //    @StateObject var videoViewModel = VideoViewModel()
-
 //    @StateObject var playerManager = VideoPlayerManager(videos: VideoViewMode)
     
     

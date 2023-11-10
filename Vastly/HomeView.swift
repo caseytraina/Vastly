@@ -97,7 +97,7 @@ struct HomeView: View {
                     VStack {
                         switch currentPage {
                         case .home:
-                            CatalogVideoView(playing: $isPlaying)
+                            CatalogChannelView(playing: $isPlaying)
                                 .environmentObject(viewModel)
                                 .environmentObject(authModel)
                             

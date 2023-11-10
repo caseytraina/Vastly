@@ -16,13 +16,15 @@ struct CatalogVerticalVideoView: View {
     @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
 
+    var channel: Channel
+    
     @Binding var activeChannel: Channel
 //    @Binding var activeVideo: Video
     
     @State private var cancellables = Set<AnyCancellable>()
 
     @State private var statusObserver: AnyCancellable?
-    @State var isLoaded = false
+    @State var isLoaded = true // TEMPORARY BEFORE STATUS OBSERVERS ADDED
     @State var videoFailed = false
 
     @State var videoListNum = 1
@@ -54,12 +56,12 @@ struct CatalogVerticalVideoView: View {
     @Binding var publisherIsTapped: Bool
 
     var body: some View {
-        if let vids = viewModel.catalog.currentChannel?.videos {
+//        if let vids = viewModel.catalog.currentChannel?.videos {
             ScrollViewReader { proxy in
                 GeometryReader { geo in
                     ScrollView {
                         LazyVStack {
-                            ForEach(Array(vids.enumerated()), id: \.offset) { i, vid in
+                            ForEach(Array(viewModel.catalog.videosForChannel(channel).enumerated()), id: \.offset) { i, vid in
                                 renderVStackVideo(
                                     geoWidth: geo.size.width,
                                     geoHeight: geo.size.height,
@@ -114,7 +116,7 @@ struct CatalogVerticalVideoView: View {
                     .frame(width: geo.size.width, height: geo.size.height)
                 }
             }
-        }
+//        }
     }
     
     private func renderVStackVideo(geoWidth: CGFloat, geoHeight: CGFloat, video: Video, next: Video?, i: Int) -> some View {
@@ -288,7 +290,7 @@ struct CatalogVerticalVideoView: View {
         .id(i)
         .frame(width: geoWidth, height: geoHeight)
         .clipped()
-//        .offset(y: channel == activeChannel ? dragOffset : 0.0)
+        .offset(y: channel == activeChannel ? dragOffset : 0.0)
     }
     
     private func videoIsLiked(_ video: Video) -> Bool {

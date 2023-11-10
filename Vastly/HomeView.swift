@@ -74,7 +74,7 @@ struct HomeView: View {
 
     @Environment(\.scenePhase) private var scenePhase
     
-    @State var channelIndex = 0
+//    @State var channelIndex = 0
     @State var activeChannel: Channel = FOR_YOU_CHANNEL
     @State var currentPage: Page = .home
     @State var isPlaying = true
@@ -91,15 +91,13 @@ struct HomeView: View {
                     ForEach(Array(viewModel.catalog.channels().enumerated()), id: \.offset) { index, channel in
                         LinearGradient(gradient: Gradient(colors: myGradient(channel)), startPoint: .topLeading, endPoint: .bottom)
                             .ignoresSafeArea()
-                            .opacity(channelIndex == index ? 1 : 0)
-                            .animation(.easeInOut(duration: 0.75), value: channelIndex)
+                            .opacity(channel == viewModel.catalog.activeChannel ? 1 : 0)
+                            .animation(.easeInOut(duration: 0.75), value: viewModel.catalog.activeChannel)
                     }
                     VStack {
                         switch currentPage {
                         case .home:
-                            CatalogVideoView(playing: $isPlaying,
-                                             channelIndex: $channelIndex
-                                             )
+                            CatalogVideoView(playing: $isPlaying)
                                 .environmentObject(viewModel)
                                 .environmentObject(authModel)
                             

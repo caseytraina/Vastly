@@ -240,6 +240,20 @@ class CatalogPlayerManager: ObservableObject {
         }
     }
     
+    func nextChannel() {
+        pauseCurrentVideo()
+        if let nextVideo = self.catalog.nextChannel() {
+            playCurrentVideo()
+        }
+    }
+    
+    func previousChannel() {
+        pauseCurrentVideo()
+        if let nextVideo = self.catalog.previousVideo() {
+            playCurrentVideo()
+        }
+    }
+    
     // This function plays the previous video in the currently active channel.
     func previousVideo() {
         pauseCurrentVideo()

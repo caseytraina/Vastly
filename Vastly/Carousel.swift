@@ -16,7 +16,6 @@ struct Carousel: View {
     
     @Binding var isPlaying: Bool
     @Binding var selected: Channel
-    @Binding var channel_index: Int
     var body: some View {
         ZStack {
 //            Color(.black)
@@ -28,23 +27,24 @@ struct Carousel: View {
                     ScrollViewReader { proxy in
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                ForEach(viewModel.channels.indices) { i in
+                                ForEach(viewModel.channels) { channel in
                                     Button(action: {
 //                                        selected = Channel.allCases[i]
                                         viewModel.playerManager?.pauseCurrentVideo()
-                                        channel_index = i
+                                        viewModel.catalog.changeToChannel(channel)
+//                                        channel_index = i
                                         withAnimation {
-                                            proxy.scrollTo(i, anchor: .center)
+                                            proxy.scrollTo(channel, anchor: .center)
                                         }
                                     }, label: {
-                                        MyText(text: viewModel.channels[i].title, size: screenSize.width * 0.04, bold: true, alignment: .center, color: selected == viewModel.channels[i] ? .white : Color("AccentGray"))
+                                        MyText(text: channel.title, size: screenSize.width * 0.04, bold: true, alignment: .center, color: selected == channel ? .white : Color("AccentGray"))
                                             .padding(.horizontal, 15)
                                             .padding(.vertical, 10)
                                             .lineLimit(1)
                                             .overlay(
                                                 Rectangle()
                                                     .frame(height: 4)
-                                                    .foregroundColor(selected == viewModel.channels[i] ? .white : .clear),
+                                                    .foregroundColor(selected == channel ? .white : .clear),
                                                 alignment: .bottom
                                             )
 //                                            .background(Capsule()
@@ -57,14 +57,14 @@ struct Carousel: View {
                                             .transition(.opacity)
                                         
                                     })
-                                    .id(i)
+                                    .id(channel)
                                     .padding(.top)
                                 }
                             }
                         }
-                        .onChange(of: channel_index) { newIndex in
+                        .onChange(of: selected) { newChannel in
                             withAnimation {
-                                proxy.scrollTo(newIndex, anchor: .center)
+                                proxy.scrollTo(newChannel, anchor: .center)
                             }
                         }
 //                        .frame(maxWidth: geo.size.width * 0.65)

@@ -14,6 +14,8 @@ import FirebaseStorage
 import Foundation
 import SwiftUI
 
+// TODO: Track video indices in respective channels
+
 /*
  CatalogModel is responsible for the querying and handling of video data in-app. CatalogModel handles all video operations, except for the actual playing of the videos. That is controlled in VideoObserver.
  */
@@ -142,6 +144,7 @@ class Catalog {
     
     @Published var currentVideo: Video?
     @Published var currentChannel: ChannelVideos?
+    @Published var activeChannel: Channel = FOR_YOU_CHANNEL
     
     var currentChannelIndex = 0
     
@@ -185,6 +188,9 @@ class Catalog {
             self.updateChannelHistory()
             self.currentChannelIndex += 1
             self.currentChannel = self.catalog[self.currentChannelIndex]
+            if let newChannel = self.currentChannel?.channel {
+                self.activeChannel = newChannel
+            }
             return self.currentChannel
         } else {
             return nil
@@ -196,6 +202,9 @@ class Catalog {
             self.updateChannelHistory()
             self.currentChannelIndex -= 1
             self.currentChannel = self.catalog[self.currentChannelIndex]
+            if let newChannel = self.currentChannel?.channel {
+                self.activeChannel = newChannel
+            }
             return self.currentChannel
         } else {
             return nil
@@ -242,6 +251,9 @@ class Catalog {
             self.updateChannelHistory()
             self.currentChannelIndex = newChannelIndex
             self.currentChannel = self.catalog[newChannelIndex]
+            if let newChannel = self.currentChannel?.channel {
+                self.activeChannel = newChannel
+            }
             self.changeToVideoIndex(0)
         }
     }

@@ -22,7 +22,7 @@ struct CatalogVideoView: View {
     @State var activeChannel: Channel = FOR_YOU_CHANNEL
     @Binding var playing: Bool
     
-    @Binding var channelIndex: Int
+//    @Binding var channelIndex: Int
 //    @Binding var videoIndex: Int
     //    @State var video_indices: [Int]
     //    @State var current_trending = 0
@@ -71,8 +71,7 @@ struct CatalogVideoView: View {
             ZStack {
                 VStack {
                     Carousel(isPlaying: $playing,
-                             selected: $activeChannel,
-                             channel_index: $channelIndex)
+                             selected: $activeChannel)
                         .environmentObject(viewModel)
                         .environmentObject(authModel)
                         .frame(height: screenSize.height*0.075)
@@ -91,7 +90,8 @@ struct CatalogVideoView: View {
                                             if viewModel.catalog.videosForChannel(channel).isEmpty {
                                                 emptyVideos()
                                             } else {
-                                                CatalogVerticalVideoView(activeChannel: $activeChannel,
+                                                CatalogVerticalVideoView(channel: channel,
+                                                                         activeChannel: $activeChannel,
                                                                          isPlaying: $playing,
                                                                          dragOffset: $dragOffset,
                                                                          publisherIsTapped: $publisherIsTapped)
@@ -118,7 +118,7 @@ struct CatalogVideoView: View {
                                     proxy.scrollTo(activeChannel, anchor: .leading)
                                 }
                             }
-                            .onChange(of: activeChannel) { newChannel in
+                            .onChange(of: viewModel.catalog.activeChannel) { newChannel in
                                 channelChanged(newChannel: newChannel)
                                 withAnimation(.easeOut(duration: 0.125)) {
                                     proxy.scrollTo(newChannel, anchor: .leading)
@@ -256,11 +256,14 @@ struct CatalogVideoView: View {
             if vel <= -screenSize.width/2 || distance <= -screenSize.width/2 {
                 if (viewModel.catalog.nextChannel() != nil) {
                     // TODO: Remove this internal channel index
-                    channelIndex += 1
+//                    channelIndex += 1
+                    viewModel.playerManager?.nextChannel()
                 }
             } else if vel >= screenSize.width/2 || distance >= screenSize.width/2 {
                 if (viewModel.catalog.previousChannel() != nil) {
-                    channelIndex -= 1
+//                    channelIndex -= 1
+                    viewModel.playerManager?.previousChannel()
+
                 }
             }
             
@@ -271,11 +274,11 @@ struct CatalogVideoView: View {
             let distance = event.translation.height
             
             if vel <= -screenSize.height/4 || distance <= -screenSize.height/2 {
-                viewModel.catalog.nextVideo()
+                viewModel.playerManager?.nextVideo()
                 
                 
             } else if vel >= screenSize.height/4 || distance >= screenSize.height/2 {
-                viewModel.catalog.previousVideo()
+                viewModel.playerManager?.previousVideo()
             }
         }
         dragType = .unknown
@@ -294,7 +297,8 @@ struct CatalogVideoView: View {
     }
     
     private func channelChanged(newChannel: Channel) {
-        channelIndex = self.viewModel.catalog.currentChannelIndex
+        self.viewModel.catalog.changeToChannel(newChannel)
+//        channelIndex = self.viewModel.catalog.currentChannelIndex
         endTime = Date()
         
         let impact = UIImpactFeedbackGenerator(style: .medium)
@@ -302,7 +306,7 @@ struct CatalogVideoView: View {
         
         viewModel.playerManager?.changeToChannel(to: newChannel, shouldPlay: playing)
         let catalog = viewModel.catalog
-        catalog.changeToChannel(newChannel)
+//        catalog.changeToChannel(newChannel)
         
         if let currentVideo = catalog.currentVideo {
             // This must be a value since we changed to a new channel

@@ -131,7 +131,7 @@ class ChannelVideos {
         }
 }
 
-final class Catalog: ObservableObject {
+final class Catalog {
     // This should be kept private, we access the catalog via the public
     // funcs below
     private var catalog: [ChannelVideos] = []
@@ -142,9 +142,9 @@ final class Catalog: ObservableObject {
     var videoHistory: [Video] = []
     var channelHistory: [ChannelVideos] = []
     
-    @Published var currentVideo: Video?
-    @Published var currentChannel: ChannelVideos?
-    @Published var activeChannel: Channel = FOR_YOU_CHANNEL
+    var currentVideo: Video?
+    var currentChannel: ChannelVideos?
+    var activeChannel: Channel = FOR_YOU_CHANNEL
     
     var currentChannelIndex = 0
     

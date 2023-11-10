@@ -24,7 +24,7 @@ struct Carousel: View {
                                 ForEach(viewModel.channels) { channel in
                                     Button(action: {
                                         viewModel.playerManager?.pauseCurrentVideo()
-                                        viewModel.catalog.changeToChannel(channel)
+                                        viewModel.changeToChannel(channel)
                                         withAnimation {
                                             proxy.scrollTo(channel, anchor: .center)
                                         }

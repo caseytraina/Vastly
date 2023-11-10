@@ -56,21 +56,23 @@ struct CatalogChannelView: View {
                         .ignoresSafeArea()
                         .padding(.vertical)
                     Spacer()
-//                    MyText(text: viewModel.catalog.activeChannel.title, size: screenSize.width * 0.05, bold: true, alignment: .center, color: .white)
+//                    MyText(text: viewModel.currentChannel.title, size: screenSize.width * 0.05, bold: true, alignment: .center, color: .white)
                     ZStack {
                         ScrollViewReader { proxy in
                             ScrollView (.horizontal, showsIndicators: false) {
                                 HStack {
-//                                ForEach(viewModel.channels, id: \.self) { channel in
-                                    CatalogVideoView(channel: viewModel.catalog.activeChannel,
-                                                     isPlaying: $playing,
-                                                     dragOffset: $dragOffset,
-                                                     publisherIsTapped: $publisherIsTapped)
+                                    if let currentChannel = viewModel.currentChannel {
+                                        //                                ForEach(viewModel.channels, id: \.self) { channel in
+                                        CatalogVideoView(channel: currentChannel,
+                                                         isPlaying: $playing,
+                                                         dragOffset: $dragOffset,
+                                                         publisherIsTapped: $publisherIsTapped)
                                         .environmentObject(viewModel)
                                         .environmentObject(authModel)
                                         .frame(width: screenSize.width, height: screenSize.height * 0.8)
-                                        .id(viewModel.catalog.activeChannel)
-//                                    }
+                                        .id(currentChannel.channel)
+                                    }
+    //                                    }
                                 }
                                 .offset(x: offset.width)
                             }

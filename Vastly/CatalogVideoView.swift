@@ -16,7 +16,7 @@ struct CatalogVideoView: View {
     @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
 
-    var channel: Channel
+    var channel: ChannelVideos
     @State private var cancellables = Set<AnyCancellable>()
 
     @State private var statusObserver: AnyCancellable?
@@ -49,14 +49,14 @@ struct CatalogVideoView: View {
     @Binding var publisherIsTapped: Bool
 
     var body: some View {
-        if viewModel.catalog.videosForChannel(channel).isEmpty {
+        if channel.videos.isEmpty {
             emptyVideos()
         } else {
             ScrollViewReader { proxy in
                 GeometryReader { geo in
                     ScrollView {
                         LazyVStack {
-                            ForEach(Array(viewModel.catalog.videosForChannel(channel).enumerated()), id: \.offset) { i, vid in
+                            ForEach(Array(channel.videos.enumerated()), id: \.offset) { i, vid in
                                 renderVStackVideo(
                                     geoWidth: geo.size.width,
                                     geoHeight: geo.size.height,
@@ -155,8 +155,6 @@ struct CatalogVideoView: View {
                                 ZStack {
                                     FullscreenVideoPlayer(videoMode: $videoMode,
                                                           video: video)
-//                                                          ,
-//                                                          activeChannel: activeChannel)
                                         .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                         .padding(0)
                                         .environmentObject(viewModel)

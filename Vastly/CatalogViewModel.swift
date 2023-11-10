@@ -131,7 +131,7 @@ class ChannelVideos {
         }
 }
 
-class Catalog: ObservableObject {
+final class Catalog: ObservableObject {
     // This should be kept private, we access the catalog via the public
     // funcs below
     private var catalog: [ChannelVideos] = []
@@ -148,22 +148,12 @@ class Catalog: ObservableObject {
     
     var currentChannelIndex = 0
     
-    init() {
-    }
-    
     func addChannel(_ channelVideos: ChannelVideos) {
         self.catalog.append(channelVideos)
     }
     
     func channels() -> [Channel] {
         return self.catalog.map { channelVideos in channelVideos.channel }
-    }
-    
-    func videosForChannel(_ channel: Channel) -> [Video] {
-        let channel = self.catalog.first(where: { channelVideos in
-            return channelVideos.channel == channel
-        })
-        return channel?.videos ?? []
     }
     
     func hasNextChannel() -> Bool {
@@ -284,6 +274,8 @@ class Catalog: ObservableObject {
 class CatalogViewModel: ObservableObject {
     @Published var isProcessing: Bool
     @Published var catalog: Catalog = Catalog()
+    @Published var currentChannel: ChannelVideos?
+    
     // This is private, channels should be accessed via the catalog, this
     // is only used to populate the catalog
     var channels: [Channel] = [FOR_YOU_CHANNEL]
@@ -309,6 +301,11 @@ class CatalogViewModel: ObservableObject {
                 self.isProcessing = false
             }
         }
+    }
+    
+    func changeToChannel(_ channel: Channel) {
+        self.catalog.changeToChannel(channel)
+        self.currentChannel = self.catalog.currentChannel
     }
     
     func getCatalog() async {

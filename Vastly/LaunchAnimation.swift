@@ -8,7 +8,6 @@
 import SwiftUI
 import AVKit
 
-
 struct LaunchAnimation: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
@@ -23,7 +22,6 @@ struct LaunchAnimation: View {
     init(authModel: AuthViewModel) {
         _viewModel = StateObject(wrappedValue: CatalogViewModel(authModel: authModel))
         _videoViewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
-//        let playerItem =
     }
     
     var body: some View {
@@ -33,19 +31,9 @@ struct LaunchAnimation: View {
                     ZStack {
                         Color.accentColor // color of background of animation
                             .ignoresSafeArea()
-                        
                         LaunchScreenPlayer(player: $player)
-//                        VideoPlayer(player: player)
                             .ignoresSafeArea()
-//                            .scaledToFill()
-//                            .position(x: 0)
-//                            .frame(maxWidth: geo.size.width, maxHeight: geo.size.height)
-//                            .aspectRatio(CGSize(width: 750, height: 1624), contentMode: .fill)
-//                            .clipped()
-
                     }
-    //                    .ignoresSafeArea()
-    //                    .position(x: screenSize.width / 2, y: screenSize.height / 2)
                 } else {
                     ContentView()
                         .environmentObject(authModel)
@@ -68,20 +56,10 @@ struct LaunchAnimation: View {
                     self.endObserverToken = nil
 
                 }
-                
-                
-                
-        }
+            }
         }
     }
 }
-
-//struct LaunchAnimation_Previews: PreviewProvider {
-//    static var previews: some View {
-//        LaunchAnimation()
-//    }
-//}
-
 
 struct LaunchScreenPlayer: UIViewControllerRepresentable {
     

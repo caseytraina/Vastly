@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "C0671B31-A31C-42FF-AC21-C5E6C8C7BED6",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Vastly.xcodeproj",
+      "identifier" : "023EE7722A0ADF36004E09DD",
+      "name" : "Vastly"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Vastly.xcodeproj",
+        "identifier" : "023EE7872A0ADF37004E09DD",
+        "name" : "VastlyTests"
+      }
+    }
+  ],
+  "version" : 1
+}

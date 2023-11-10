@@ -131,7 +131,7 @@ class ChannelVideos {
         }
 }
 
-class Catalog {
+class Catalog: ObservableObject {
     // This should be kept private, we access the catalog via the public
     // funcs below
     private var catalog: [ChannelVideos] = []
@@ -301,7 +301,7 @@ class CatalogViewModel: ObservableObject {
     init(authModel: AuthViewModel) {
         self.isProcessing = true
         self.authModel = authModel
-        
+
         Task {
             await self.getCatalog()
             self.playerManager = CatalogPlayerManager(self.catalog)

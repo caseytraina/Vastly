@@ -8,43 +8,35 @@
 import SwiftUI
 
 struct Carousel: View {
-    
     @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
-//
     @State var isNavigationActive = false
     
     @Binding var isPlaying: Bool
-    @Binding var selected: Channel
     var body: some View {
         ZStack {
-//            Color(.black)
-//                .ignoresSafeArea()
             GeometryReader { geo in
                 HStack(alignment: .center) {
-//                    Spacer()
                     Spacer()
                     ScrollViewReader { proxy in
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
                                 ForEach(viewModel.channels) { channel in
                                     Button(action: {
-//                                        selected = Channel.allCases[i]
                                         viewModel.playerManager?.pauseCurrentVideo()
                                         viewModel.catalog.changeToChannel(channel)
-//                                        channel_index = i
                                         withAnimation {
                                             proxy.scrollTo(channel, anchor: .center)
                                         }
                                     }, label: {
-                                        MyText(text: channel.title, size: screenSize.width * 0.04, bold: true, alignment: .center, color: selected == channel ? .white : Color("AccentGray"))
+                                        MyText(text: channel.title, size: screenSize.width * 0.04, bold: true, alignment: .center, color: viewModel.catalog.activeChannel == channel ? .white : Color("AccentGray"))
                                             .padding(.horizontal, 15)
                                             .padding(.vertical, 10)
                                             .lineLimit(1)
                                             .overlay(
                                                 Rectangle()
                                                     .frame(height: 4)
-                                                    .foregroundColor(selected == channel ? .white : .clear),
+                                                    .foregroundColor(viewModel.catalog.activeChannel == channel ? .white : .clear),
                                                 alignment: .bottom
                                             )
 //                                            .background(Capsule()
@@ -53,7 +45,7 @@ struct Carousel: View {
 //                                            .overlay(Capsule()
 //                                                .stroke(Color.black, lineWidth: 1)
 //                                                .shadow(color: Color.black.opacity(selected == viewModel.channels[i] ? 1.0 : 0.0), radius: 5, x: 0, y: 5))
-                                            .animation(.easeOut, value: selected)
+                                            .animation(.easeOut, value: viewModel.catalog.activeChannel)
                                             .transition(.opacity)
                                         
                                     })
@@ -62,7 +54,7 @@ struct Carousel: View {
                                 }
                             }
                         }
-                        .onChange(of: selected) { newChannel in
+                        .onChange(of: viewModel.catalog.activeChannel) { newChannel in
                             withAnimation {
                                 proxy.scrollTo(newChannel, anchor: .center)
                             }
@@ -80,9 +72,3 @@ struct Carousel: View {
         }
     }
 }
-
-//struct Carousel_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Carousel()
-//    }
-//}

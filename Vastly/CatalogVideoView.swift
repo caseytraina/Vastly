@@ -17,10 +17,6 @@ struct CatalogVideoView: View {
     @EnvironmentObject var authModel: AuthViewModel
 
     var channel: Channel
-    
-    @Binding var activeChannel: Channel
-//    @Binding var activeVideo: Video
-    
     @State private var cancellables = Set<AnyCancellable>()
 
     @State private var statusObserver: AnyCancellable?
@@ -50,9 +46,6 @@ struct CatalogVideoView: View {
     
     @State var audioPlayer: AVAudioPlayer?
     @State var shareURL: URL?
-    
-//    var channel: Channel
-    
     @Binding var publisherIsTapped: Bool
 
     var body: some View {
@@ -107,13 +100,13 @@ struct CatalogVideoView: View {
                             self.shareURL = videoShareURL(newVideo)
                         }
                     }
-//                    .onChange(of: self.viewModel.catalog.currentChannel) { newChannel in
+//                    .onChange(of: self.activeChannel) { newChannel in
 //                        self.activeChannel = newChannel.channel
-//                        trackAVStatus(for: getVideo(current_playing))
+////                        trackAVStatus(for: getVideo(current_playing))
 //                        withAnimation(.easeOut(duration: 0.125)) {
 //                            proxy.scrollTo(0, anchor: .top)
 //                        }
-//                        shareURL = videoShareURL(getVideo(current_playing))
+////                        shareURL = videoShareURL(getVideo(current_playing))
 //                    }
                     .frame(width: geo.size.width, height: geo.size.height)
                 }
@@ -161,8 +154,9 @@ struct CatalogVideoView: View {
                             ZStack {
                                 ZStack {
                                     FullscreenVideoPlayer(videoMode: $videoMode,
-                                                          video: video,
-                                                          activeChannel: $activeChannel)
+                                                          video: video)
+//                                                          ,
+//                                                          activeChannel: activeChannel)
                                         .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                         .padding(0)
                                         .environmentObject(viewModel)
@@ -179,7 +173,8 @@ struct CatalogVideoView: View {
                                             .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                     }
                                 }
-                                ProgressBar(value: $playerProgress, activeChannel: $activeChannel, video: video, isPlaying: $isPlaying)
+                                ProgressBar(value: $playerProgress,
+                                            video: video, isPlaying: $isPlaying)
                                     .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                     .padding(0)
                                     .environmentObject(viewModel)
@@ -300,7 +295,7 @@ struct CatalogVideoView: View {
         .id(i)
         .frame(width: geoWidth, height: geoHeight)
         .clipped()
-        .offset(y: channel == activeChannel ? dragOffset : 0.0)
+//        .offset(y: channel == activeChannel ? dragOffset : 0.0)
     }
     
     private func videoIsLiked(_ video: Video) -> Bool {

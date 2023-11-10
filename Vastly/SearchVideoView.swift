@@ -229,7 +229,7 @@ struct SearchVideoView: View {
                             ZStack {
                                 
                                 ZStack {
-                                    FullscreenVideoPlayer(videoMode: $videoMode, video: video, activeChannel: $channel)
+                                    FullscreenVideoPlayer(videoMode: $videoMode, video: video)
                                         .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                         .padding(0)
                                         .environmentObject(viewModel)
@@ -249,7 +249,7 @@ struct SearchVideoView: View {
 
                                 if i == current_playing {
                                     
-                                    ProgressBar(value: $playerProgress, activeChannel: $channel, video: video, isPlaying: $isPlaying)
+                                    ProgressBar(value: $playerProgress, video: video, isPlaying: $isPlaying)
                                         .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                         .padding(0)
                                         .environmentObject(viewModel)

@@ -73,9 +73,7 @@ struct HomeView: View {
     @EnvironmentObject var authModel: AuthViewModel
 
     @Environment(\.scenePhase) private var scenePhase
-    
-//    @State var channelIndex = 0
-    @State var activeChannel: Channel = FOR_YOU_CHANNEL
+//    @State var activeChannel: Channel = FOR_YOU_CHANNEL
     @State var currentPage: Page = .home
     @State var isPlaying = true
     

@@ -19,7 +19,7 @@ struct CatalogChannelView: View {
     @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
     
-    @State var activeChannel: Channel = FOR_YOU_CHANNEL
+//    @State var activeChannel: Channel = FOR_YOU_CHANNEL
     @Binding var playing: Bool
         
     @State var offset: CGSize = CGSize(width: 0, height: 0)
@@ -48,8 +48,7 @@ struct CatalogChannelView: View {
         Group {
             ZStack {
                 VStack {
-                    Carousel(isPlaying: $playing,
-                             selected: $activeChannel)
+                    Carousel(isPlaying: $playing)
                         .environmentObject(viewModel)
                         .environmentObject(authModel)
                         .frame(height: screenSize.height*0.075)
@@ -57,40 +56,34 @@ struct CatalogChannelView: View {
                         .ignoresSafeArea()
                         .padding(.vertical)
                     Spacer()
+//                    MyText(text: viewModel.catalog.activeChannel.title, size: screenSize.width * 0.05, bold: true, alignment: .center, color: .white)
                     ZStack {
                         ScrollViewReader { proxy in
                             ScrollView (.horizontal, showsIndicators: false) {
                                 HStack {
-                                    ForEach(viewModel.channels, id: \.self) { channel in
-                                        if abs((viewModel.channels.firstIndex(of: activeChannel) ?? 0) - (viewModel.channels.firstIndex(of: channel) ?? 0)) <= 1 {
-                                            
-                                            CatalogVideoView(channel: channel,
-                                                             activeChannel: $activeChannel,
-                                                             isPlaying: $playing,
-                                                             dragOffset: $dragOffset,
-                                                             publisherIsTapped: $publisherIsTapped)
-                                                .environmentObject(viewModel)
-                                                .environmentObject(authModel)
-                                                .frame(width: screenSize.width, height: screenSize.height * 0.8)
-                                                .id(channel)
-                                        } else {
-                                            Color("BackgroundColor")
-                                                .frame(width: screenSize.width, height: screenSize.height * 0.8)
-                                                .id(channel)
-                                        }
-                                    }
+//                                ForEach(viewModel.channels, id: \.self) { channel in
+                                    CatalogVideoView(channel: viewModel.catalog.activeChannel,
+                                                     isPlaying: $playing,
+                                                     dragOffset: $dragOffset,
+                                                     publisherIsTapped: $publisherIsTapped)
+                                        .environmentObject(viewModel)
+                                        .environmentObject(authModel)
+                                        .frame(width: screenSize.width, height: screenSize.height * 0.8)
+                                        .id(viewModel.catalog.activeChannel)
+//                                    }
                                 }
                                 .offset(x: offset.width)
                             }
                             .scrollDisabled(true)
                             .onAppear {
-                                viewModel.playerManager?.changeToChannel(to: activeChannel,
-                                                                         shouldPlay: playing)
-                                withAnimation(.easeOut(duration: 0.125)) {
-                                    proxy.scrollTo(activeChannel, anchor: .leading)
-                                }
+//                                viewModel.playerManager?.changeToChannel(to: activeChannel,
+//                                                                         shouldPlay: playing)
+//                                withAnimation(.easeOut(duration: 0.125)) {
+//                                    proxy.scrollTo(activeChannel, anchor: .leading)
+//                                }
                             }
                             .onChange(of: viewModel.catalog.activeChannel) { newChannel in
+                                print("Channel channged in CatalogChannelView")
                                 channelChanged(newChannel: newChannel)
                                 withAnimation(.easeOut(duration: 0.125)) {
                                     proxy.scrollTo(newChannel, anchor: .leading)
@@ -200,7 +193,24 @@ struct CatalogChannelView: View {
         )
         
     }
-    
+//    
+//    if abs((viewModel.channels.firstIndex(of: activeChannel) ?? 0) - (viewModel.channels.firstIndex(of: channel) ?? 0)) <= 1 {
+//    //
+//                                                CatalogVideoView(channel: channel,
+//                                                                 //activeChannel: $activeChannel,
+//                                                                 isPlaying: $playing,
+//                                                                 dragOffset: $dragOffset,
+//                                                                 publisherIsTapped: $publisherIsTapped)
+//                                                    .environmentObject(viewModel)
+//                                                    .environmentObject(authModel)
+//                                                    .frame(width: screenSize.width, height: screenSize.height * 0.8)
+//                                                    .id(channel)
+//    //                                        } else {
+//    //                                            Color("BackgroundColor")
+//    //                                                .frame(width: screenSize.width, height: screenSize.height * 0.8)
+//    //                                                .id(channel)
+//    //                                        }
+//
     private func onDragChanged(_ event: DragGesture.Value) {
         if dragType == .unknown {
             if abs(event.translation.width/screenSize.width) > abs(event.translation.height/screenSize.height)*5 {
@@ -281,7 +291,7 @@ struct CatalogChannelView: View {
             videoClicked(for: currentVideo,
                          with: authModel.user,
                          profile: authModel.current_user,
-                         watchedIn: activeChannel)
+                         watchedIn: catalog.activeChannel)
             
             let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
             

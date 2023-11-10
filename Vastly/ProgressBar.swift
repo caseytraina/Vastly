@@ -13,7 +13,7 @@ let PROGRESS_BAR_WIDTH = screenSize.width * 0.95
 struct ProgressBar: View {
     
     @Binding var value: Double
-    @Binding var activeChannel: Channel
+//    @Binding var activeChannel: Channel
     
     @State var dragStart: Double = 0.0
     
@@ -39,11 +39,11 @@ struct ProgressBar: View {
                         .foregroundColor(Color("AccentGray"))
     //                if video.id == viewModel.playerManager?.getCurrentVideo()?.id {
                     RoundedRectangle(cornerRadius: 5).frame(width: min(abs(PROGRESS_BAR_WIDTH * CGFloat(self.value)), PROGRESS_BAR_WIDTH), height: PROGRESS_BAR_HEIGHT)
-                            .foregroundColor(activeChannel.color)
+//                            .foregroundColor(activeChannel.color)
 
                     
                         Circle()
-                            .foregroundColor(activeChannel.color)
+//                            .foregroundColor(activeChannel.color)
                             .frame(width: geometry.size.height * 2 * (beingDragged ? 2 : 1), height: PROGRESS_BAR_HEIGHT * 2 * (beingDragged ? 2 : 1))
                             .position(x: CGFloat(self.value) * PROGRESS_BAR_WIDTH, y: PROGRESS_BAR_HEIGHT / 2)
 //                            .gesture(

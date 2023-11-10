@@ -146,7 +146,7 @@ final class Catalog {
     var currentChannel: ChannelVideos?
     var activeChannel: Channel = FOR_YOU_CHANNEL
     
-    var currentChannelIndex = 0
+    private var currentChannelIndex = 0
     
     func addChannel(_ channelVideos: ChannelVideos) {
         self.catalog.append(channelVideos)

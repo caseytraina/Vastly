@@ -171,7 +171,7 @@ class CatalogPlayerManager: ObservableObject {
     }
     
     // Function to update static metadata
-    func updateStaticInfo(for video: Video) {
+    private func updateStaticInfo(for video: Video) {
         var staticInfo = [String: Any]()
         staticInfo[MPMediaItemPropertyTitle] = video.title
         staticInfo[MPMediaItemPropertyArtist] = video.author.name
@@ -197,6 +197,7 @@ class CatalogPlayerManager: ObservableObject {
     
     
     // this function updates the command center metadata that is displayed. It must be called any time a change is made to the video or its state.
+    // TODO: This should be made private, SearchVideoView uses it currently
     func updateNowPlayingInfo(for video: Video) {
         print("UPDATING INFO")
         let player = self.getPlayer(for: video)

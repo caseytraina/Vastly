@@ -256,10 +256,6 @@ final class Catalog {
         return videoHistory.last
     }
     
-    // This will return the previous video in the current channel
-    // To peek at the last video played across everything, use `peekPreviousVideo`
-
-    
     func changeToVideoIndex(_ index: Int) {
         self.updateVideoHistory()
         self.currentChannel.changeToVideoIndex(index)
@@ -363,19 +359,25 @@ class CatalogViewModel: ObservableObject {
         self.currentChannel = self.catalog.currentChannel
     }
     
+    private func populateForYouChannel() async {
+        let forYou = ChannelVideos(channel: FOR_YOU_CHANNEL,
+                                   user: self.authModel.current_user,
+                                   authors: self.authors)
+        let forYouVideos = await self.generateShapedForYou(max: 20)
+        for idPlusFirebaseData in forYouVideos {
+            forYou.addVideo(id: idPlusFirebaseData.id, unfilteredVideo: idPlusFirebaseData.firebaseData)
+        }
+        self.catalog.addChannel(forYou)
+        self.currentChannel = forYou
+    }
+    
     func getCatalog() async {
         await self.getChannels()
         await self.getAuthors()
+        await self.populateForYouChannel()
         
         let db = Firestore.firestore()
         let storageRef = db.collection("videos")
-        var forYou = ChannelVideos(channel: FOR_YOU_CHANNEL,
-                                   user: self.authModel.current_user,
-                                   authors: self.authors)
-        forYou = await self.generateShapedForYou(max: 20, channelVideos: forYou)
-        self.catalog.addChannel(forYou)
-//        self.currentChannel = forYou
-        
         // Ignore the "FOR YOU" channel
         for channel in self.channels.dropFirst() {
             do {
@@ -396,10 +398,6 @@ class CatalogViewModel: ObservableObject {
                 print("error with video: \(error)")
             }
         }
-//        self.currentChannel = forYou
-    
-            
-//        await self.processUnprocessedVideos(unprocessedVideos: videosDict)
     }
     
     // This function queries all of the authors from firebase, housing them in a local array to be used to apply to videos.
@@ -499,7 +497,12 @@ class CatalogViewModel: ObservableObject {
         var scores: [Double]
     }
     
-    func generateShapedForYou(max: Int, channelVideos: ChannelVideos) async -> ChannelVideos {
+    struct IdPlusFirebaseData {
+        var id: String
+        var firebaseData: FirebaseData
+    }
+    private func generateShapedForYou(max: Int) async -> [IdPlusFirebaseData] {
+        var channelVideos: [IdPlusFirebaseData] = []
         let userId = self.authModel.user?.phoneNumber ?? self.authModel.user?.email ?? ""
         var rankURL = URLComponents(string: "https://api.prod.shaped.ai/v1/models/video_recommendations_percentages/rank")!
         let queryItems = [
@@ -531,7 +534,7 @@ class CatalogViewModel: ObservableObject {
                     let document = try await videosRef.document(videoId).getDocument()
                     let unfilteredVideo = try document.data(as: FirebaseData.self)
                     let id = document.documentID
-                    channelVideos.addVideo(id: id, unfilteredVideo: unfilteredVideo)
+                    channelVideos.append(IdPlusFirebaseData(id: id, firebaseData: unfilteredVideo))
                 } catch {
                     print("error looking up videos: \(error)")
                 }

@@ -107,8 +107,9 @@ struct ProfileView: View {
                             }
                             
                         }, label: {
-                            MyText(text: "Sign Out", size: geo.size.width * 0.05, bold: true, alignment: .center, color: .red)
+                            MyText(text: "Sign Out", size: geo.size.width * 0.05, bold: true, alignment: .center, color: .gray)
                         })
+                        Spacer()
                         
                     }
                 }

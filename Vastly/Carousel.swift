@@ -54,7 +54,7 @@ struct Carousel: View {
                                 }
                             }
                         }
-                        .onChange(of: viewModel.catalog.activeChannel) { newChannel in
+                        .onChange(of: viewModel.catalog.currentChannel?.channel) { newChannel in
                             withAnimation {
                                 proxy.scrollTo(newChannel, anchor: .center)
                             }

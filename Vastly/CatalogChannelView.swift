@@ -61,8 +61,8 @@ struct CatalogChannelView: View {
                         ScrollViewReader { proxy in
                             ScrollView (.horizontal, showsIndicators: false) {
                                 HStack {
-                                    if let currentChannel = viewModel.currentChannel {
-                                        //                                ForEach(viewModel.channels, id: \.self) { channel in
+//                                    if let currentChannel = viewModel.currentChannel {
+                                    ForEach(viewModel.channels, id: \.self) { currentChannel in
                                         CatalogVideoView(channel: currentChannel,
                                                          isPlaying: $playing,
                                                          dragOffset: $dragOffset,
@@ -70,7 +70,7 @@ struct CatalogChannelView: View {
                                         .environmentObject(viewModel)
                                         .environmentObject(authModel)
                                         .frame(width: screenSize.width, height: screenSize.height * 0.8)
-                                        .id(currentChannel.channel)
+                                        .id(currentChannel)
                                     }
     //                                    }
                                 }
@@ -143,6 +143,7 @@ struct CatalogChannelView: View {
 //                }
                 .onAppear {
                     startTime = Date()
+                    viewModel.catalog.playCurrentVideo()
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
                     DispatchQueue.main.async {
@@ -238,15 +239,18 @@ struct CatalogChannelView: View {
             let distance = event.translation.width
             
             if vel <= -screenSize.width/2 || distance <= -screenSize.width/2 {
-                if (viewModel.catalog.nextChannel() != nil) {
+                if viewModel.catalog.hasNextChannel() {
                     // TODO: Remove this internal channel index
 //                    channelIndex += 1
-                    viewModel.playerManager?.nextChannel()
+//                    viewModel.playerManager?.nextChannel()
+                    viewModel.changeToNextChannel()
+                    
                 }
             } else if vel >= screenSize.width/2 || distance >= screenSize.width/2 {
-                if (viewModel.catalog.previousChannel() != nil) {
+                if viewModel.catalog.hasPreviousChannel() {
 //                    channelIndex -= 1
-                    viewModel.playerManager?.previousChannel()
+//                    viewModel.playerManager?.previousChannel()
+                    viewModel.changeToPreviousChannel()
 
                 }
             }
@@ -258,11 +262,11 @@ struct CatalogChannelView: View {
             let distance = event.translation.height
             
             if vel <= -screenSize.height/4 || distance <= -screenSize.height/2 {
-                viewModel.playerManager?.nextVideo()
+                viewModel.changeToNextVideo()
                 
                 
             } else if vel >= screenSize.height/4 || distance >= screenSize.height/2 {
-                viewModel.playerManager?.previousVideo()
+                viewModel.changeToPreviousVideo()
             }
         }
         dragType = .unknown

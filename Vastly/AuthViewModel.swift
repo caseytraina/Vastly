@@ -246,7 +246,7 @@ class AuthViewModel: ObservableObject {
         do {
             self.current_user = try await fetch(docRef: storageRef)
         } catch {
-            print(error)
+            print("error getting user: \(error)")
         }
     }
     

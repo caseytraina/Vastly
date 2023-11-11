@@ -146,7 +146,15 @@ final class Catalog {
     var currentChannel: ChannelVideos?
     var activeChannel: Channel = FOR_YOU_CHANNEL
     
+    var playerManager: CatalogPlayerManager?
+    
     private var currentChannelIndex = 0
+    
+    func playCurrentVideo() {
+        if let video = self.currentChannel?.currentVideo() {
+            self.playerManager?.play(for: video)
+        }
+    }
     
     func addChannel(_ channelVideos: ChannelVideos) {
         self.catalog.append(channelVideos)
@@ -175,6 +183,7 @@ final class Catalog {
     
     func nextChannel() -> ChannelVideos? {
         if hasNextChannel() {
+            
             self.updateChannelHistory()
             self.currentChannelIndex += 1
             self.currentChannel = self.catalog[self.currentChannelIndex]
@@ -201,12 +210,43 @@ final class Catalog {
         }
     }
     
+    func channelHasVideos(_ channel: Channel) -> Bool {
+        if self.catalog.contains(where: {$0.channel == channel}) {
+            return self.catalog.first(where: {$0.channel == channel})?.videos.isEmpty ?? true
+        }
+        return true
+    }
+    
+    func getChannelVideos(channel: Channel) -> ChannelVideos? {
+        return self.catalog.first(where: {$0.channel == channel})
+    }
+    
     func nextVideo() -> Video? {
+        if let cur = self.currentVideo {
+            self.playerManager?.pause(for: cur)
+        }
         self.updateVideoHistory()
         if let nextVideo = currentChannel?.nextVideo() {
             self.currentVideo = nextVideo
         }
+        if let cur = self.currentVideo {
+            self.playerManager?.play(for: cur)
+        }
         return self.currentVideo
+    }
+    
+    func previousVideo() -> Video? {
+        if let cur = self.currentVideo {
+            self.playerManager?.pause(for: cur)
+        }
+        self.updateVideoHistory()
+        if let previousVideo = currentChannel?.previousVideo() {
+            currentVideo = previousVideo
+        }
+        if let cur = self.currentVideo {
+            self.playerManager?.play(for: cur)
+        }
+        return currentVideo
     }
     
     func peekNextVideo() -> Video? {
@@ -219,13 +259,7 @@ final class Catalog {
     
     // This will return the previous video in the current channel
     // To peek at the last video played across everything, use `peekPreviousVideo`
-    func previousVideo() -> Video? {
-        self.updateVideoHistory()
-        if let previousVideo = currentChannel?.previousVideo() {
-            currentVideo = previousVideo
-        }
-        return currentVideo
-    }
+
     
     func changeToVideoIndex(_ index: Int) {
         self.updateVideoHistory()
@@ -297,6 +331,7 @@ class CatalogViewModel: ObservableObject {
         Task {
             await self.getCatalog()
             self.playerManager = CatalogPlayerManager(self.catalog)
+            self.catalog.playerManager = self.playerManager
             DispatchQueue.main.async {
                 self.isProcessing = false
             }
@@ -304,7 +339,31 @@ class CatalogViewModel: ObservableObject {
     }
     
     func changeToChannel(_ channel: Channel) {
+        self.playerManager?.pauseCurrentVideo()
         self.catalog.changeToChannel(channel)
+        self.currentChannel = self.catalog.currentChannel
+    }
+    func changeToNextChannel() {
+        self.playerManager?.pauseCurrentVideo()
+        self.catalog.nextChannel()
+        self.currentChannel = self.catalog.currentChannel
+    }
+    
+    func changeToPreviousChannel() {
+        self.playerManager?.pauseCurrentVideo()
+        self.catalog.previousChannel()
+        self.currentChannel = self.catalog.currentChannel
+    }
+    
+    func changeToNextVideo() {
+        self.playerManager?.pauseCurrentVideo()
+        self.catalog.nextVideo()
+        self.currentChannel = self.catalog.currentChannel
+    }
+    
+    func changeToPreviousVideo() {
+        self.playerManager?.pauseCurrentVideo()
+        self.catalog.nextVideo()
         self.currentChannel = self.catalog.currentChannel
     }
     
@@ -319,6 +378,7 @@ class CatalogViewModel: ObservableObject {
                                    authors: self.authors)
         forYou = await self.generateShapedForYou(max: 20, channelVideos: forYou)
         self.catalog.addChannel(forYou)
+//        self.currentChannel = forYou
         
         // Ignore the "FOR YOU" channel
         for channel in self.channels.dropFirst() {
@@ -340,6 +400,8 @@ class CatalogViewModel: ObservableObject {
                 print("error with video: \(error)")
             }
         }
+//        self.currentChannel = forYou
+    
             
 //        await self.processUnprocessedVideos(unprocessedVideos: videosDict)
     }
@@ -442,7 +504,7 @@ class CatalogViewModel: ObservableObject {
     }
     
     func generateShapedForYou(max: Int, channelVideos: ChannelVideos) async -> ChannelVideos {
-        let userId = self.authModel.current_user?.phoneNumber ?? self.authModel.current_user?.email ?? ""
+        let userId = self.authModel.user?.phoneNumber ?? self.authModel.user?.email ?? ""
         var rankURL = URLComponents(string: "https://api.prod.shaped.ai/v1/models/video_recommendations_percentages/rank")!
         let queryItems = [
             URLQueryItem(name: "user_id", value: userId),

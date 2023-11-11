@@ -154,7 +154,12 @@ final class Catalog {
     var channelHistory: [ChannelVideos] = []
     
     var currentVideo: Video?
-    var currentChannel: ChannelVideos = ChannelVideos(channel: FOR_YOU_CHANNEL)
+    var currentChannel: ChannelVideos = ChannelVideos(channel: FOR_YOU_CHANNEL) {
+        didSet {
+            activeChannel = currentChannel.channel
+        }
+    }
+    // This is just a helper variable to access the channel directly
     var activeChannel: Channel = FOR_YOU_CHANNEL
     
     var playerManager: CatalogPlayerManager?
@@ -201,7 +206,6 @@ final class Catalog {
             self.updateChannelHistory()
             self.currentChannelIndex += 1
             self.currentChannel = self.catalog[self.currentChannelIndex]
-            self.activeChannel = self.currentChannel.channel
             return self.currentChannel
         } else {
             return nil
@@ -213,7 +217,6 @@ final class Catalog {
             self.updateChannelHistory()
             self.currentChannelIndex -= 1
             self.currentChannel = self.catalog[self.currentChannelIndex]
-            self.activeChannel = self.currentChannel.channel
             return self.currentChannel
         } else {
             return nil
@@ -270,7 +273,6 @@ final class Catalog {
             self.updateChannelHistory()
             self.currentChannelIndex = newChannelIndex
             self.currentChannel = self.catalog[newChannelIndex]
-            self.activeChannel = self.currentChannel.channel
             self.changeToVideoIndex(0)
         }
     }

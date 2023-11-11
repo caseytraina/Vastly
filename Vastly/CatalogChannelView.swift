@@ -271,8 +271,6 @@ struct CatalogChannelView: View {
     }
     
     private func channelChanged(newChannel: Channel) {
-        self.viewModel.catalog.changeToChannel(newChannel)
-//        channelIndex = self.viewModel.catalog.currentChannelIndex
         endTime = Date()
         
         let impact = UIImpactFeedbackGenerator(style: .medium)
@@ -280,8 +278,6 @@ struct CatalogChannelView: View {
         
         viewModel.playerManager?.changeToChannel(to: newChannel, shouldPlay: playing)
         let catalog = viewModel.catalog
-//        catalog.changeToChannel(newChannel)
-        
         if let currentVideo = catalog.currentVideo {
             // This must be a value since we changed to a new channel
             let previousVideo = catalog.peekPreviousVideo()!

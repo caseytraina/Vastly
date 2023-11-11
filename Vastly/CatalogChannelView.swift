@@ -151,9 +151,9 @@ struct CatalogChannelView: View {
                 }
                 .onChange(of: playing) { newPlaying in
                     if newPlaying {
-                        viewModel.playerManager?.playCurrentVideo()
+                        viewModel.playCurrentVideo()
                     } else {
-                        viewModel.playerManager?.pauseCurrentVideo()
+                        viewModel.pauseCurrentVideo()
                     }
                 }
                 
@@ -208,14 +208,9 @@ struct CatalogChannelView: View {
             let distance = event.translation.width
             
             if vel <= -screenSize.width/2 || distance <= -screenSize.width/2 {
-                if viewModel.catalog.hasNextChannel() {
-                    viewModel.changeToNextChannel(shouldPlay: playing)
-                    
-                }
+                viewModel.changeToNextChannel(shouldPlay: playing)
             } else if vel >= screenSize.width/2 || distance >= screenSize.width/2 {
-                if viewModel.catalog.hasPreviousChannel() {
-                    viewModel.changeToPreviousChannel(shouldPlay: playing)
-                }
+                viewModel.changeToPreviousChannel(shouldPlay: playing)
             }
             
         } else {
@@ -273,7 +268,7 @@ struct CatalogChannelView: View {
     }
     
     private func updateMetadata() {
-        if let video = viewModel.playerManager?.getCurrentVideo() {
+        if let video = viewModel.catalog.currentVideo {
             viewModel.playerManager?.updateNowPlayingInfo(for: video)
         }
     }

@@ -173,8 +173,8 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "379"
-            endingLineNumber = "379"
+            startingLineNumber = "375"
+            endingLineNumber = "375"
             landmarkName = "getCatalog()"
             landmarkType = "7">
          </BreakpointContent>
@@ -348,8 +348,8 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "368"
-            endingLineNumber = "368"
+            startingLineNumber = "364"
+            endingLineNumber = "364"
             landmarkName = "CatalogViewModel"
             landmarkType = "3">
          </BreakpointContent>
@@ -364,11 +364,56 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "524"
-            endingLineNumber = "524"
+            startingLineNumber = "520"
+            endingLineNumber = "520"
             landmarkName = "generateShapedForYou(max:)"
             landmarkType = "7">
             <Locations>
+               <Location
+                  uuid = "CEA83932-2DED-4938-8033-F0924284DDCF - 9b6987eec98f86a5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Vastly.CatalogViewModel.generateShapedForYou(max: Swift.Int) async -&gt; Swift.Array&lt;Vastly.CatalogViewModel.IdPlusFirebaseData&gt;"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cabrillo/Documents/Developer/Vastly/Vastly/Vastly/CatalogViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "522"
+                  endingLineNumber = "522"
+                  offsetFromSymbolStart = "644">
+               </Location>
+               <Location
+                  uuid = "CEA83932-2DED-4938-8033-F0924284DDCF - a8c1045fae8e42e7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for Vastly.CatalogViewModel.generateShapedForYou(max: Swift.Int) async -&gt; Swift.Array&lt;Vastly.CatalogViewModel.IdPlusFirebaseData&gt;"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cabrillo/Documents/Developer/Vastly/Vastly/Vastly/CatalogViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "522"
+                  endingLineNumber = "522"
+                  offsetFromSymbolStart = "1056">
+               </Location>
+               <Location
+                  uuid = "CEA83932-2DED-4938-8033-F0924284DDCF - 763a84cc0f8c1f21"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(7) suspend resume partial function for Vastly.CatalogViewModel.generateShapedForYou(max: Swift.Int) async -&gt; Swift.Array&lt;Vastly.CatalogViewModel.IdPlusFirebaseData&gt;"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cabrillo/Documents/Developer/Vastly/Vastly/Vastly/CatalogViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "522"
+                  endingLineNumber = "522"
+                  offsetFromSymbolStart = "720">
+               </Location>
                <Location
                   uuid = "CEA83932-2DED-4938-8033-F0924284DDCF - 9b6987eec98f85da"
                   shouldBeEnabled = "Yes"
@@ -430,7 +475,7 @@
                   offsetFromSymbolStart = "192">
                </Location>
                <Location
-                  uuid = "CEA83932-2DED-4938-8033-F0924284DDCF - 9b6987eec98f859c"
+                  uuid = "CEA83932-2DED-4938-8033-F0924284DDCF - 9b6987eec98f8518"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -440,12 +485,12 @@
                   urlString = "file:///Users/cabrillo/Documents/Developer/Vastly/Vastly/Vastly/CatalogViewModel.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "529"
-                  endingLineNumber = "529"
+                  startingLineNumber = "525"
+                  endingLineNumber = "525"
                   offsetFromSymbolStart = "888">
                </Location>
                <Location
-                  uuid = "CEA83932-2DED-4938-8033-F0924284DDCF - e9f473cb5946b5ff"
+                  uuid = "CEA83932-2DED-4938-8033-F0924284DDCF - e9f473cb5946b57b"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -455,12 +500,12 @@
                   urlString = "file:///Users/cabrillo/Documents/Developer/Vastly/Vastly/Vastly/CatalogViewModel.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "529"
-                  endingLineNumber = "529"
+                  startingLineNumber = "525"
+                  endingLineNumber = "525"
                   offsetFromSymbolStart = "64">
                </Location>
                <Location
-                  uuid = "CEA83932-2DED-4938-8033-F0924284DDCF - a8c1045fae8e41de"
+                  uuid = "CEA83932-2DED-4938-8033-F0924284DDCF - a8c1045fae8e415a"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -470,12 +515,12 @@
                   urlString = "file:///Users/cabrillo/Documents/Developer/Vastly/Vastly/Vastly/CatalogViewModel.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "529"
-                  endingLineNumber = "529"
+                  startingLineNumber = "525"
+                  endingLineNumber = "525"
                   offsetFromSymbolStart = "248">
                </Location>
                <Location
-                  uuid = "CEA83932-2DED-4938-8033-F0924284DDCF - 763a84cc0f8c1c18"
+                  uuid = "CEA83932-2DED-4938-8033-F0924284DDCF - 763a84cc0f8c1c9c"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -485,8 +530,8 @@
                   urlString = "file:///Users/cabrillo/Documents/Developer/Vastly/Vastly/Vastly/CatalogViewModel.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "529"
-                  endingLineNumber = "529"
+                  startingLineNumber = "525"
+                  endingLineNumber = "525"
                   offsetFromSymbolStart = "192">
                </Location>
             </Locations>

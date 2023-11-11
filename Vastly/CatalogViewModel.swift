@@ -310,38 +310,35 @@ class CatalogViewModel: ObservableObject {
     }
     
     func playCurrentVideo() {
-        if let video = self.currentChannel.currentVideo() {
-            self.playerManager?.play(for: video)
-        }
+        self.playerManager?.playCurrentVideo()
+    }
+    
+    func pauseCurrentVideo() {
+        self.playerManager?.pauseCurrentVideo()
     }
     
     func changeToChannel(_ channel: Channel, shouldPlay: Bool) {
         self.playerManager?.pauseCurrentVideo()
         self.catalog.changeToChannel(channel)
         self.currentChannel = self.catalog.currentChannel
-        self.playerManager?.changeToChannel(to: channel, shouldPlay: shouldPlay)
+        self.playerManager?.changeToChannel(channel, shouldPlay: shouldPlay)
     }
     
     func changeToNextChannel(shouldPlay: Bool) {
-        self.playerManager?.pauseCurrentVideo()
         if let newChannel = self.catalog.nextChannel() {
-            self.currentChannel = self.catalog.currentChannel
-            self.playerManager?.changeToChannel(to: newChannel.channel, shouldPlay: shouldPlay)
+            self.changeToChannel(newChannel.channel, shouldPlay: shouldPlay)
         }
     }
     
     func changeToPreviousChannel(shouldPlay: Bool) {
-        self.playerManager?.pauseCurrentVideo()
         if let newChannel = self.catalog.previousChannel() {
-            self.currentChannel = self.catalog.currentChannel
-            self.playerManager?.changeToChannel(to: newChannel.channel, shouldPlay: shouldPlay)
+            self.changeToChannel(newChannel.channel, shouldPlay: shouldPlay)
         }
     }
     
     func changeToNextVideo() {
         self.playerManager?.pauseCurrentVideo()
         if let nextVideo = self.catalog.nextVideo() {
-            self.currentChannel = self.catalog.currentChannel
             self.playerManager?.play(for: nextVideo)
         }
     }
@@ -349,7 +346,6 @@ class CatalogViewModel: ObservableObject {
     func changeToPreviousVideo() {
         self.playerManager?.pauseCurrentVideo()
         if let previousVideo = self.catalog.previousVideo() {
-            self.currentChannel = self.catalog.currentChannel
             self.playerManager?.play(for: previousVideo)
         }
     }

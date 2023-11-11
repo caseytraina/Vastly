@@ -94,9 +94,7 @@ struct ProfileView: View {
 
                         Spacer()
                         Button(action: {
-                            if let manager = viewModel.playerManager {
-                                manager.pauseCurrentVideo()
-                            }
+                            viewModel.pauseCurrentVideo()
                             Task {
                                 do {
                                     isPlaying = false

@@ -226,66 +226,43 @@ class CatalogPlayerManager: ObservableObject {
         guard let currentVideo = getCurrentVideo() else { return }
         pause(for: currentVideo)
     }
+    
+    // This function plays the current video.
+    func playCurrentVideo() {
+        guard let currentVideo = getCurrentVideo() else { return }
+        play(for: currentVideo)
+    }
+    
 
     // This function returns the current video.
-    func getCurrentVideo() -> Video? {
+    private func getCurrentVideo() -> Video? {
         return self.catalog.currentVideo
     }
 
     // This function plays the next video in the currently active channel.
-    func nextVideo() {
+    // This is only used in the command center buttons, it shouldn't be used pubically
+    private func nextVideo() {
         pauseCurrentVideo()
         if let nextVideo = self.catalog.nextVideo() {
             playCurrentVideo()
         }
     }
-    
-    func nextChannel() {
-        pauseCurrentVideo()
-        if let nextVideo = self.catalog.nextChannel() {
-            playCurrentVideo()
-        }
-    }
-    
-    func previousChannel() {
-        pauseCurrentVideo()
-        if let nextVideo = self.catalog.previousVideo() {
-            playCurrentVideo()
-        }
-    }
-    
+
     // This function plays the previous video in the currently active channel.
-    func previousVideo() {
+    // This is only used in the command center buttons, it shouldn't be used pubically
+    private func previousVideo() {
         pauseCurrentVideo()
         if let previousVideo = self.catalog.previousVideo() {
             playCurrentVideo()
         }
     }
     
-    // this video changes the current video to a new index in the same active channel.
-    func changeToIndex(to index: Int, shouldPlay: Bool) {
-        pauseCurrentVideo()
-        self.catalog.changeToVideoIndex(index)
+    // this function facilitates a change in channel
+    func changeToChannel(_ channel: Channel, shouldPlay: Bool) {
         self.updateStaticInfo(for: self.getCurrentVideo() ?? EMPTY_VIDEO)
         if shouldPlay {
             playCurrentVideo()
         }
-    }
-    
-    // this function facilitates a change in channel and current_index.
-    func changeToChannel(to channel: Channel, shouldPlay: Bool) {
-        pauseCurrentVideo()
-        self.catalog.changeToChannel(channel)
-        self.updateStaticInfo(for: self.getCurrentVideo() ?? EMPTY_VIDEO)
-        if shouldPlay {
-            playCurrentVideo()
-        }
-    }
-    
-    // This function plays the current video.
-    func playCurrentVideo() {
-        guard let currentVideo = getCurrentVideo() else { return }
-        play(for: currentVideo)
     }
     
     func seekForward(by increment: Double) {

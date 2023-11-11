@@ -118,22 +118,6 @@ struct ProfileView: View {
                 }
         }
     }
-    
-    private func myGradient(channel_index: Int) -> [Color] {
-        
-//        let background = Color(red: 18.0/255, green: 18.0/255, blue: 18.0/255)
-        let background = Color(red: 5/255, green: 5/255, blue: 5/255)
-
-        let channel_color = viewModel.channels[channel_index].color.opacity(0.8)
-
-//        let purple = Color(red: 0.3803921568627451, green: 0.058823529411764705, blue: 0.4980392156862745)
-        var gradient: [Color] = [channel_color]
-        
-        for _ in 0..<5 {
-            gradient.append(background)
-        }
-        return gradient
-    }
 }
 
 //struct SignOutView_Previews: PreviewProvider {

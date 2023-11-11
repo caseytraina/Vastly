@@ -16,7 +16,7 @@ struct CatalogVideoView: View {
     @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
 
-    var channel: Channel
+    var channel: ChannelVideos
     @State private var cancellables = Set<AnyCancellable>()
 
     @State private var statusObserver: AnyCancellable?
@@ -49,22 +49,20 @@ struct CatalogVideoView: View {
     @Binding var publisherIsTapped: Bool
 
     var body: some View {
-        if viewModel.catalog.channelHasVideos(channel) {
+        if channel.videos.isEmpty {
             emptyVideos()
         } else {
             ScrollViewReader { proxy in
                 GeometryReader { geo in
                     ScrollView {
                         LazyVStack {
-                            if let channelVideos = viewModel.catalog.getChannelVideos(channel: channel) {
-                                ForEach(Array(channelVideos.videos.enumerated()), id: \.offset) { i, vid in
-                                    renderVStackVideo(
-                                        geoWidth: geo.size.width,
-                                        geoHeight: geo.size.height,
-                                        video: vid,
-                                        next: viewModel.catalog.peekNextVideo(),
-                                        i: i)
-                                }
+                            ForEach(Array(channel.videos.enumerated()), id: \.offset) { i, vid in
+                                renderVStackVideo(
+                                    geoWidth: geo.size.width,
+                                    geoHeight: geo.size.height,
+                                    video: vid,
+                                    next: viewModel.catalog.peekNextVideo(),
+                                    i: i)
                             }
                         }
                     }
@@ -295,7 +293,7 @@ struct CatalogVideoView: View {
         .id(i)
         .frame(width: geoWidth, height: geoHeight)
         .clipped()
-        .offset(y: channel == viewModel.currentChannel?.channel ? dragOffset : 0.0)
+        .offset(y: channel == viewModel.currentChannel ? dragOffset : 0.0)
     }
     
     private func videoIsLiked(_ video: Video) -> Bool {

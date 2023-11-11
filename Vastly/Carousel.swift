@@ -21,9 +21,8 @@ struct Carousel: View {
                     ScrollViewReader { proxy in
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                ForEach(viewModel.channels) { channel in
+                                ForEach(viewModel.catalog.channels()) { channel in
                                     Button(action: {
-                                        viewModel.playerManager?.pauseCurrentVideo()
                                         viewModel.changeToChannel(channel)
                                         withAnimation {
                                             proxy.scrollTo(channel, anchor: .center)
@@ -54,7 +53,7 @@ struct Carousel: View {
                                 }
                             }
                         }
-                        .onChange(of: viewModel.catalog.currentChannel?.channel) { newChannel in
+                        .onChange(of: viewModel.catalog.currentChannel.channel) { newChannel in
                             withAnimation {
                                 proxy.scrollTo(newChannel, anchor: .center)
                             }

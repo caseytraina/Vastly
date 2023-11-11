@@ -19,7 +19,6 @@ struct CatalogChannelView: View {
     @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
     
-//    @State var activeChannel: Channel = FOR_YOU_CHANNEL
     @Binding var playing: Bool
         
     @State var offset: CGSize = CGSize(width: 0, height: 0)
@@ -61,18 +60,14 @@ struct CatalogChannelView: View {
                         ScrollViewReader { proxy in
                             ScrollView (.horizontal, showsIndicators: false) {
                                 HStack {
-//                                    if let currentChannel = viewModel.currentChannel {
-                                    ForEach(viewModel.channels, id: \.self) { currentChannel in
-                                        CatalogVideoView(channel: currentChannel,
-                                                         isPlaying: $playing,
-                                                         dragOffset: $dragOffset,
-                                                         publisherIsTapped: $publisherIsTapped)
-                                        .environmentObject(viewModel)
-                                        .environmentObject(authModel)
-                                        .frame(width: screenSize.width, height: screenSize.height * 0.8)
-                                        .id(currentChannel)
-                                    }
-    //                                    }
+                                    CatalogVideoView(channel: viewModel.currentChannel,
+                                                     isPlaying: $playing,
+                                                     dragOffset: $dragOffset,
+                                                     publisherIsTapped: $publisherIsTapped)
+                                    .environmentObject(viewModel)
+                                    .environmentObject(authModel)
+                                    .frame(width: screenSize.width, height: screenSize.height * 0.8)
+                                    .id(viewModel.currentChannel)
                                 }
                                 .offset(x: offset.width)
                             }

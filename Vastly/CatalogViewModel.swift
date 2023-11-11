@@ -20,7 +20,14 @@ import SwiftUI
  CatalogModel is responsible for the querying and handling of video data in-app. CatalogModel handles all video operations, except for the actual playing of the videos. That is controlled in VideoObserver.
  */
 
-class ChannelVideos {
+class ChannelVideos: Identifiable, Hashable {
+    static func == (lhs: ChannelVideos, rhs: ChannelVideos) -> Bool {
+        lhs.channel == rhs.channel
+    }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(channel.id)
+    }
+    
     // TODO: Handle dynamic queues for search results and on the fly channels
     
     var videos: [Video] = []
@@ -35,6 +42,10 @@ class ChannelVideos {
     init(channel: Channel, user: Profile?, authors: [Author]) {
         self.user = user
         self.authors = authors
+        self.channel = channel
+    }
+    
+    init(channel: Channel) {
         self.channel = channel
     }
     
@@ -143,7 +154,7 @@ final class Catalog {
     var channelHistory: [ChannelVideos] = []
     
     var currentVideo: Video?
-    var currentChannel: ChannelVideos?
+    var currentChannel: ChannelVideos = ChannelVideos(channel: FOR_YOU_CHANNEL)
     var activeChannel: Channel = FOR_YOU_CHANNEL
     
     var playerManager: CatalogPlayerManager?
@@ -151,7 +162,7 @@ final class Catalog {
     private var currentChannelIndex = 0
     
     func playCurrentVideo() {
-        if let video = self.currentChannel?.currentVideo() {
+        if let video = self.currentChannel.currentVideo() {
             self.playerManager?.play(for: video)
         }
     }
@@ -164,6 +175,10 @@ final class Catalog {
         return self.catalog.map { channelVideos in channelVideos.channel }
     }
     
+    func channelVideos() -> [ChannelVideos] {
+        return self.catalog
+    }
+    
     func hasNextChannel() -> Bool {
         let totalChannels = self.catalog.count
         return self.currentChannelIndex < (totalChannels - 1)
@@ -174,7 +189,7 @@ final class Catalog {
     }
       
     func currentVideoIndex() -> Int? {
-        return currentChannel?.currentVideoIndex
+        return currentChannel.currentVideoIndex
     }
     
     func peekPreviousChannel() -> ChannelVideos? {
@@ -183,13 +198,10 @@ final class Catalog {
     
     func nextChannel() -> ChannelVideos? {
         if hasNextChannel() {
-            
             self.updateChannelHistory()
             self.currentChannelIndex += 1
             self.currentChannel = self.catalog[self.currentChannelIndex]
-            if let newChannel = self.currentChannel?.channel {
-                self.activeChannel = newChannel
-            }
+            self.activeChannel = self.currentChannel.channel
             return self.currentChannel
         } else {
             return nil
@@ -201,24 +213,11 @@ final class Catalog {
             self.updateChannelHistory()
             self.currentChannelIndex -= 1
             self.currentChannel = self.catalog[self.currentChannelIndex]
-            if let newChannel = self.currentChannel?.channel {
-                self.activeChannel = newChannel
-            }
+            self.activeChannel = self.currentChannel.channel
             return self.currentChannel
         } else {
             return nil
         }
-    }
-    
-    func channelHasVideos(_ channel: Channel) -> Bool {
-        if self.catalog.contains(where: {$0.channel == channel}) {
-            return self.catalog.first(where: {$0.channel == channel})?.videos.isEmpty ?? true
-        }
-        return true
-    }
-    
-    func getChannelVideos(channel: Channel) -> ChannelVideos? {
-        return self.catalog.first(where: {$0.channel == channel})
     }
     
     func nextVideo() -> Video? {
@@ -226,7 +225,7 @@ final class Catalog {
             self.playerManager?.pause(for: cur)
         }
         self.updateVideoHistory()
-        if let nextVideo = currentChannel?.nextVideo() {
+        if let nextVideo = currentChannel.nextVideo() {
             self.currentVideo = nextVideo
         }
         if let cur = self.currentVideo {
@@ -240,7 +239,7 @@ final class Catalog {
             self.playerManager?.pause(for: cur)
         }
         self.updateVideoHistory()
-        if let previousVideo = currentChannel?.previousVideo() {
+        if let previousVideo = currentChannel.previousVideo() {
             currentVideo = previousVideo
         }
         if let cur = self.currentVideo {
@@ -250,7 +249,7 @@ final class Catalog {
     }
     
     func peekNextVideo() -> Video? {
-        currentChannel?.peekNextVideo()
+        currentChannel.peekNextVideo()
     }
     
     func peekPreviousVideo() -> Video? {
@@ -263,8 +262,8 @@ final class Catalog {
     
     func changeToVideoIndex(_ index: Int) {
         self.updateVideoHistory()
-        self.currentChannel?.changeToVideoIndex(index)
-        let vid = self.currentChannel?.currentVideo()
+        self.currentChannel.changeToVideoIndex(index)
+        let vid = self.currentChannel.currentVideo()
         self.currentVideo = vid
     }
     
@@ -275,17 +274,13 @@ final class Catalog {
             self.updateChannelHistory()
             self.currentChannelIndex = newChannelIndex
             self.currentChannel = self.catalog[newChannelIndex]
-            if let newChannel = self.currentChannel?.channel {
-                self.activeChannel = newChannel
-            }
+            self.activeChannel = self.currentChannel.channel
             self.changeToVideoIndex(0)
         }
     }
     
     func updateChannelHistory() {
-        if let currentChannel = currentChannel {
-            channelHistory.append(currentChannel)
-        }
+        channelHistory.append(currentChannel)
     }
     
     func updateVideoHistory() {
@@ -308,11 +303,11 @@ final class Catalog {
 class CatalogViewModel: ObservableObject {
     @Published var isProcessing: Bool
     @Published var catalog: Catalog = Catalog()
-    @Published var currentChannel: ChannelVideos?
+    @Published var currentChannel: ChannelVideos = ChannelVideos(channel: FOR_YOU_CHANNEL)
     
     // This is private, channels should be accessed via the catalog, this
     // is only used to populate the catalog
-    var channels: [Channel] = [FOR_YOU_CHANNEL]
+    private var channels: [Channel] = [FOR_YOU_CHANNEL]
     var authors: [Author] = []
     
     @Published var viewedVideosProcessing: Bool = true
@@ -343,6 +338,7 @@ class CatalogViewModel: ObservableObject {
         self.catalog.changeToChannel(channel)
         self.currentChannel = self.catalog.currentChannel
     }
+    
     func changeToNextChannel() {
         self.playerManager?.pauseCurrentVideo()
         self.catalog.nextChannel()

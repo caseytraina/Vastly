@@ -138,7 +138,7 @@ struct CatalogChannelView: View {
 //                }
                 .onAppear {
                     startTime = Date()
-                    viewModel.catalog.playCurrentVideo()
+                    viewModel.playCurrentVideo()
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
                     DispatchQueue.main.async {

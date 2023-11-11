@@ -152,7 +152,7 @@ final class Catalog {
     // in the previous channel
     var videoHistory: [Video] = []
     var channelHistory: [ChannelVideos] = []
-    
+
     var currentVideo: Video?
     var currentChannel: ChannelVideos = ChannelVideos(channel: FOR_YOU_CHANNEL) {
         didSet {
@@ -162,15 +162,7 @@ final class Catalog {
     // This is just a helper variable to access the channel directly
     var activeChannel: Channel = FOR_YOU_CHANNEL
     
-    var playerManager: CatalogPlayerManager?
-    
     private var currentChannelIndex = 0
-    
-    func playCurrentVideo() {
-        if let video = self.currentChannel.currentVideo() {
-            self.playerManager?.play(for: video)
-        }
-    }
     
     func addChannel(_ channelVideos: ChannelVideos) {
         self.catalog.append(channelVideos)
@@ -224,29 +216,17 @@ final class Catalog {
     }
     
     func nextVideo() -> Video? {
-        if let cur = self.currentVideo {
-            self.playerManager?.pause(for: cur)
-        }
         self.updateVideoHistory()
         if let nextVideo = currentChannel.nextVideo() {
             self.currentVideo = nextVideo
-        }
-        if let cur = self.currentVideo {
-            self.playerManager?.play(for: cur)
         }
         return self.currentVideo
     }
     
     func previousVideo() -> Video? {
-        if let cur = self.currentVideo {
-            self.playerManager?.pause(for: cur)
-        }
         self.updateVideoHistory()
         if let previousVideo = currentChannel.previousVideo() {
             currentVideo = previousVideo
-        }
-        if let cur = self.currentVideo {
-            self.playerManager?.play(for: cur)
         }
         return currentVideo
     }
@@ -324,10 +304,16 @@ class CatalogViewModel: ObservableObject {
         Task {
             await self.getCatalog()
             self.playerManager = CatalogPlayerManager(self.catalog)
-            self.catalog.playerManager = self.playerManager
+//            self.catalog.playerManager = self.playerManager
             DispatchQueue.main.async {
                 self.isProcessing = false
             }
+        }
+    }
+    
+    func playCurrentVideo() {
+        if let video = self.currentChannel.currentVideo() {
+            self.playerManager?.play(for: video)
         }
     }
     
@@ -351,14 +337,18 @@ class CatalogViewModel: ObservableObject {
     
     func changeToNextVideo() {
         self.playerManager?.pauseCurrentVideo()
-        self.catalog.nextVideo()
-        self.currentChannel = self.catalog.currentChannel
+        if let nextVideo = self.catalog.nextVideo() {
+            self.currentChannel = self.catalog.currentChannel
+            self.playerManager?.play(for: nextVideo)
+        }
     }
     
     func changeToPreviousVideo() {
         self.playerManager?.pauseCurrentVideo()
-        self.catalog.nextVideo()
-        self.currentChannel = self.catalog.currentChannel
+        if let previousVideo = self.catalog.previousVideo() {
+            self.currentChannel = self.catalog.currentChannel
+            self.playerManager?.play(for: previousVideo)
+        }
     }
     
     private func populateForYouChannel() async {

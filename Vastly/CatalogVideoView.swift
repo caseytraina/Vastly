@@ -15,7 +15,8 @@ struct CatalogVideoView: View {
     
     @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
-
+    
+    // The current channel being shown
     var channel: ChannelVideos
     @State private var cancellables = Set<AnyCancellable>()
 

@@ -93,41 +93,6 @@ struct CatalogChannelView: View {
                         }
                     }
                 }
-                
-//                .onChange(of: channelIndex) { newIndex in
-////                    if activeChannel != viewModel.channels[newIndex] {
-//                    activeChannel = viewModel.channels[newIndex]
-////                    }
-//                    updateMetadata()
-//                }
-                
-//                .onChange(of: viewModel.catalog.currentVideo) { newVideo in
-//                    endTime = Date()
-//                    updateMetadata()
-//                    
-//                    let previousVideo = viewModel.catalog.peekPreviousVideo()!
-//                    let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
-//                    videoClicked(for: viewModel.catalog.currentVideo ?? EMPTY_VIDEO,
-//                                 with: authModel.user,
-//                                 profile: authModel.current_user,
-//                                 watchedIn: activeChannel)
-//                    videoWatched(from: startTime,
-//                                 to: endTime,
-//                                 for: previousVideo,
-//                                 time: duration ?? 0.0,
-//                                 watched: duration,
-//                                 with: authModel.user,
-//                                 profile: authModel.current_user,
-//                                 viewModel: viewModel,
-//                                 watchedIn: activeChannel)
-//                    
-//                    
-//                    viewModel.playerManager?.playCurrentVideo()
-//                    let impact = UIImpactFeedbackGenerator(style: .light)
-//                    impact.impactOccurred()
-//                    
-//                    startTime = Date()
-//                }
                 .onAppear {
                     startTime = Date()
                 }

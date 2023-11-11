@@ -28,13 +28,14 @@ class ChannelVideos: Identifiable, Hashable {
         hasher.combine(channel.id)
     }
     
-    var videos: [Video] = []
     var channel: Channel
     // Keep the context of who this is for, for filtering and sorting
     var user: Profile?
     var authors: [Author] = []
     
-    var currentVideoIndex = 0
+    // Don't access these directly, use the public functions
+    private(set) var videos: [Video] = []
+    private(set) var currentVideoIndex = 0
     
     init(channel: Channel, user: Profile?, authors: [Author]) {
         self.user = user
@@ -108,14 +109,18 @@ class ChannelVideos: Identifiable, Hashable {
         }
     }
     
-    func shuffle() {
-        self.videos.shuffle()
-    }
-    
     func changeToVideoIndex(_ index: Int) {
         if (index >= 0 && index < self.videos.count) {
             self.currentVideoIndex = index
         }
+    }
+        
+    func getVideo(id: String) -> Video? {
+        var foundVideo: Video? = nil
+        foundVideo = self.videos.first(where: { video in
+            return video.id == id
+        })
+        return foundVideo
     }
     
     private func findAuthor(_ video: UnprocessedVideo) -> Author {
@@ -147,18 +152,16 @@ final class Catalog {
     // consumed, so we can track state and transitions
     // if they change channel for example, we want to know the last video
     // in the previous channel
-    var videoHistory: [Video] = []
-    var channelHistory: [ChannelVideos] = []
-
-    var currentVideo: Video?
-    var currentChannel: ChannelVideos = ChannelVideos(channel: FOR_YOU_CHANNEL) {
+    private(set) var videoHistory: [Video] = []
+    private(set) var channelHistory: [ChannelVideos] = []
+    private(set) var currentVideo: Video?
+    private(set) var currentChannel: ChannelVideos = ChannelVideos(channel: FOR_YOU_CHANNEL) {
         didSet {
             activeChannel = currentChannel.channel
         }
     }
     // This is just a helper variable to access the channel directly
-    var activeChannel: Channel = FOR_YOU_CHANNEL
-    
+    private(set) var activeChannel: Channel = FOR_YOU_CHANNEL
     private var currentChannelIndex = 0
     
     func addChannel(_ channelVideos: ChannelVideos) {
@@ -257,9 +260,10 @@ final class Catalog {
     func getVideo(id: String) -> Video? {
         var foundVideo: Video? = nil
         self.catalog.forEach { channelVideos in
-            foundVideo = channelVideos.videos.first(where: { video in
-                return video.id == id
-            })
+            foundVideo = channelVideos.getVideo(id: id)
+            if foundVideo != nil {
+                return
+            }
         }
         return foundVideo
     }

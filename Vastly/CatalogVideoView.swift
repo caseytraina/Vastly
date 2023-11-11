@@ -70,29 +70,23 @@ struct CatalogVideoView: View {
                     .scrollDisabled(true)
                     .clipped()
                     .onAppear {
-                        
                         let currentVideoIndex = self.viewModel.catalog.currentVideoIndex()
+                        withAnimation(.easeOut(duration: 0.125)) {
+                            proxy.scrollTo(currentVideoIndex, anchor: .top)
+                        }
                         if let currentVideo = self.viewModel.catalog.currentVideo {
-                            
-                            withAnimation(.easeOut(duration: 0.125)) {
-                                proxy.scrollTo(currentVideoIndex, anchor: .top)
-                            }
-                            
-                            //                        self.trackAVStatus(for: currentVideo)
-                            self.play(currentVideo)
-                            self.viewModel.playerManager?.pauseAllOthers(except: currentVideo)
+                            // self.trackAVStatus(for: currentVideo)
                             self.shareURL = videoShareURL(currentVideo)
                         }
                     }
                     .onChange(of: self.viewModel.catalog.currentVideo) { newVideo in
+                        let newVideoIndex = self.viewModel.catalog.currentVideoIndex()
+                        withAnimation(.easeOut(duration: 0.125)) {
+                            proxy.scrollTo(newVideoIndex, anchor: .top)
+                        }
+                        
                         if let newVideo = newVideo {
-                            let newVideoIndex = self.viewModel.catalog.currentVideoIndex()
-                            //                        trackAVStatus(for: newVideo)
-                            
-                            withAnimation(.easeOut(duration: 0.125)) {
-                                proxy.scrollTo(newVideoIndex, anchor: .top)
-                            }
-                            
+                            // self.trackAVStatus(for: newVideo)
                             DispatchQueue.main.async {
                                 liked = false
                                 liked = videoIsLiked(newVideo)
@@ -100,14 +94,6 @@ struct CatalogVideoView: View {
                             self.shareURL = videoShareURL(newVideo)
                         }
                     }
-//                    .onChange(of: self.activeChannel) { newChannel in
-//                        self.activeChannel = newChannel.channel
-////                        trackAVStatus(for: getVideo(current_playing))
-//                        withAnimation(.easeOut(duration: 0.125)) {
-//                            proxy.scrollTo(0, anchor: .top)
-//                        }
-////                        shareURL = videoShareURL(getVideo(current_playing))
-//                    }
                     .frame(width: geo.size.width, height: geo.size.height)
                 }
             }
@@ -142,56 +128,44 @@ struct CatalogVideoView: View {
                 .padding(.bottom, 10)
                 .frame(width: screenSize.width * 0.15)
             } // end hstack
-            
-//            if (abs(i - current_playing) <= 1 && channel == activeChannel) {
-                if let manager = viewModel.playerManager {
+            if videoFailed {
+                VideoFailedView()
+                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
+            } else {
+                if isLoaded {
+                    ZStack {
+                        ZStack {
+                            FullscreenVideoPlayer(videoMode: $videoMode,
+                                                  video: video)
+                                .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                                .padding(0)
+                                .environmentObject(viewModel)
 
-                    if videoFailed {
-                        VideoFailedView()
-                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
-                    } else {
-                        if isLoaded {
-                            ZStack {
-                                ZStack {
-                                    FullscreenVideoPlayer(videoMode: $videoMode,
-                                                          video: video)
-                                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
-                                        .padding(0)
-                                        .environmentObject(viewModel)
-
-                                    if !videoMode {
-                                        AudioOverlay(author: video.author, video: video, playing: $isPlaying)
-                                            .environmentObject(viewModel)
-                                    }
-                                    if !isPlaying {
-                                        Image(systemName: "play.fill")
-                                            .foregroundColor(.white)
-                                            .font(.system(size: screenSize.width * 0.15, weight: .light))
-                                            .shadow(radius: 2.0)
-                                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
-                                    }
-                                }
-                                ProgressBar(value: $playerProgress,
-                                            video: video, isPlaying: $isPlaying)
-                                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
-                                    .padding(0)
+                            if !videoMode {
+                                AudioOverlay(author: video.author, video: video, playing: $isPlaying)
                                     .environmentObject(viewModel)
                             }
-                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
-                        }  else {
-                            VideoThumbnailView(video: video)
-                                .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                            if !isPlaying {
+                                Image(systemName: "play.fill")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: screenSize.width * 0.15, weight: .light))
+                                    .shadow(radius: 2.0)
+                                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                            }
                         }
+                        ProgressBar(value: $playerProgress,
+                                    video: video, isPlaying: $isPlaying)
+                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                            .padding(0)
+                            .environmentObject(viewModel)
                     }
-//                }
-//            } else if (i == current_playing && channel != activeChannel) {
-//                VideoThumbnailView(video: video)
-//                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
-            } else {
-                VideoLoadingView()
-                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
-            } // end abs if
-            
+                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                }  else {
+                    VideoThumbnailView(video: video)
+                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                }
+            }
+
             VStack(alignment: .center) {
                 
                 HStack(alignment: .top) {
@@ -328,18 +302,6 @@ struct CatalogVideoView: View {
                 }
             }
         }
-    }
-    
-    private func play(_ video: Video) {
-        viewModel.playerManager?.play(for: video)
-//        if isPlaying && channel == activeChannel {
-//            viewModel.playerManager?.getPlayer(for: getVideo(i)).play()
-//        }
-    }
-    
-    private func pause(_ video: Video) {
-        viewModel.playerManager?.pause(for: video)
-//        viewModel.playerManager?.getPlayer(for: getVideo(i)).pause()
     }
     
 //    private func trackAVStatus(for video: Video) {

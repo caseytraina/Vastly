@@ -23,7 +23,7 @@ struct Carousel: View {
                             HStack {
                                 ForEach(viewModel.catalog.channels()) { channel in
                                     Button(action: {
-                                        viewModel.changeToChannel(channel)
+                                        viewModel.changeToChannel(channel, shouldPlay: isPlaying)
                                         withAnimation {
                                             proxy.scrollTo(channel, anchor: .center)
                                         }

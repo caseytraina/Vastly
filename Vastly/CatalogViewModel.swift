@@ -28,15 +28,12 @@ class ChannelVideos: Identifiable, Hashable {
         hasher.combine(channel.id)
     }
     
-    // TODO: Handle dynamic queues for search results and on the fly channels
-    
     var videos: [Video] = []
-//    var unprocessedVideos: [UnprocessedVideo] = []
-        
     var channel: Channel
     // Keep the context of who this is for, for filtering and sorting
     var user: Profile?
     var authors: [Author] = []
+    
     var currentVideoIndex = 0
     
     init(channel: Channel, user: Profile?, authors: [Author]) {
@@ -257,16 +254,6 @@ final class Catalog {
         }
     }
     
-    func updateChannelHistory() {
-        channelHistory.append(currentChannel)
-    }
-    
-    func updateVideoHistory() {
-        if let currentVideo = currentVideo {
-            videoHistory.append(currentVideo)
-        }
-    }
-    
     func getVideo(id: String) -> Video? {
         var foundVideo: Video? = nil
         self.catalog.forEach { channelVideos in
@@ -275,6 +262,16 @@ final class Catalog {
             })
         }
         return foundVideo
+    }
+    
+    private func updateChannelHistory() {
+        channelHistory.append(currentChannel)
+    }
+    
+    private func updateVideoHistory() {
+        if let currentVideo = currentVideo {
+            videoHistory.append(currentVideo)
+        }
     }
 }
 
@@ -293,6 +290,8 @@ class CatalogViewModel: ObservableObject {
 
     @Published var viewed_videos: [Video] = []
     
+    // This public interface should be read-only, we should't be playing / pausing
+    // or seeking via this variable, that should be handled in the public funcs below
     var playerManager: CatalogPlayerManager?
     
     var authModel: AuthViewModel
@@ -304,7 +303,6 @@ class CatalogViewModel: ObservableObject {
         Task {
             await self.getCatalog()
             self.playerManager = CatalogPlayerManager(self.catalog)
-//            self.catalog.playerManager = self.playerManager
             DispatchQueue.main.async {
                 self.isProcessing = false
             }
@@ -317,22 +315,27 @@ class CatalogViewModel: ObservableObject {
         }
     }
     
-    func changeToChannel(_ channel: Channel) {
+    func changeToChannel(_ channel: Channel, shouldPlay: Bool) {
         self.playerManager?.pauseCurrentVideo()
         self.catalog.changeToChannel(channel)
         self.currentChannel = self.catalog.currentChannel
+        self.playerManager?.changeToChannel(to: channel, shouldPlay: shouldPlay)
     }
     
-    func changeToNextChannel() {
+    func changeToNextChannel(shouldPlay: Bool) {
         self.playerManager?.pauseCurrentVideo()
-        self.catalog.nextChannel()
-        self.currentChannel = self.catalog.currentChannel
+        if let newChannel = self.catalog.nextChannel() {
+            self.currentChannel = self.catalog.currentChannel
+            self.playerManager?.changeToChannel(to: newChannel.channel, shouldPlay: shouldPlay)
+        }
     }
     
-    func changeToPreviousChannel() {
+    func changeToPreviousChannel(shouldPlay: Bool) {
         self.playerManager?.pauseCurrentVideo()
-        self.catalog.previousChannel()
-        self.currentChannel = self.catalog.currentChannel
+        if let newChannel = self.catalog.previousChannel() {
+            self.currentChannel = self.catalog.currentChannel
+            self.playerManager?.changeToChannel(to: newChannel.channel, shouldPlay: shouldPlay)
+        }
     }
     
     func changeToNextVideo() {
@@ -363,7 +366,7 @@ class CatalogViewModel: ObservableObject {
         self.currentChannel = forYou
     }
     
-    func getCatalog() async {
+    private func getCatalog() async {
         await self.getChannels()
         await self.getAuthors()
         await self.populateForYouChannel()
@@ -393,7 +396,7 @@ class CatalogViewModel: ObservableObject {
     }
     
     // This function queries all of the authors from firebase, housing them in a local array to be used to apply to videos.
-    func getAuthors() async {
+    private func getAuthors() async {
         let db = Firestore.firestore()
         let storageRef = db.collection("authors")
         
@@ -420,7 +423,7 @@ class CatalogViewModel: ObservableObject {
     }
     
     // This function queries all of the channels from firebase, housing them in a local array to be used to apply to videos.
-    func getChannels() async {
+    private func getChannels() async {
         let db = Firestore.firestore()
         let storageRef = db.collection("channels")
         
@@ -453,7 +456,7 @@ class CatalogViewModel: ObservableObject {
     }
     
     // This function turns a path to a URL of a thumbnail, connecting to our CDN imagekit which is a URL-based video and image delivery and transformation company.
-    func pathToURL(_ path: String) -> URL {
+    private func pathToURL(_ path: String) -> URL {
 //        let FIREBASE_ENDPOINT = "https://firebasestorage.googleapis.com/v0/b/rizeo-40249.appspot.com/o/"
 //        var fixedPath = path.replacingOccurrences(of: " ", with: "%20")
 //        fixedPath = fixedPath.replacingOccurrences(of: "/", with: "%2F")
@@ -474,7 +477,7 @@ class CatalogViewModel: ObservableObject {
         return snapshot.documents
     }
 
-    func fetchValueFromPlist(key: String) -> String? {
+    private func fetchValueFromPlist(key: String) -> String? {
         guard let path = Bundle.main.path(forResource: "Config", ofType: "plist"),
               let dict = NSDictionary(contentsOfFile: path) as? [String: AnyObject]
         else {
@@ -484,12 +487,12 @@ class CatalogViewModel: ObservableObject {
         return dict[key] as? String
     }
     
-    struct ShapedResponse: Codable {
+    private struct ShapedResponse: Codable {
         var ids: [String]
         var scores: [Double]
     }
     
-    struct IdPlusFirebaseData {
+    private struct IdPlusFirebaseData {
         var id: String
         var firebaseData: FirebaseData
     }

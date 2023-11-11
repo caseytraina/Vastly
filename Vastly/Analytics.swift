@@ -44,7 +44,7 @@ private func commonProperties(video: Video, user: User?, profile: Profile?) -> [
     for (prop, val) in userProperties {
         common[prop] = val
     }
-
+    
     return common
 }
 

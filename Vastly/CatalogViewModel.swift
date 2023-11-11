@@ -144,6 +144,11 @@ class ChannelVideos: Identifiable, Hashable {
         }
 }
 
+// The data structure for videos and channels, this maintains the state of
+// where the user is in the application, which video and channel they are in
+// what is next and previous and history etc.
+// This should not know anything about video players, that is handled in the
+// CatalogViewModel
 final class Catalog {
     // This should be kept private, we access the catalog via the public
     // funcs below
@@ -162,6 +167,9 @@ final class Catalog {
     }
     // This is just a helper variable to access the channel directly
     private(set) var activeChannel: Channel = FOR_YOU_CHANNEL
+    
+    // This is the main control for which channel we are in, this is the main
+    // source of truth in this model
     private var currentChannelIndex = 0
     
     func addChannel(_ channelVideos: ChannelVideos) {
@@ -170,10 +178,6 @@ final class Catalog {
     
     func channels() -> [Channel] {
         return self.catalog.map { channelVideos in channelVideos.channel }
-    }
-    
-    func channelVideos() -> [ChannelVideos] {
-        return self.catalog
     }
     
     func hasNextChannel() -> Bool {
@@ -303,7 +307,7 @@ class CatalogViewModel: ObservableObject {
     init(authModel: AuthViewModel) {
         self.isProcessing = true
         self.authModel = authModel
-
+        
         Task {
             await self.getCatalog()
             self.playerManager = CatalogPlayerManager(self.catalog)

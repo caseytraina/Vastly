@@ -17,6 +17,25 @@ import Amplitude
 
 import CoreMedia
 
+class Analytics {
+    static private func commonProperties(user: User?, profile: Profile?) -> [String: NSObject] {
+        return [
+            "User ID": (user?.uid ?? "") as NSObject,
+            "Name": (profile?.name() ?? "") as NSObject
+        ]
+    }
+
+    static func channelClicked(_ channel: Channel, user: User?, profile: Profile?) {
+        var properties = self.commonProperties(user: user, profile: profile)
+        properties["Channel"] = channel.id as NSObject
+        
+        print("Logging amplitude event: channelClicked")
+        Amplitude.instance().logEvent(
+            "Channel Clicked",
+            withEventProperties: properties)
+    }
+}
+
 private func commonProperties(video: Video) -> [String: NSObject] {
     return [
         "Video ID": video.id as NSObject,

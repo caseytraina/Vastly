@@ -163,15 +163,19 @@ final class Catalog {
     private(set) var currentChannel: ChannelVideos = ChannelVideos(channel: FOR_YOU_CHANNEL) {
         didSet {
             activeChannel = currentChannel.channel
+            Analytics.channelClicked(activeChannel, user: user, profile: profile)
         }
     }
     // This is just a helper variable to access the channel directly
     private(set) var activeChannel: Channel = FOR_YOU_CHANNEL
     
+    var profile: Profile?
+    var user: User?
+    
     // This is the main control for which channel we are in, this is the main
     // source of truth in this model
     private var currentChannelIndex = 0
-    
+
     func addChannel(_ channelVideos: ChannelVideos) {
         self.catalog.append(channelVideos)
     }
@@ -210,28 +214,6 @@ final class Catalog {
     func peekNextChannel() -> ChannelVideos? {
         if hasNextChannel() {
             return self.catalog[self.currentChannelIndex + 1]
-        } else {
-            return nil
-        }
-    }
-    
-    func nextChannel() -> ChannelVideos? {
-        if hasNextChannel() {
-            self.updateChannelHistory()
-            self.currentChannelIndex += 1
-            self.currentChannel = self.catalog[self.currentChannelIndex]
-            return self.currentChannel
-        } else {
-            return nil
-        }
-    }
-    
-    func previousChannel() -> ChannelVideos? {
-        if hasPreviousChannel() {
-            self.updateChannelHistory()
-            self.currentChannelIndex -= 1
-            self.currentChannel = self.catalog[self.currentChannelIndex]
-            return self.currentChannel
         } else {
             return nil
         }
@@ -328,6 +310,9 @@ class CatalogViewModel: ObservableObject {
         
         Task {
             await self.getCatalog()
+            catalog.user = self.authModel.user
+            catalog.profile = self.authModel.current_user
+            
             self.playerManager = CatalogPlayerManager(self.catalog)
             DispatchQueue.main.async {
                 self.isProcessing = false

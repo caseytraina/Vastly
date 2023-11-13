@@ -28,10 +28,10 @@ class ChannelVideos: Identifiable, Hashable {
         hasher.combine(channel.id)
     }
     
-    var channel: Channel
+    private(set) var channel: Channel
     // Keep the context of who this is for, for filtering and sorting
-    var user: Profile?
-    var authors: [Author] = []
+    private(set) var user: Profile?
+    private(set) var authors: [Author] = []
     
     // Don't access these directly, use the public functions
     private(set) var videos: [Video] = []

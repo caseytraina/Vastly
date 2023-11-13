@@ -215,7 +215,7 @@ struct CatalogChannelView: View {
             if let previousVideo = catalog.peekPreviousVideo() {
                 let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
                 // This must be a value since we changed to a new channel
-                let previousChannel = catalog.peekPreviousChannel()!
+                let previousChannel = catalog.peekPreviousChannelInHistory()!
                 videoWatched(
                     from: startTime,
                     to: endTime,

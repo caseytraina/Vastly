@@ -193,8 +193,26 @@ final class Catalog {
         return currentChannel.currentVideoIndex
     }
     
-    func peekPreviousChannel() -> ChannelVideos? {
+    // You can navigate to a channel not next, so this maintains that order
+    // if you want the next channel in the carousel then use peekPreviousChannel
+    func peekPreviousChannelInHistory() -> ChannelVideos? {
         return channelHistory.last
+    }
+    
+    func peekPreviousChannel() -> ChannelVideos? {
+        if hasPreviousChannel() {
+            return self.catalog[self.currentChannelIndex - 1]
+        } else {
+            return nil
+        }
+    }
+    
+    func peekNextChannel() -> ChannelVideos? {
+        if hasNextChannel() {
+            return self.catalog[self.currentChannelIndex + 1]
+        } else {
+            return nil
+        }
     }
     
     func nextChannel() -> ChannelVideos? {
@@ -333,14 +351,14 @@ class CatalogViewModel: ObservableObject {
     }
     
     func changeToNextChannel(shouldPlay: Bool) {
-        if let newChannel = self.catalog.nextChannel() {
-            self.changeToChannel(newChannel.channel, shouldPlay: shouldPlay)
+        if let nextChannel = self.catalog.peekNextChannel() {
+            self.changeToChannel(nextChannel.channel, shouldPlay: shouldPlay)
         }
     }
     
     func changeToPreviousChannel(shouldPlay: Bool) {
-        if let newChannel = self.catalog.previousChannel() {
-            self.changeToChannel(newChannel.channel, shouldPlay: shouldPlay)
+        if let previousChannel = self.catalog.peekPreviousChannel() {
+            self.changeToChannel(previousChannel.channel, shouldPlay: shouldPlay)
         }
     }
     

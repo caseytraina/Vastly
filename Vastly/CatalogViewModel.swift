@@ -215,28 +215,6 @@ final class Catalog {
         }
     }
     
-    func nextChannel() -> ChannelVideos? {
-        if hasNextChannel() {
-            self.updateChannelHistory()
-            self.currentChannelIndex += 1
-            self.currentChannel = self.catalog[self.currentChannelIndex]
-            return self.currentChannel
-        } else {
-            return nil
-        }
-    }
-    
-    func previousChannel() -> ChannelVideos? {
-        if hasPreviousChannel() {
-            self.updateChannelHistory()
-            self.currentChannelIndex -= 1
-            self.currentChannel = self.catalog[self.currentChannelIndex]
-            return self.currentChannel
-        } else {
-            return nil
-        }
-    }
-    
     func nextVideo() -> Video? {
         self.updateVideoHistory()
         if let nextVideo = currentChannel.nextVideo() {

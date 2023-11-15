@@ -12,12 +12,13 @@ import AVFoundation
 import AudioToolbox
 
 struct CatalogVideoView: View {
-    
     @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
     
-    // The current channel being shown
+    // The channel that we want to render (might not be the current active channel)
     var channel: Channel
+    
+    // The channel which is currently being viewed
     var currentChannel: ChannelVideos
     
     @State private var cancellables = Set<AnyCancellable>()
@@ -52,23 +53,18 @@ struct CatalogVideoView: View {
     @Binding var publisherIsTapped: Bool
 
     var body: some View {
-        
-        if viewModel.catalog.channelVideos(for: channel) == nil {
-            emptyVideos()
-        } else {
+        if let videos = viewModel.catalog.channelVideos(for: channel) {
             ScrollViewReader { proxy in
                 GeometryReader { geo in
                     ScrollView {
                         LazyVStack {
-                            if let videos = viewModel.catalog.channelVideos(for: channel) {
-                                ForEach(videos.indices, id: \.self) { i in
-                                    renderVStackVideo(
-                                        geoWidth: geo.size.width,
-                                        geoHeight: geo.size.height,
-                                        video: videos[i],
-                                        next: viewModel.catalog.peekNextVideo(),
-                                        i: i)
-                                }
+                            ForEach(videos.indices, id: \.self) { i in
+                                renderVStackVideo(
+                                    geoWidth: geo.size.width,
+                                    geoHeight: geo.size.height,
+                                    video: videos[i],
+                                    next: viewModel.catalog.peekNextVideo(),
+                                    i: i)
                             }
                         }
                     }
@@ -76,6 +72,8 @@ struct CatalogVideoView: View {
                     .scrollDisabled(true)
                     .clipped()
                     .onAppear {
+                        // This is going to be rendered for views which aren't active
+                        // so that when we scroll sideways we see the new content
                         if channel == currentChannel.channel {
                             let currentVideoIndex = self.viewModel.catalog.currentVideoIndex()
 //                            withAnimation(.easeOut(duration: 0.125)) {
@@ -108,11 +106,9 @@ struct CatalogVideoView: View {
                     .frame(width: geo.size.width, height: geo.size.height)
                 }
             }
+        } else {
+            emptyVideos()
         }
-        
-        
-        
-        
     }
         
     private func emptyVideos() -> some View {
@@ -137,7 +133,7 @@ struct CatalogVideoView: View {
                 Toggle(isOn: $videoMode) {
                     
                 }
-                .toggleStyle(AudioToggleStyle(color: self.viewModel.catalog.currentChannel.channel.color ?? .accentColor))
+                .toggleStyle(AudioToggleStyle(color: self.viewModel.catalog.currentChannel.channel.color ))
                 .padding(.trailing, 40)
                 .padding(.top, 10)
                 .padding(.bottom, 10)

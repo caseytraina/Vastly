@@ -75,10 +75,11 @@ struct CatalogVideoView: View {
                         // This is going to be rendered for views which aren't active
                         // so that when we scroll sideways we see the new content
                         if channel == currentChannel.channel {
+                            viewModel.playCurrentVideo()
                             let currentVideoIndex = self.viewModel.catalog.currentVideoIndex()
-//                            withAnimation(.easeOut(duration: 0.125)) {
+                            withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(currentVideoIndex, anchor: .top)
-//                            }
+                            }
                             if let currentVideo = self.viewModel.catalog.currentVideo {
                                 // self.trackAVStatus(for: currentVideo)
                                 self.shareURL = videoShareURL(currentVideo)
@@ -131,7 +132,6 @@ struct CatalogVideoView: View {
                 }
                 Spacer()
                 Toggle(isOn: $videoMode) {
-                    
                 }
                 .toggleStyle(AudioToggleStyle(color: self.viewModel.catalog.currentChannel.channel.color ))
                 .padding(.trailing, 40)
@@ -139,11 +139,11 @@ struct CatalogVideoView: View {
                 .padding(.bottom, 10)
                 .frame(width: screenSize.width * 0.15)
             } // end hstack
-            if videoFailed {
+            if viewModel.playerManager?.videoStatuses[video.id] == .failed { // temporary fix until can correctly access value through function w/ updating state. *check viewModel.getStatus*
                 VideoFailedView()
                     .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
             } else {
-                if isLoaded {
+                if viewModel.playerManager?.videoStatuses[video.id] == .ready {
                     ZStack {
                         ZStack {
                             FullscreenVideoPlayer(videoMode: $videoMode,
@@ -279,6 +279,7 @@ struct CatalogVideoView: View {
         .frame(width: geoWidth, height: geoHeight)
         .clipped()
         .offset(y: channel == viewModel.currentChannel.channel ? dragOffset : 0.0)
+//        .offset(y: dragOffset)
     }
     
     private func videoIsLiked(_ video: Video) -> Bool {
@@ -356,7 +357,7 @@ struct CatalogVideoView: View {
 //            
 //        }
 //    }
-//    
+    
 //    private func switchedPlayer() {
 //        cancellables.forEach { $0.cancel() }
 //        cancellables.removeAll()

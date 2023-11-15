@@ -9,13 +9,24 @@ import Foundation
 import AVKit
 import SwiftUI
 import MediaPlayer
+import Combine
 
 /*
  This View Model governs all AVPlayers and their states, and controls the starting and stopping of videos. This exists as a child of the CatalogModel.
  */
 
+enum VideoStatus {
+    case loading
+    case ready
+    case unknown
+    case failed
+}
+
 class CatalogPlayerManager: ObservableObject {
     @Published var players: [String: AVPlayer] = [:]
+    var videoCancellables: [String : AnyCancellable] = [:]
+    @Published var videoStatuses: [String : VideoStatus] = [:]
+    
     var commandCenter: MPRemoteCommandCenter?
     @Published var catalog: Catalog
     @Published var isInBackground = false {
@@ -23,6 +34,8 @@ class CatalogPlayerManager: ObservableObject {
             print("background value changed: \(self.isInBackground)")
         }
     }
+//    @State private var statusObserver: AnyCancellable?
+
     
     init(_ catalog: Catalog) {
         print("INIT: Catalog Player Manager")
@@ -38,15 +51,25 @@ class CatalogPlayerManager: ObservableObject {
                 item.preferredPeakBitRate = 4000000
                 item.preferredPeakBitRateForExpensiveNetworks = 3000000       
                 player.replaceCurrentItem(with: item)
+                self.observeStatus(video: video, player: player)
             }
             return player
         } else {
             let player = AVPlayer(url: video.url ?? URL(string: "www.google.com")!)
 
             players[video.id] = player
+            self.observeStatus(video: video, player: player)
             return player
         }
     }
+    
+    func getStatus(for video: Video) -> VideoStatus {
+        if let status = self.videoStatuses[video.id] {
+            return status
+        }
+        return .loading
+    }
+    
     func updateBackgroundState(isInBackground: Bool) {
         self.isInBackground = isInBackground
     }
@@ -283,4 +306,50 @@ class CatalogPlayerManager: ObservableObject {
             self.updateNowPlayingInfo(for: video)
         }
     }
+    
+    private func observeStatus(video: Video, player: AVPlayer) {
+        self.videoCancellables[video.id]?.cancel()
+
+//        if let player = viewModel.playerManager?.getPlayer(for: video) {
+        
+        self.videoCancellables[video.id] = AnyCancellable(
+                (player.currentItem?
+                    .publisher(for: \.status)
+                    .sink { status in
+                        switch status {
+                        case .unknown:
+                            // Handle unknown status
+                            DispatchQueue.main.async {
+                                self.videoStatuses[video.id] = .unknown
+                            }
+
+                        case .readyToPlay:
+                            DispatchQueue.main.async {
+                                self.videoStatuses[video.id] = .ready
+                            }
+                            print("Status ready: \(self.videoStatuses[video.id])")
+
+                        case .failed:
+                            // Handle failed status
+                            DispatchQueue.main.async {
+                                self.videoStatuses[video.id] = .failed
+                            }
+                            print("Status failed: \(self.videoStatuses[video.id])")
+                        @unknown default:
+                            // Handle other unknown cases
+                            DispatchQueue.main.async {
+                                self.videoStatuses[video.id] = .loading
+                            }
+                            print("Status default: \(self.videoStatuses[video.id])")
+
+                        }
+                    })!
+            )
+            
+//            switchedPlayer()
+//            observePlayer(to: player)
+            
+//        }
+    }
+    
 }

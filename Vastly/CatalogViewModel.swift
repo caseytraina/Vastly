@@ -257,7 +257,8 @@ final class Catalog {
             self.updateChannelHistory()
             self.currentChannelIndex = newChannelIndex
             self.currentChannel = self.catalog[newChannelIndex]
-            self.changeToVideoIndex(0)
+            self.changeToVideoIndex(self.currentChannel.currentVideoIndex)
+//            self.changeToVideoIndex(0)
         }
     }
     
@@ -362,6 +363,10 @@ class CatalogViewModel: ObservableObject {
         }
     }
     
+    func videoStatus(_ video: Video) -> VideoStatus {
+        return self.playerManager?.getStatus(for: video) ?? .loading
+    }
+    
     private func populateForYouChannel() async {
         let forYou = ChannelVideos(channel: FOR_YOU_CHANNEL,
                                    user: self.authModel.current_user,
@@ -372,6 +377,7 @@ class CatalogViewModel: ObservableObject {
         }
         self.catalog.addChannel(forYou)
         self.currentChannel = forYou
+        self.changeToChannel(FOR_YOU_CHANNEL, shouldPlay: true)
     }
     
     private func getCatalog() async {

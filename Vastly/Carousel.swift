@@ -28,14 +28,16 @@ struct Carousel: View {
                                             proxy.scrollTo(channel, anchor: .center)
                                         }
                                     }, label: {
-                                        MyText(text: channel.title, size: screenSize.width * 0.04, bold: true, alignment: .center, color: viewModel.catalog.activeChannel == channel ? .white : Color("AccentGray"))
+                                        MyText(text: channel.title, size: screenSize.width * 0.04, bold: true, alignment: .center, color: viewModel.catalog.activeChannel == channel ? channel.color : Color("AccentGray"))
                                             .padding(.horizontal, 15)
+                                            .brightness(0.3)
                                             .padding(.vertical, 10)
                                             .lineLimit(1)
                                             .overlay(
                                                 Rectangle()
                                                     .frame(height: 4)
-                                                    .foregroundColor(viewModel.catalog.activeChannel == channel ? .white : .clear),
+                                                    .foregroundColor(viewModel.catalog.activeChannel == channel ? channel.color : .clear)
+                                                    .brightness(0.3),
                                                 alignment: .bottom
                                             )
 //                                            .background(Capsule()

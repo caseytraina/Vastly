@@ -86,12 +86,12 @@ struct HomeView: View {
                 if viewModel.isProcessing || authModel.current_user == nil {
                     LoadingView()
                 } else {
-                    ForEach(Array(viewModel.catalog.channels().enumerated()), id: \.offset) { index, channel in
-                        LinearGradient(gradient: Gradient(colors: myGradient(channel)), startPoint: .topLeading, endPoint: .bottom)
-                            .ignoresSafeArea()
-                            .opacity(channel == viewModel.catalog.activeChannel ? 1 : 0)
-                            .animation(.easeInOut(duration: 0.75), value: viewModel.catalog.activeChannel)
-                    }
+//                    ForEach(Array(viewModel.catalog.channels().enumerated()), id: \.offset) { index, channel in
+//                        LinearGradient(gradient: Gradient(colors: myGradient(channel)), startPoint: .topLeading, endPoint: .bottom)
+//                            .ignoresSafeArea()
+//                            .opacity(channel == viewModel.catalog.activeChannel ? 1 : 0)
+//                            .animation(.easeInOut(duration: 0.75), value: viewModel.catalog.activeChannel)
+//                    }
                     VStack {
                         switch currentPage {
                         case .home:

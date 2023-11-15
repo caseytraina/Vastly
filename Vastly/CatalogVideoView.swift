@@ -17,7 +17,9 @@ struct CatalogVideoView: View {
     @EnvironmentObject var authModel: AuthViewModel
     
     // The current channel being shown
-    var channel: ChannelVideos
+    var channel: Channel
+    var currentChannel: ChannelVideos
+    
     @State private var cancellables = Set<AnyCancellable>()
 
     @State private var statusObserver: AnyCancellable?
@@ -50,20 +52,23 @@ struct CatalogVideoView: View {
     @Binding var publisherIsTapped: Bool
 
     var body: some View {
-        if channel.videos.isEmpty {
+        
+        if viewModel.catalog.channelVideos(for: channel) == nil {
             emptyVideos()
         } else {
             ScrollViewReader { proxy in
                 GeometryReader { geo in
                     ScrollView {
                         LazyVStack {
-                            ForEach(Array(channel.videos.enumerated()), id: \.offset) { i, vid in
-                                renderVStackVideo(
-                                    geoWidth: geo.size.width,
-                                    geoHeight: geo.size.height,
-                                    video: vid,
-                                    next: viewModel.catalog.peekNextVideo(),
-                                    i: i)
+                            if let videos = viewModel.catalog.channelVideos(for: channel) {
+                                ForEach(videos.indices, id: \.self) { i in
+                                    renderVStackVideo(
+                                        geoWidth: geo.size.width,
+                                        geoHeight: geo.size.height,
+                                        video: videos[i],
+                                        next: viewModel.catalog.peekNextVideo(),
+                                        i: i)
+                                }
                             }
                         }
                     }
@@ -71,34 +76,43 @@ struct CatalogVideoView: View {
                     .scrollDisabled(true)
                     .clipped()
                     .onAppear {
-                        let currentVideoIndex = self.viewModel.catalog.currentVideoIndex()
-                        withAnimation(.easeOut(duration: 0.125)) {
-                            proxy.scrollTo(currentVideoIndex, anchor: .top)
-                        }
-                        if let currentVideo = self.viewModel.catalog.currentVideo {
-                            // self.trackAVStatus(for: currentVideo)
-                            self.shareURL = videoShareURL(currentVideo)
+                        if channel == currentChannel.channel {
+                            let currentVideoIndex = self.viewModel.catalog.currentVideoIndex()
+//                            withAnimation(.easeOut(duration: 0.125)) {
+                                proxy.scrollTo(currentVideoIndex, anchor: .top)
+//                            }
+                            if let currentVideo = self.viewModel.catalog.currentVideo {
+                                // self.trackAVStatus(for: currentVideo)
+                                self.shareURL = videoShareURL(currentVideo)
+                            }
                         }
                     }
                     .onChange(of: self.viewModel.catalog.currentVideo) { newVideo in
-                        let newVideoIndex = self.viewModel.catalog.currentVideoIndex()
-                        withAnimation(.easeOut(duration: 0.125)) {
-                            proxy.scrollTo(newVideoIndex, anchor: .top)
-                        }
-                        
-                        if let newVideo = newVideo {
-                            // self.trackAVStatus(for: newVideo)
-                            DispatchQueue.main.async {
-                                liked = false
-                                liked = videoIsLiked(newVideo)
+                        if channel == currentChannel.channel {
+                            
+                            let newVideoIndex = self.viewModel.catalog.currentVideoIndex()
+                            withAnimation(.easeOut(duration: 0.125)) {
+                                proxy.scrollTo(newVideoIndex, anchor: .top)
                             }
-                            self.shareURL = videoShareURL(newVideo)
+                            
+                            if let newVideo = newVideo {
+                                // self.trackAVStatus(for: newVideo)
+                                DispatchQueue.main.async {
+                                    liked = false
+                                    liked = videoIsLiked(newVideo)
+                                }
+                                self.shareURL = videoShareURL(newVideo)
+                            }
                         }
                     }
                     .frame(width: geo.size.width, height: geo.size.height)
                 }
             }
         }
+        
+        
+        
+        
     }
         
     private func emptyVideos() -> some View {
@@ -123,7 +137,7 @@ struct CatalogVideoView: View {
                 Toggle(isOn: $videoMode) {
                     
                 }
-//                .toggleStyle(AudioToggleStyle(color: self.viewModel.catalog.currentChannel?.channel.color))
+                .toggleStyle(AudioToggleStyle(color: self.viewModel.catalog.currentChannel.channel.color ?? .accentColor))
                 .padding(.trailing, 40)
                 .padding(.top, 10)
                 .padding(.bottom, 10)
@@ -268,7 +282,7 @@ struct CatalogVideoView: View {
         .id(i)
         .frame(width: geoWidth, height: geoHeight)
         .clipped()
-        .offset(y: channel == viewModel.currentChannel ? dragOffset : 0.0)
+        .offset(y: channel == viewModel.currentChannel.channel ? dragOffset : 0.0)
     }
     
     private func videoIsLiked(_ video: Video) -> Bool {

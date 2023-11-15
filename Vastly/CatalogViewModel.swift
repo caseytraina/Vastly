@@ -193,6 +193,10 @@ final class Catalog {
         return currentChannel.currentVideoIndex
     }
     
+    func channelVideos(for channel: Channel) -> [Video]? {
+        return self.catalog.first(where:  { $0.channel == channel })?.videos
+    }
+    
     // You can navigate to a channel not next, so this maintains that order
     // if you want the next channel in the carousel then use peekPreviousChannel
     func peekPreviousChannelInHistory() -> ChannelVideos? {
@@ -433,9 +437,9 @@ class CatalogViewModel: ObservableObject {
             for document in documents {
                 let data = document.data()
                 
-                let r = (data?["r"] as? Double ?? 0.0)/255
-                let g = (data?["g"] as? Double ?? 0.0)/255
-                let b = (data?["b"] as? Double ?? 0.0)/255
+                let r = (data?["r"] as? Double ?? 115)/255
+                let g = (data?["g"] as? Double ?? 79)/255
+                let b = (data?["b"] as? Double ?? 255)/255
                 
                 let channel = Channel(
                     id: document.documentID,

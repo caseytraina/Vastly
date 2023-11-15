@@ -59,14 +59,17 @@ struct CatalogChannelView: View {
                         ScrollViewReader { proxy in
                             ScrollView (.horizontal, showsIndicators: false) {
                                 HStack {
-                                    CatalogVideoView(channel: viewModel.currentChannel,
-                                                     isPlaying: $playing,
-                                                     dragOffset: $dragOffset,
-                                                     publisherIsTapped: $publisherIsTapped)
-                                    .environmentObject(viewModel)
-                                    .environmentObject(authModel)
-                                    .frame(width: screenSize.width, height: screenSize.height * 0.8)
-                                    .id(viewModel.currentChannel)
+                                    ForEach(viewModel.catalog.channels()) { channel in
+                                        CatalogVideoView(channel: channel,
+                                                         currentChannel: viewModel.currentChannel,
+                                                         isPlaying: $playing,
+                                                         dragOffset: $dragOffset,
+                                                         publisherIsTapped: $publisherIsTapped)
+                                        .environmentObject(viewModel)
+                                        .environmentObject(authModel)
+                                        .frame(width: screenSize.width, height: screenSize.height * 0.8)
+                                        .id(channel)
+                                    }
                                 }
                                 .offset(x: offset.width)
                             }

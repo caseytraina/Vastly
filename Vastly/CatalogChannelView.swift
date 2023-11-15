@@ -188,11 +188,11 @@ struct CatalogChannelView: View {
             let distance = event.translation.height
             
             if vel <= -screenSize.height/4 || distance <= -screenSize.height/2 {
-                viewModel.changeToNextVideo()
+                viewModel.changeToNextVideo(shouldPlay: playing)
                 
                 
             } else if vel >= screenSize.height/4 || distance >= screenSize.height/2 {
-                viewModel.changeToPreviousVideo()
+                viewModel.changeToPreviousVideo(shouldPlay: playing)
             }
         }
         dragType = .unknown

@@ -344,17 +344,21 @@ class CatalogViewModel: ObservableObject {
         }
     }
     
-    func changeToNextVideo() {
+    func changeToNextVideo(shouldPlay: Bool) {
         self.playerManager?.pauseCurrentVideo()
         if let nextVideo = self.catalog.nextVideo() {
-            self.playerManager?.play(for: nextVideo)
+            if shouldPlay {
+                self.playerManager?.play(for: nextVideo)
+            }
         }
     }
     
-    func changeToPreviousVideo() {
+    func changeToPreviousVideo(shouldPlay: Bool) {
         self.playerManager?.pauseCurrentVideo()
         if let previousVideo = self.catalog.previousVideo() {
-            self.playerManager?.play(for: previousVideo)
+            if shouldPlay {
+                self.playerManager?.play(for: previousVideo)
+            }
         }
     }
     

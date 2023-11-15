@@ -173,10 +173,10 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "379"
-            endingLineNumber = "379"
+            startingLineNumber = "383"
+            endingLineNumber = "383"
             landmarkName = "getCatalog()"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -332,10 +332,10 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "368"
-            endingLineNumber = "368"
+            startingLineNumber = "372"
+            endingLineNumber = "372"
             landmarkName = "populateForYouChannel()"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -348,10 +348,10 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "524"
-            endingLineNumber = "524"
+            startingLineNumber = "528"
+            endingLineNumber = "528"
             landmarkName = "generateShapedForYou(max:)"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -364,9 +364,9 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "351"
-            endingLineNumber = "351"
-            landmarkName = "changeToNextVideo()"
+            startingLineNumber = "353"
+            endingLineNumber = "353"
+            landmarkName = "changeToNextVideo(shouldPlay:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -540,9 +540,9 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "350"
-            endingLineNumber = "350"
-            landmarkName = "changeToNextVideo()"
+            startingLineNumber = "351"
+            endingLineNumber = "351"
+            landmarkName = "changeToNextVideo(shouldPlay:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

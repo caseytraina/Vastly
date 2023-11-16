@@ -285,7 +285,7 @@ class CatalogPlayerManager: ObservableObject {
     // This is only used in the command center buttons, it shouldn't be used pubically
     private func nextVideo() {
         pauseCurrentVideo()
-        if let nextVideo = self.catalog.nextVideo() {
+        if let _ = self.catalog.nextVideo() {
             playCurrentVideo()
         }
     }
@@ -294,7 +294,7 @@ class CatalogPlayerManager: ObservableObject {
     // This is only used in the command center buttons, it shouldn't be used pubically
     private func previousVideo() {
         pauseCurrentVideo()
-        if let previousVideo = self.catalog.previousVideo() {
+        if let _ = self.catalog.previousVideo() {
             playCurrentVideo()
         }
     }

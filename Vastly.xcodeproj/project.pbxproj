@@ -124,6 +124,7 @@
 		AAA20DF72AE268D500061254 /* CatalogPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA20DF62AE268D500061254 /* CatalogPlayerManager.swift */; };
 		AAA20DF92AE27C9F00061254 /* CatalogChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA20DF82AE27C9F00061254 /* CatalogChannelView.swift */; };
 		AAA20DFB2AE2804800061254 /* CatalogVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA20DFA2AE2804800061254 /* CatalogVideoView.swift */; };
+		AAA6B5532B078B3400E6EF57 /* VideoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA6B5522B078B3400E6EF57 /* VideoListView.swift */; };
 		AAE1127C2AFE2F980049C3DB /* CatalogTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE1127B2AFE2F980049C3DB /* CatalogTest.swift */; };
 /* End PBXBuildFile section */
 
@@ -219,6 +220,7 @@
 		AAA20DF62AE268D500061254 /* CatalogPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPlayerManager.swift; sourceTree = "<group>"; };
 		AAA20DF82AE27C9F00061254 /* CatalogChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogChannelView.swift; sourceTree = "<group>"; };
 		AAA20DFA2AE2804800061254 /* CatalogVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogVideoView.swift; sourceTree = "<group>"; };
+		AAA6B5522B078B3400E6EF57 /* VideoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoListView.swift; sourceTree = "<group>"; };
 		AAE1127B2AFE2F980049C3DB /* CatalogTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogTest.swift; sourceTree = "<group>"; };
 		AAE1127D2AFE32950049C3DB /* Vastly.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Vastly.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -382,6 +384,7 @@
 				02611E582AA77CEA007029BB /* FullEpisodeView.swift */,
 				AAA20DF82AE27C9F00061254 /* CatalogChannelView.swift */,
 				AAA20DFA2AE2804800061254 /* CatalogVideoView.swift */,
+				AAA6B5522B078B3400E6EF57 /* VideoListView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -665,6 +668,7 @@
 				02611E532AA7797D007029BB /* FullEpisodeButton.swift in Sources */,
 				02583E222A1D736C008CDA59 /* FullscreenVideoPlayer.swift in Sources */,
 				02583E0B2A19EA4B008CDA59 /* NamePromptView.swift in Sources */,
+				AAA6B5532B078B3400E6EF57 /* VideoListView.swift in Sources */,
 				02583E152A1AF88B008CDA59 /* PasswordConfirmView.swift in Sources */,
 				021E5A922A69BB9D00B120CD /* PageIndicator.swift in Sources */,
 				023EE7F22A0C5EF8004E09DD /* VideoViewModel.swift in Sources */,

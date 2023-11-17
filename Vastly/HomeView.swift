@@ -105,10 +105,9 @@ struct HomeView: View {
                                 .environmentObject(viewModel)
                                 .environmentObject(videoViewModel)
                         case .bookmarks:
-                            LikesListView(isPlaying: $isPlaying)
+                            LikesListView()
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
-                                .environmentObject(videoViewModel)
                         case .profile:
                             ProfileView(isPlaying: $isPlaying)
                                 .environmentObject(authModel)

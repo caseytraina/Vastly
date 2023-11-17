@@ -649,4 +649,46 @@ class CatalogViewModel: ObservableObject {
             self.likedVideosProcessing = false
         }
     }
+    
+    func fetchViewedVideos() async {
+        if let viewed_videos = self.authModel.current_user?.viewedVideos {
+            let db = Firestore.firestore()
+            let ref = db.collection("videos")
+            for id in viewed_videos {
+                do {
+                    let doc = try await ref.document(id).getDocument()
+                    if doc.exists {
+                        print("Doc Found for \(id)")
+                        
+                        let data = doc.data()
+                        
+                        let video = resultToVideo(id: id, data: data)
+                        
+                        if let video {
+                            if !self.viewed_videos.contains(where: { $0.id == video.id }) {
+                                DispatchQueue.main.async {
+                                    self.viewed_videos.append(video)
+                                }
+                            }
+                        }
+                        
+                        if self.viewed_videos.count > 5 {
+                            DispatchQueue.main.async {
+                                self.viewedVideosProcessing = false
+                            }
+                        }
+                        
+                    } else {
+                        print("Doc not found for \(id)")
+                    }
+                    
+                } catch {
+                    print("Error getting viewing history: \(error)")
+                }
+            }
+        }
+        DispatchQueue.main.async {
+            self.viewedVideosProcessing = false
+        }
+    }
 }

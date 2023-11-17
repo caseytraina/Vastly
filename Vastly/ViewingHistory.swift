@@ -14,7 +14,7 @@ import Firebase
 struct ViewingHistory: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogViewModel
     
     @State var processed = false
     
@@ -138,7 +138,7 @@ struct ViewingHistory: View {
 //        let background = Color(red: 18.0/255, green: 18.0/255, blue: 18.0/255)
         let background = Color(red: 5/255, green: 5/255, blue: 5/255)
 
-        let channel_color = viewModel.channels[channel_index].color.opacity(0.8)
+        let channel_color = viewModel.catalog.channels()[channel_index].color.opacity(0.8)
 
 //        let purple = Color(red: 0.3803921568627451, green: 0.058823529411764705, blue: 0.4980392156862745)
         var gradient: [Color] = [channel_color]

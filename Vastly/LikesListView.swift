@@ -127,31 +127,6 @@ struct LikesListView: View {
                 }
             }
         }
-//        .gesture(DragGesture()
-//            .onChanged { event in
-//                dragOffset = event.translation.height
-//
-//            }
-//            .onEnded { event in
-//                let vel = event.predictedEndTranslation.height
-//                let distance = event.translation.height
-//                
-//                if vel <= -screenSize.height/4 || distance <= -screenSize.height/2 {
-//                    if cur + 1 <= viewModel.authModel.liked_videos.count {
-//                        cur += 1
-//                        
-//                    }
-//                } else if vel >= screenSize.height/4 || distance >= screenSize.height/2 {
-//                    if cur > 0 {
-//                        cur -= 1
-//                        
-//                    }
-//                }
-//                dragOffset = 0
-//            })
-        
-        
-
     }
     
     private func getThumbnail(video: Video) -> URL? {
@@ -178,9 +153,3 @@ struct LikesListView: View {
         return gradient
     }
 }
-
-//struct LikesListView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        LikesListView()
-//    }
-//}

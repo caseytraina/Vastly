@@ -8,29 +8,18 @@
 import SwiftUI
 
 struct VideoListView: View {
-    
     @EnvironmentObject var authModel: AuthViewModel
     @EnvironmentObject var viewModel: CatalogViewModel
-    
-    @State var isAnimating = false
-    @State var processed = false
     
     var title: String
     var icon: String
     @Binding var videoList: [Video]
     @Binding var loading: Bool
     var loadFunc: (() async -> Void)
-    
-    @State var dummyChannel = FOR_YOU_CHANNEL
-    
-    @State var dummyPublisher = false
-    
-    @State var dragOffset = 0.0
-    @State var cur = 0
-    
+        
     @State var isLinkActive = false
-    
-    @State var current_video = EMPTY_VIDEO
+    @State var isAnimating = false
+    @State var currentVideo = EMPTY_VIDEO
     
     var body: some View {
         ZStack {
@@ -56,7 +45,7 @@ struct VideoListView: View {
                         .brightness(0.5)
                 } else {
                     NavigationLink(destination:
-                        SingleVideoView(isActive: $isLinkActive, video: current_video)
+                        SingleVideoView(isActive: $isLinkActive, video: currentVideo)
                            .environmentObject(authModel)
                            .environmentObject(viewModel)
                         
@@ -67,7 +56,7 @@ struct VideoListView: View {
                     ScrollView {
                         ForEach(videoList) { video in
                             Button(action: {
-                                current_video = video
+                                currentVideo = video
                                 viewModel.pauseCurrentVideo()
                                 isLinkActive = true
                             }, label: {
@@ -126,7 +115,6 @@ struct VideoListView: View {
                 Task {
                     await loadFunc()
                     print("INIT: got videos.")
-                    
                 }
             }
         }

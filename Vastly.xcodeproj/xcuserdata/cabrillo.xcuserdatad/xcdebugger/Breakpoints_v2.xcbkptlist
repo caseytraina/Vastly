@@ -48,8 +48,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "307"
             endingLineNumber = "307"
-            landmarkName = "authModel"
-            landmarkType = "24">
+            landmarkName = "CatalogViewModel"
+            landmarkType = "3">
             <Locations>
                <Location
                   uuid = "8F911F9F-9620-4134-BFD2-3CA085430529 - f7d89095875f072e"
@@ -334,8 +334,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "372"
             endingLineNumber = "372"
-            landmarkName = "CatalogViewModel"
-            landmarkType = "3">
+            landmarkName = "changeToPreviousVideo(shouldPlay:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -350,8 +350,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "528"
             endingLineNumber = "528"
-            landmarkName = "IdPlusFirebaseData"
-            landmarkType = "14">
+            landmarkName = "generateShapedForYou(max:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -542,8 +542,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "351"
             endingLineNumber = "351"
-            landmarkName = "CatalogViewModel"
-            landmarkType = "3">
+            landmarkName = "changeToNextChannel(shouldPlay:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

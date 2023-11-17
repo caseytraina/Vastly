@@ -256,9 +256,9 @@ final class Catalog {
         }) {
             self.updateChannelHistory()
             self.currentChannelIndex = newChannelIndex
+            let currentVideoIndex = self.currentChannel.currentVideoIndex
             self.currentChannel = self.catalog[newChannelIndex]
-            self.changeToVideoIndex(self.currentChannel.currentVideoIndex)
-//            self.changeToVideoIndex(0)
+            self.changeToVideoIndex(currentVideoIndex)
         }
     }
     

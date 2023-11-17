@@ -12,9 +12,9 @@ let PROGRESS_BAR_WIDTH = screenSize.width * 0.95
 
 struct ProgressBar: View {
     
-    @Binding var value: Double
+//    @Binding var value: Double
 //    @Binding var activeChannel: Channel
-    
+    @State var progress = 0.0
     @State var dragStart: Double = 0.0
     
     @State var beingDragged = false
@@ -23,7 +23,7 @@ struct ProgressBar: View {
     
     @Binding var isPlaying: Bool
     
-    @EnvironmentObject var videoViewModel: VideoViewModel
+    @EnvironmentObject var videoViewModel: CatalogViewModel
     
     @GestureState private var dragState = DragState.inactive
     
@@ -33,19 +33,22 @@ struct ProgressBar: View {
                 EmptyView()
                 Spacer()
                 ZStack(alignment: .leading) {
-                    
+                    if let progress = videoViewModel.playerManager?.playerTimes[video.id] {
+                        if let duration = videoViewModel.playerManager?.getDurationOfVideo(video: video) {
+                            
+    
                     RoundedRectangle(cornerRadius: 5).frame(width: PROGRESS_BAR_WIDTH , height: PROGRESS_BAR_HEIGHT)
                         .opacity(0.3)
                         .foregroundColor(Color("AccentGray"))
     //                if video.id == viewModel.playerManager?.getCurrentVideo()?.id {
-                    RoundedRectangle(cornerRadius: 5).frame(width: min(abs(PROGRESS_BAR_WIDTH * CGFloat(self.value)), PROGRESS_BAR_WIDTH), height: PROGRESS_BAR_HEIGHT)
+                            RoundedRectangle(cornerRadius: 5).frame(width: min(abs(PROGRESS_BAR_WIDTH * CGFloat(progress.seconds/duration.seconds)), PROGRESS_BAR_WIDTH), height: PROGRESS_BAR_HEIGHT)
 //                            .foregroundColor(activeChannel.color)
 
                     
                         Circle()
 //                            .foregroundColor(activeChannel.color)
                             .frame(width: geometry.size.height * 2 * (beingDragged ? 2 : 1), height: PROGRESS_BAR_HEIGHT * 2 * (beingDragged ? 2 : 1))
-                            .position(x: CGFloat(self.value) * PROGRESS_BAR_WIDTH, y: PROGRESS_BAR_HEIGHT / 2)
+                            .position(x: CGFloat(progress.seconds/duration.seconds) * PROGRESS_BAR_WIDTH, y: PROGRESS_BAR_HEIGHT / 2)
 //                            .gesture(
 //                                DragGesture()
 //                                    .updating($dragState) { drag, state, transaction in
@@ -57,6 +60,8 @@ struct ProgressBar: View {
 //                            )
 
     //                }
+                        }
+                    }
                 }
                 .frame(width: PROGRESS_BAR_WIDTH, height: PROGRESS_BAR_HEIGHT)
 //                .background(
@@ -79,8 +84,8 @@ struct ProgressBar: View {
                     .updating($dragState) { drag, state, transaction in
                         state = .dragging(translation: drag.translation)
                     }
-                    .onEnded(onDragEnded)
-                    .onChanged(onDragChanged)
+//                    .onEnded(onDragEnded)
+//                    .onChanged(onDragChanged)
             )
             .onTapGesture(count: 1) {
                 isPlaying.toggle()
@@ -99,49 +104,49 @@ struct ProgressBar: View {
         }
     }
     
-    private func onDragEnded(drag: DragGesture.Value) {
-        beingDragged = false
-        let width = drag.translation.width
-//        self.value = Double(width / UIScreen.main.bounds.width)
-        self.value = dragStart + Double(width / UIScreen.main.bounds.width)
-
-        let trueValue = Double(drag.translation.width / UIScreen.main.bounds.width)
-//        self.value = dragStart + trueValue
-        // Get the total duration of the video
-        guard let duration = videoViewModel.playerManager?.getPlayer(for: video).items().last?.duration else { return }
-        guard let currentTime = videoViewModel.playerManager?.getPlayer(for: video).items().last?.currentTime().seconds else { return }
-
-        // Calculate the new time based on the proportion of the video's duration
+//    private func onDragEnded(drag: DragGesture.Value) {
+//        beingDragged = false
+//        let width = drag.translation.width
+////        self.value = Double(width / UIScreen.main.bounds.width)
+//        self.value = dragStart + Double(width / UIScreen.main.bounds.width)
+//
+//        let trueValue = Double(drag.translation.width / UIScreen.main.bounds.width)
+////        self.value = dragStart + trueValue
+//        // Get the total duration of the video
+//        guard let duration = videoViewModel.playerManager?.getPlayer(for: video).items().last?.duration else { return }
+//        guard let currentTime = videoViewModel.playerManager?.getPlayer(for: video).items().last?.currentTime().seconds else { return }
+//
+//        // Calculate the new time based on the proportion of the video's duration
+////        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
 //        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
-        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
-
-        // Seek to the new time in the video
-        videoViewModel.playerManager?.getPlayer(for: video).items().last?.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
+//
+//        // Seek to the new time in the video
+//        videoViewModel.playerManager?.getPlayer(for: video).items().last?.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
+////        dragStart = self.value
 //        dragStart = self.value
-        dragStart = self.value
-    }
-    
-    private func onDragChanged(drag: DragGesture.Value) {
-        beingDragged = true
-        let width = drag.translation.width
-//        self.value = Double(width / UIScreen.main.bounds.width)
-        self.value = dragStart + Double(width / UIScreen.main.bounds.width)
-
-        let trueValue = Double(drag.translation.width / UIScreen.main.bounds.width)
-//        self.value = dragStart + trueValue
-        // Get the total duration of the video
-        guard let duration = videoViewModel.playerManager?.getPlayer(for: video).items().last?.duration else { return }
-        guard let currentTime = videoViewModel.playerManager?.getPlayer(for: video).items().last?.currentTime().seconds else { return }
-
-        // Calculate the new time based on the proportion of the video's duration
+//    }
+//    
+//    private func onDragChanged(drag: DragGesture.Value) {
+//        beingDragged = true
+//        let width = drag.translation.width
+////        self.value = Double(width / UIScreen.main.bounds.width)
+//        self.value = dragStart + Double(width / UIScreen.main.bounds.width)
+//
+//        let trueValue = Double(drag.translation.width / UIScreen.main.bounds.width)
+////        self.value = dragStart + trueValue
+//        // Get the total duration of the video
+//        guard let duration = videoViewModel.playerManager?.getPlayer(for: video).items().last?.duration else { return }
+//        guard let currentTime = videoViewModel.playerManager?.getPlayer(for: video).items().last?.currentTime().seconds else { return }
+//
+//        // Calculate the new time based on the proportion of the video's duration
+////        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
 //        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
-        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
-
-        // Seek to the new time in the video
-        videoViewModel.playerManager?.getPlayer(for: video).items().last?.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
-
-    }
-    
+//
+//        // Seek to the new time in the video
+//        videoViewModel.playerManager?.getPlayer(for: video).items().last?.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
+//
+//    }
+//    
     enum DragState {
         case inactive
         case dragging(translation: CGSize)

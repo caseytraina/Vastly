@@ -23,9 +23,24 @@ enum VideoStatus {
 }
 
 class CatalogPlayerManager: ObservableObject {
+    
+    var onChange: (() -> Void)?
+    
     @Published var players: [String: AVPlayer] = [:]
+    
+    var videoStatuses: [String : VideoStatus] = [:] {
+        didSet {
+            onChange?()
+        }
+    }
+    
+    @Published var timeObserverToken: Any?
+    @Published var endObserverToken: Any?
+    
     var videoCancellables: [String : AnyCancellable] = [:]
-    @Published var videoStatuses: [String : VideoStatus] = [:]
+    
+    var playerTimes: [String : CMTime] = [:]
+
     
     var commandCenter: MPRemoteCommandCenter?
     @Published var catalog: Catalog
@@ -87,6 +102,11 @@ class CatalogPlayerManager: ObservableObject {
                 }
             }
         }
+    }
+    
+    func getDurationOfVideo(video: Video) -> CMTime {
+        let player = self.getPlayer(for: video)
+        return player.currentItem?.duration ?? CMTime(value: 0, timescale: 1000)
     }
     
     // plays the video.
@@ -217,8 +237,6 @@ class CatalogPlayerManager: ObservableObject {
         }.resume()
     }
     
-    
-    
     // this function updates the command center metadata that is displayed. It must be called any time a change is made to the video or its state.
     // TODO: This should be made private, SearchVideoView uses it currently
     func updateNowPlayingInfo(for video: Video) {
@@ -322,11 +340,13 @@ class CatalogPlayerManager: ObservableObject {
                             DispatchQueue.main.async {
                                 self.videoStatuses[video.id] = .unknown
                             }
-
+                            
                         case .readyToPlay:
+                            
                             DispatchQueue.main.async {
                                 self.videoStatuses[video.id] = .ready
                             }
+                            
                             print("Status ready: \(self.videoStatuses[video.id])")
 
                         case .failed:
@@ -347,9 +367,61 @@ class CatalogPlayerManager: ObservableObject {
             )
             
 //            switchedPlayer()
-//            observePlayer(to: player)
+        observePlayer(video: video, to: player)
             
 //        }
     }
+    
+    
+    
+    private func observePlayer(video: Video, to player: AVPlayer) {
+    
+        if let timeObserverToken = timeObserverToken {
+            NotificationCenter.default.removeObserver(timeObserverToken)
+            self.timeObserverToken = nil
+        }
+        
+    //        DispatchQueue.global(qos: .userInitiated).async {
+            print("Attached observer to \(player.currentItem)")
+    
+            player.currentItem?.asset.loadValuesAsynchronously(forKeys: ["duration"]) {
+                    DispatchQueue.main.async {
+                        let duration = player.currentItem?.asset.duration
+                        self.playerTimes[video.id] = duration ?? CMTime(value: 0, timescale: 1000)
+    
+                        self.timeObserverToken = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1000), queue: .main) { time in
+                            self.playerTimes[video.id] = time
+                            self.onChange?()
+//                            self.playerProgress = time.seconds / (duration?.seconds ?? 1.0)
+//                            self.timedPlayer = player
+                        }
+                    }
+                }
+    
+            print("Started Observing Video")
+    
+            if let endObserverToken = endObserverToken {
+                NotificationCenter.default.removeObserver(endObserverToken)
+                self.endObserverToken = nil
+            }
+    
+            endObserverToken = NotificationCenter.default.addObserver(
+                forName: .AVPlayerItemDidPlayToEndTime,
+                object: player.currentItem,
+                queue: .main
+            ) { _ in
+//                recent_change = true
+//                playSound()
+//                videoCompleted(for: getVideo(current_playing), with: authModel.user, profile: authModel.current_user)
+//                player.seek(to: CMTime.zero)
+//    
+//                player.pause()
+//                current_playing += 1;
+    //            recent_change = false
+            }
+        }
+        
+    
+    
     
 }

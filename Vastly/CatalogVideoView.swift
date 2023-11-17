@@ -143,7 +143,7 @@ struct CatalogVideoView: View {
                 VideoFailedView()
                     .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
             } else {
-                if viewModel.playerManager?.videoStatuses[video.id] == .ready {
+                if viewModel.playerManager?.videoStatuses[video.id] == .ready { // Should be moved to helper function but issue with statee
                     ZStack {
                         ZStack {
                             FullscreenVideoPlayer(videoMode: $videoMode,
@@ -164,8 +164,7 @@ struct CatalogVideoView: View {
                                     .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                             }
                         }
-                        ProgressBar(value: $playerProgress,
-                                    video: video, isPlaying: $isPlaying)
+                        ProgressBar(video: video, isPlaying: $isPlaying)
                             .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                             .padding(0)
                             .environmentObject(viewModel)
@@ -185,7 +184,8 @@ struct CatalogVideoView: View {
                         .padding(.leading)
                     
                     Spacer()
-                    MyText(text: "\(playerTime.asString) / \(playerDuration.asString)", size: geoWidth * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
+                    
+                    MyText(text: "\(viewModel.getVideoTime(video).asString) / \(viewModel.getVideoDuration(video).asString)", size: geoWidth * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
                         .lineLimit(1)
                         .padding(.trailing)
                 } // end hstack

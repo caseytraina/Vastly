@@ -301,7 +301,7 @@ class CatalogViewModel: ObservableObject {
     
     // This public interface should be read-only, we should't be playing / pausing
     // or seeking via this variable, that should be handled in the public funcs below
-    var playerManager: CatalogPlayerManager?
+    @Published var playerManager: CatalogPlayerManager?
     
     var authModel: AuthViewModel
     
@@ -312,10 +312,21 @@ class CatalogViewModel: ObservableObject {
         Task {
             await self.getCatalog()
             self.playerManager = CatalogPlayerManager(self.catalog)
+            self.playerManager?.onChange = { [weak self] in
+                self?.objectWillChange.send()
+            }
             DispatchQueue.main.async {
                 self.isProcessing = false
             }
         }
+    }
+    
+    func getVideoTime(_ video: Video) -> CMTime {
+        return self.playerManager?.playerTimes[video.id] ?? CMTime(value: 0, timescale: 1000)
+    }
+    
+    func getVideoDuration(_ video: Video) -> CMTime {
+        return self.playerManager?.getDurationOfVideo(video: video) ?? CMTime(value: 0, timescale: 1000)
     }
     
     func playCurrentVideo() {

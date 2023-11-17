@@ -249,7 +249,7 @@ struct SearchVideoView: View {
 
                                 if i == current_playing {
                                     
-                                    ProgressBar(value: $playerProgress, video: video, isPlaying: $isPlaying)
+                                    ProgressBar(video: video, isPlaying: $isPlaying)
                                         .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                         .padding(0)
                                         .environmentObject(viewModel)

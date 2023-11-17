@@ -329,6 +329,10 @@ class CatalogViewModel: ObservableObject {
         return self.playerManager?.getDurationOfVideo(video: video) ?? CMTime(value: 0, timescale: 1000)
     }
     
+    func getVideoStatus(_ video: Video) -> VideoStatus {
+        self.playerManager?.getStatus(for: video) ?? .loading
+    }
+    
     func playCurrentVideo() {
         self.playerManager?.playCurrentVideo()
     }

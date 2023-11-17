@@ -122,30 +122,35 @@ struct CatalogVideoView: View {
     
     private func renderVStackVideo(geoWidth: CGFloat, geoHeight: CGFloat, video: Video, next: Video?, i: Int) -> some View {
         VStack(alignment: .leading) {
-            HStack {
-                if !videoMode {
-                    VStack(alignment: .leading) {
-                        MyText(text: "Audio autoplay is on", size: geoWidth * 0.04, bold: false, alignment: .leading, color: .white)
-                        MyText(text: "Put Vastly in your pocket and go", size: geoWidth * 0.04, bold: false, alignment: .leading, color: Color("AccentGray"))
-                    }
-                    .padding(.horizontal)
-                }
+
+
+            Spacer()
+            HStack(alignment: .bottom) {
+                MyText(text: video.title, size: 20, bold: true, alignment: .leading, color: .gray)
+                    .brightness(0.4)
+                    .lineLimit(2)
+                    .lineSpacing(0)
                 Spacer()
                 Toggle(isOn: $videoMode) {
+                    
                 }
-                .toggleStyle(AudioToggleStyle(color: self.viewModel.catalog.currentChannel.channel.color ))
-                .padding(.trailing, 40)
-                .padding(.top, 10)
-                .padding(.bottom, 10)
-                .frame(width: screenSize.width * 0.15)
-            } // end hstack
-            if viewModel.playerManager?.videoStatuses[video.id] == .failed { // temporary fix until can correctly access value through function w/ updating state. *check viewModel.getStatus*
+                .toggleStyle(AudioToggleStyle(color: channel.color))
+                .padding(.horizontal, 10)
+                .frame(width: screenSize.width * 0.1)
+                .padding(.trailing)
+            }
+            .padding(.horizontal, 10)
+            
+
+            if viewModel.getVideoStatus(video) == .failed {
                 VideoFailedView()
-                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
+                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)// + PROGRESS_BAR_HEIGHT)
             } else {
-                if viewModel.playerManager?.videoStatuses[video.id] == .ready { // Should be moved to helper function but issue with statee
-                    ZStack {
-                        ZStack {
+                if viewModel.getVideoStatus(video) == .ready {
+                    
+                    ZStack(alignment: .top) {
+                        
+                        ZStack(alignment: .top) {
                             FullscreenVideoPlayer(videoMode: $videoMode,
                                                   video: video)
                                 .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
@@ -164,86 +169,94 @@ struct CatalogVideoView: View {
                                     .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                             }
                         }
+                            
                         ProgressBar(video: video, isPlaying: $isPlaying)
-                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)
                             .padding(0)
                             .environmentObject(viewModel)
-                    }
-                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                        
+                    } // end vstack
+                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)
                 }  else {
                     VideoThumbnailView(video: video)
-                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)// + PROGRESS_BAR_HEIGHT)
+//                                                        VideoLoadingView()
+//                                                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
                 }
-            }
+            } // end if
+            
 
             VStack(alignment: .center) {
+
                 
                 HStack(alignment: .top) {
-                    MyText(text: video.date ?? "", size: geoWidth * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
+                    MyText(text: viewModel.getVideoTime(video).asString, size: geoWidth * 0.03, bold: false, alignment: .leading, color: .gray)
                         .lineLimit(1)
-                        .padding(.leading)
+                        .brightness(0.4)
                     
                     Spacer()
-                    
-                    MyText(text: "\(viewModel.getVideoTime(video).asString) / \(viewModel.getVideoDuration(video).asString)", size: geoWidth * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
+                    MyText(text: viewModel.getVideoDuration(video).asString, size: geoWidth * 0.03, bold: false, alignment: .leading, color: .gray)
                         .lineLimit(1)
-                        .padding(.trailing)
+                        .brightness(0.4)
                 } // end hstack
+                .frame(width: PROGRESS_BAR_WIDTH)
 //                .frame(width: geoWidth)
+         
                 
-                
-                VStack {
+                HStack {
                     
-                    HStack {
+                    
+                    Button(action: {
+                        withAnimation {
+                            publisherIsTapped = true
+                        }
+                    }, label: {
                         
-                        MyText(text: video.title, size: 20, bold: true, alignment: .leading, color: .white)
-                            .lineLimit(1)
                         
-                        Spacer()
-                        Image(systemName: liked ? "plus.square.fill.on.square.fill" : "plus.square.on.square")
-                            .foregroundColor(liked ? .red : .white)
-                            .font(.system(size: 18, weight: .medium))
-                        //                        .padding(.horizontal)
-                            .onTapGesture {
-                                
-                                DispatchQueue.main.async {
-                                    liked.toggle()
-                                    let impact = UIImpactFeedbackGenerator(style: .light)
-                                    impact.impactOccurred()
-                                    toggleLike(video)
+                        HStack(alignment: .center) {
+//                            if channel == viewModel.currentChannel.channel{
+                            AsyncImage(url: video.author.fileName) { image in
+                                    image.resizable()
+                                } placeholder: {
+                                    ZStack {
+                                        Color("BackgroundColor")
+                                    }
                                 }
-                                
-                            }
-                            .transition(.opacity)
-                            .animation(.easeOut, value: liked)
-                    } // end hstack
-//                    .frame(width: geoWidth)
-                    
-                    HStack {
-                        Button(action: {
-                            withAnimation {
-                                publisherIsTapped = true
-                            }
-                        }, label: {
-                            MyText(text: video.author.name ?? "Unknown Author", size: 16, bold: true, alignment: .leading, color: .gray)
-                                .brightness(0.25)
-                                .padding(0)
-                                .lineLimit(1)
-                        })
-                        Spacer()
-                    }
-                    
-                    
-                }
-                .padding(.vertical, 5)
-//                .frame(width: geoWidth)
-                //            .padding(.horizontal, 15)
+                                .frame(width: geoWidth * 0.125, height: geoWidth * 0.125)
+                                .clipShape(RoundedRectangle(cornerRadius: 5)) // Clips the AsyncImage to a rounded
+                                //                                        .animation(.easeOut, value: activeChannel)
+                                //                                        .transition(.opacity)
+                                VStack(alignment: .leading) {
+                                    MyText(text: video.author.name ?? "Unknown Author", size: 16, bold: true, alignment: .leading, color: .gray)
+                                        .lineLimit(1)
+                                        .brightness(0.4)
+                                    if let date = video.date {
+                                        MyText(text: date, size: 12, bold: false, alignment: .leading, color: .gray)
+                                            .lineLimit(1)
+                                            .brightness(0.4)
+                                    }
+                                    
+                                }
+                                //                                            .animation(.easeOut, value: activeChannel)
+                                //                                            .transition(.opacity)
+                                Spacer()
+                                    
+//                            }
+                        }
+                        .padding(.bottom, 5)
+                        
+                    })
+
+                    Spacer()
+                } // end author hstack
                 
-                VStack(alignment: .leading) {
-                    
-                    MyText(text: video.bio, size: 16, bold: false, alignment: .leading, color: Color("AccentGray"))
-                        .truncationMode(.tail)
-                        .lineLimit(bioExpanded ? 8 : 2)
+                
+                
+                
+                VStack(alignment: .leading) {  // start of bio vstack
+                    SeeMoreText(text: video.bio, size: 16, bold: false, alignment: .leading, color: .gray, expanded: $bioExpanded)
+//                        .truncationMode(.tail)
+                        .brightness(0.4)
                         .onTapGesture {
                             withAnimation {
                                 bioExpanded.toggle()
@@ -259,19 +272,60 @@ struct CatalogVideoView: View {
                                 .padding(.trailing, 5)
 
                         }
+                        
+                        Button(action: {
+                            DispatchQueue.main.async {
+                                liked.toggle()
+                                let impact = UIImpactFeedbackGenerator(style: .light)
+                                impact.impactOccurred()
+//                                toggleLike(i)
+                                toggleLike(video)
+                            }
+                        }, label: {
+                            if let image = UIImage(named: liked ? "bookmark-fill" : "bookmark") {
+                                Image(uiImage: image)
+                                    .renderingMode(.template)
+                                    .foregroundColor(liked ? .white : .white)
+                                    .font(.system(size: 18, weight: .medium))
+                                    .frame(width: 24, height: 24)
+                                    .transition(.opacity)
+                                    .animation(.easeOut, value: liked)
+                                    .padding(5)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .foregroundStyle(.gray)
+                                            .opacity(0.25)
+                                    )
+                            }
+                        })
+                        .padding(.trailing, 5)
+
+                        
                         if let shareURL {
                             ShareLink(item: shareURL) {
                                 Image(systemName: "square.and.arrow.up")
                                     .foregroundColor(.white)
                                     .font(.system(size: 18, weight: .medium))
+                                    .frame(width: 24, height: 24)
+                                    .padding(5)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .foregroundStyle(.gray)
+                                            .opacity(0.25)
+                                    )
                             }
+                            .padding(.trailing, 5)
                         }
                         Spacer()
                     }
                     .padding(.vertical, 10)
+                    //                    .padding(.horizontal, 15)
+                    
                     Spacer()
                     
-                }
+                } // end bio vstack
+                
+                
             }
             .padding(.horizontal, 10)
         }

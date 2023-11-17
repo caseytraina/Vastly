@@ -42,11 +42,11 @@ struct ProgressBar: View {
                         .foregroundColor(Color("AccentGray"))
     //                if video.id == viewModel.playerManager?.getCurrentVideo()?.id {
                             RoundedRectangle(cornerRadius: 5).frame(width: min(abs(PROGRESS_BAR_WIDTH * CGFloat(progress.seconds/duration.seconds)), PROGRESS_BAR_WIDTH), height: PROGRESS_BAR_HEIGHT)
-//                            .foregroundColor(activeChannel.color)
+                            .foregroundColor(videoViewModel.currentChannel.channel.color)
 
                     
                         Circle()
-//                            .foregroundColor(activeChannel.color)
+                            .foregroundColor(videoViewModel.currentChannel.channel.color)
                             .frame(width: geometry.size.height * 2 * (beingDragged ? 2 : 1), height: PROGRESS_BAR_HEIGHT * 2 * (beingDragged ? 2 : 1))
                             .position(x: CGFloat(progress.seconds/duration.seconds) * PROGRESS_BAR_WIDTH, y: PROGRESS_BAR_HEIGHT / 2)
 //                            .gesture(

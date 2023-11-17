@@ -354,7 +354,7 @@ class CatalogPlayerManager: ObservableObject {
                             DispatchQueue.main.async {
                                 self.videoStatuses[video.id] = .failed
                             }
-                            print("Status failed: \(self.videoStatuses[video.id])")
+                            print("Error video failed: \(video)")
                         @unknown default:
                             // Handle other unknown cases
                             DispatchQueue.main.async {

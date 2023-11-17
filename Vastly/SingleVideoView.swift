@@ -88,12 +88,12 @@ struct SingleVideoView: View {
                     VStack(alignment: .center) {
                         
                         HStack(alignment: .top) {
-                            MyText(text: playerTime.asString, size: 12, bold: false, alignment: .leading, color: .gray)
+                            MyText(text: viewModel.getVideoTime(video).asString, size: 12, bold: false, alignment: .leading, color: .gray)
                                 .lineLimit(1)
                                 .brightness(0.4)
                             
                             Spacer()
-                            MyText(text: playerDuration.asString, size: 12, bold: false, alignment: .leading, color: .gray)
+                            MyText(text: viewModel.getVideoDuration(video).asString, size: 12, bold: false, alignment: .leading, color: .gray)
                                 .lineLimit(1)
                                 .brightness(0.4)
                         } // end hstack

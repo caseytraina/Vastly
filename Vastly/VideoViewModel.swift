@@ -68,9 +68,6 @@ class VideoViewModel: ObservableObject {
 //            await self.getVideos()
             print("Got videos.")
             // For you page must have completed loading before letting user into the app
-
-            
-
             
             print("Processed videos.")
         }

@@ -67,6 +67,10 @@ class ChannelVideos: Identifiable, Hashable {
         }
     }
     
+    func setVideos(_ videos: [Video]) {
+        self.videos = videos
+    }
+    
     func hasNextVideo() -> Bool {
         let totalVideos = self.videos.count
         return self.currentVideoIndex < (totalVideos - 1)
@@ -157,6 +161,7 @@ final class Catalog {
     // consumed, so we can track state and transitions
     // if they change channel for example, we want to know the last video
     // in the previous channel
+        
     private(set) var videoHistory: [Video] = []
     private(set) var channelHistory: [ChannelVideos] = []
     private(set) var currentVideo: Video?
@@ -185,6 +190,22 @@ final class Catalog {
         return self.currentChannelIndex < (totalChannels - 1)
     }
     
+    func setTemporaryChannel(videos: [Video]) -> Channel {
+        let chan = Channel(id: UUID().uuidString, order: 0, title: "Search", color: .white, isActive: false)
+        var channel = ChannelVideos(channel: chan)
+        channel.setVideos(videos)
+        self.addChannel(channel)
+        self.changeToChannel(chan)
+        return chan
+    }
+    
+    func leaveTemporaryChannel(channel: Channel) {
+        if let myChannel = self.channelHistory.last?.channel {
+            self.changeToChannel(myChannel)
+            self.catalog.removeAll(where: {$0.channel == channel})
+        }
+    }
+    
     func hasPreviousChannel() -> Bool {
         return self.currentChannelIndex > 0
     }
@@ -195,6 +216,13 @@ final class Catalog {
     
     func channelVideos(for channel: Channel) -> [Video]? {
         return self.catalog.first(where:  { $0.channel == channel })?.videos
+    }
+    
+    func channelToChannelVideos(channel: Channel) -> ChannelVideos? {
+        if let channel = catalog.first(where:  {$0.channel == channel}) {
+            return channel
+        }
+        return nil
     }
     
     // You can navigate to a channel not next, so this maintains that order
@@ -256,8 +284,8 @@ final class Catalog {
         }) {
             self.updateChannelHistory()
             self.currentChannelIndex = newChannelIndex
-            let currentVideoIndex = self.currentChannel.currentVideoIndex
             self.currentChannel = self.catalog[newChannelIndex]
+            let currentVideoIndex = self.currentChannel.currentVideoIndex
             self.changeToVideoIndex(currentVideoIndex)
         }
     }
@@ -346,6 +374,11 @@ class CatalogViewModel: ObservableObject {
         self.catalog.changeToChannel(channel)
         self.currentChannel = self.catalog.currentChannel
         self.playerManager?.changeToChannel(channel, shouldPlay: shouldPlay)
+        if shouldPlay {
+            self.playCurrentVideo()
+        } else {
+            self.pauseCurrentVideo()
+        }
     }
     
     func changeToNextChannel(shouldPlay: Bool) {
@@ -369,6 +402,12 @@ class CatalogViewModel: ObservableObject {
         }
     }
     
+    func changeToIndex(_ index: Int) {
+        self.pauseCurrentVideo()
+        self.catalog.changeToVideoIndex(index)
+        self.playCurrentVideo()
+    }
+    
     func changeToPreviousVideo(shouldPlay: Bool) {
         self.playerManager?.pauseCurrentVideo()
         if let previousVideo = self.catalog.previousVideo() {
@@ -376,6 +415,12 @@ class CatalogViewModel: ObservableObject {
                 self.playerManager?.play(for: previousVideo)
             }
         }
+    }
+    
+    func getThumbnail(video: Video) -> URL? {
+        var urlString = video.url?.absoluteString
+        urlString = urlString?.replacingOccurrences(of: "?tr=f-auto", with: "/ik-thumbnail.jpg")
+        return URL(string: urlString ?? "")
     }
     
     func videoStatus(_ video: Video) -> VideoStatus {
@@ -421,6 +466,25 @@ class CatalogViewModel: ObservableObject {
             } catch {
                 print("error with video: \(error)")
             }
+        }
+    }
+    
+    func setTemporaryChannel(videos: [Video]) -> Channel {
+        let chan = Channel(id: UUID().uuidString, order: 0, title: "Search", color: .white, isActive: false)
+        var channel = ChannelVideos(channel: chan)
+        channel.setVideos(videos)
+        self.catalog.addChannel(channel)
+        self.channels.append(chan)
+        self.changeToChannel(chan, shouldPlay: true)
+        return chan
+    }
+    
+    func leaveTemporaryChannel(channel: Channel) {
+        if let prev = self.catalog.channelHistory.last?.channel {
+            self.changeToChannel(prev, shouldPlay: false)
+            self.channels.removeAll(where: {$0 == channel})
+            
+//            self.catalog.catalog.removeAll(where: {$0.channel == channel})
         }
     }
     

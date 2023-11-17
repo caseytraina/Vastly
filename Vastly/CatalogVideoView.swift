@@ -63,7 +63,7 @@ struct CatalogVideoView: View {
                                     geoWidth: geo.size.width,
                                     geoHeight: geo.size.height,
                                     video: videos[i],
-                                    next: viewModel.catalog.peekNextVideo(),
+                                    next: viewModel.catalog.peekNextVideo(), // REMOVE LIKE ORDERING
                                     i: i)
                             }
                         }
@@ -84,6 +84,12 @@ struct CatalogVideoView: View {
                                 // self.trackAVStatus(for: currentVideo)
                                 self.shareURL = videoShareURL(currentVideo)
                             }
+                        }
+                    }
+                    .onChange(of: self.viewModel.currentChannel) { newChannel in
+                        if channel == newChannel.channel {
+                            proxy.scrollTo(newChannel.currentVideoIndex)
+                            
                         }
                     }
                     .onChange(of: self.viewModel.catalog.currentVideo) { newVideo in
@@ -142,48 +148,53 @@ struct CatalogVideoView: View {
             .padding(.horizontal, 10)
             
 
-            if viewModel.getVideoStatus(video) == .failed {
-                VideoFailedView()
-                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)// + PROGRESS_BAR_HEIGHT)
-            } else {
-                if viewModel.getVideoStatus(video) == .ready {
-                    
-                    ZStack(alignment: .top) {
+            if abs(i - viewModel.currentChannel.currentVideoIndex) <= 1 {
+                
+                if viewModel.getVideoStatus(video) == .failed {
+                    VideoFailedView()
+                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)// + PROGRESS_BAR_HEIGHT)
+                } else {
+                    if viewModel.getVideoStatus(video) == .ready {
                         
                         ZStack(alignment: .top) {
-                            FullscreenVideoPlayer(videoMode: $videoMode,
-                                                  video: video)
+                            
+                            ZStack(alignment: .top) {
+                                FullscreenVideoPlayer(videoMode: $videoMode,
+                                                      video: video)
                                 .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                 .padding(0)
                                 .environmentObject(viewModel)
-
-                            if !videoMode {
-                                AudioOverlay(author: video.author, video: video, playing: $isPlaying)
-                                    .environmentObject(viewModel)
+                                
+                                if !videoMode {
+                                    AudioOverlay(author: video.author, video: video, playing: $isPlaying)
+                                        .environmentObject(viewModel)
+                                }
+                                if !isPlaying {
+                                    Image(systemName: "play.fill")
+                                        .foregroundColor(.white)
+                                        .font(.system(size: screenSize.width * 0.15, weight: .light))
+                                        .shadow(radius: 2.0)
+                                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
+                                }
                             }
-                            if !isPlaying {
-                                Image(systemName: "play.fill")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: screenSize.width * 0.15, weight: .light))
-                                    .shadow(radius: 2.0)
-                                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
-                            }
-                        }
                             
-                        ProgressBar(video: video, isPlaying: $isPlaying)
-                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)
-                            .padding(0)
-                            .environmentObject(viewModel)
+                            ProgressBar(video: video, isPlaying: $isPlaying)
+                                .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)
+                                .padding(0)
+                                .environmentObject(viewModel)
+                            
+                        } // end vstack
+                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)
+                    }  else {
+                        VideoThumbnailView(video: video)
+                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)// + PROGRESS_BAR_HEIGHT)
                         
-                    } // end vstack
-                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)
-                }  else {
-                    VideoThumbnailView(video: video)
-                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)// + PROGRESS_BAR_HEIGHT)
-//                                                        VideoLoadingView()
-//                                                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
-                }
-            } // end if
+                    }
+                } // end if
+            } else {
+                VideoThumbnailView(video: video)
+                    .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)// + PROGRESS_BAR_HEIGHT)
+            }
             
 
             VStack(alignment: .center) {

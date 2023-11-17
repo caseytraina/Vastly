@@ -15,7 +15,7 @@ import AudioToolbox
 
 struct SearchVideoView: View {
     
-    @EnvironmentObject var videoViewModel: VideoViewModel
+//    @EnvironmentObject var videoViewModel: VideoViewModel
     @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
 
@@ -59,6 +59,8 @@ struct SearchVideoView: View {
 
     @State var shareURL: URL?
     
+    @State var tempChannel: Channel?
+    
     var body: some View {
             GeometryReader { geo in
                 
@@ -82,22 +84,28 @@ struct SearchVideoView: View {
         //                    .id(activeChannel)
                         .clipped()
                         .onAppear {
-                            videoViewModel.playerManager?.updateQueue(with: vids)
+//                            videoViewModel.playerManager?.updateQueue(with: vids)
                             isPlaying = true
 
                             withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(current_playing, anchor: .top)
                             }
                             
-                            videoViewModel.playerManager?.changeToIndex(to: current_playing, shouldPlay: isPlaying)
-                            videoViewModel.playerManager?.updateNowPlayingInfo(for: getVideo(current_playing))
+//                            videoViewModel.playerManager?.changeToIndex(to: current_playing, shouldPlay: isPlaying)
+                            tempChannel = viewModel.setTemporaryChannel(videos: vids)
+                            viewModel.changeToIndex(current_playing)
                             
-                            previous = current_playing
-                            trackAVStatus(for: getVideo(current_playing))
-                            videoViewModel.playerManager?.pauseAllOthers(except: getVideo(current_playing))
+//                            previous = current_playing
+//                            trackAVStatus(for: getVideo(current_playing))
+//                            videoViewModel.playerManager?.pauseAllOthers(except: getVideo(current_playing))
                             shareURL = videoShareURL(getVideo(current_playing))
 //                            play(current_playing)
 
+                        }
+                        .onDisappear {
+                            if let tempChannel {
+                                viewModel.leaveTemporaryChannel(channel: tempChannel)
+                            }
                         }
                         .onChange(of: current_playing) { newIndex in
                                 
@@ -112,10 +120,10 @@ struct SearchVideoView: View {
                                 recent_change = true
     //                            videoListNum = min(vids.count, videoListNum)
                                 
-                                trackAVStatus(for: getVideo(newIndex))
-                                
-                                videoViewModel.playerManager?.changeToIndex(to: newIndex, shouldPlay: isPlaying)
-                                videoViewModel.playerManager?.updateNowPlayingInfo(for: getVideo(newIndex))
+//                                trackAVStatus(for: getVideo(newIndex))
+                                viewModel.changeToIndex(newIndex)
+//                                videoViewModel.playerManager?.changeToIndex(to: newIndex, shouldPlay: isPlaying)
+//                                videoViewModel.playerManager?.updateNowPlayingInfo(for: getVideo(newIndex))
 
 //                                pause(previous)
 //                                play(newIndex)
@@ -220,11 +228,11 @@ struct SearchVideoView: View {
             if (abs(i - current_playing) <= 1) {
                 if let manager = viewModel.playerManager {
 
-                    if videoFailed {
+                    if viewModel.getVideoStatus(video) == .failed {
                         VideoFailedView()
                             .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
                     } else {
-                        if isLoaded {
+                        if viewModel.getVideoStatus(video) == .ready {
                             
                             ZStack {
                                 
@@ -280,7 +288,7 @@ struct SearchVideoView: View {
                         .padding(.leading)
                     
                     Spacer()
-                    MyText(text: "\(playerTime.asString) / \(playerDuration.asString)", size: geoWidth * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
+                    MyText(text: "\(viewModel.getVideoTime(video).asString) / \(viewModel.getVideoDuration(video).asString)", size: geoWidth * 0.03, bold: false, alignment: .leading, color: Color("AccentGray"))
                         .lineLimit(1)
                         .padding(.trailing)
                 } // end hstack
@@ -437,58 +445,54 @@ struct SearchVideoView: View {
         viewModel.playerManager?.pause(for: getVideo(i))
     }
     
-    private func AuthorURL(_ i: Int) -> URL? {
-        return videoViewModel.videos[channel]?[i].author.fileName
-    }
-    
     private func videoShareURL(_ video: Video) -> URL {
         let string = "vastlyapp://open-video?id=\(String(video.id.replacingOccurrences(of: " ", with: "%20")))"
         return URL(string: string) ?? EMPTY_VIDEO.url!
     }
     
-    private func trackAVStatus(for video: Video) {
-        statusObserver?.cancel()
-
-        if let player = viewModel.playerManager?.getPlayer(for: video) {
-            statusObserver = AnyCancellable(
-                (player.currentItem?
-                    .publisher(for: \.status)
-                    .sink { status in
-                        switch status {
-                        case .unknown:
-                            // Handle unknown status
-                            print("UNKNOWN")
-                            videoFailed = false
-
-                            isLoaded = false
-                        case .readyToPlay:
-                            isLoaded = true
-                            videoFailed = false
-                            play(current_playing)
-//                            viewModel.playerManager?.playCurrentVideo()
-                            isPlaying = true
-                        case .failed:
-                            // Handle failed status
-                            videoFailed = true
-//                            viewModel.videos[activeChannel]?.remove(at: current_playing)
-//                            videoListNum -= 1
-//                            print("DELETED")
-//                            nextVideo()
-                            isLoaded = false
-                        @unknown default:
-                            // Handle other unknown cases
-                            videoFailed = false
-                            isLoaded = false
-                        }
-                    })!
-            )
-            
-            switchedPlayer()
-            observePlayer(to: player)
-            
-        }
-    }
-    
+//    private func trackAVStatus(for video: Video) {
+//        statusObserver?.cancel()
+//
+//        if let player = viewModel.playerManager?.getPlayer(for: video) {
+//            statusObserver = AnyCancellable(
+//                (player.currentItem?
+//                    .publisher(for: \.status)
+//                    .sink { status in
+//                        switch status {
+//                        case .unknown:
+//                            // Handle unknown status
+//                            print("UNKNOWN")
+//                            videoFailed = false
+//
+//                            isLoaded = false
+//                        case .readyToPlay:
+//                            isLoaded = true
+//                            videoFailed = false
+//                            play(current_playing)
+////                            viewModel.playerManager?.playCurrentVideo()
+//                            isPlaying = true
+//                        case .failed:
+//                            // Handle failed status
+//                            videoFailed = true
+////                            viewModel.videos[activeChannel]?.remove(at: current_playing)
+////                            videoListNum -= 1
+////                            print("DELETED")
+////                            nextVideo()
+//                            isLoaded = false
+//                        @unknown default:
+//                            // Handle other unknown cases
+//                            videoFailed = false
+//                            isLoaded = false
+//                        }
+//                    })!
+//            )
+//            
+//            switchedPlayer()
+//            observePlayer(to: player)
+//            
+//        }
+//    }
+//    
     private func switchedPlayer() {
         cancellables.forEach { $0.cancel() }
         cancellables.removeAll()

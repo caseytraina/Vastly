@@ -43,18 +43,23 @@ struct CatalogChannelView: View {
     @State var isShareLinkActive = false
     @State private var openedVideo: Video?
     
+    @State var audioPopupShown = true
+    
     var body: some View {
         Group {
             ZStack {
                 VStack {
+                    Toggle(isOn: $viewModel.isVideoMode) {
+                    }
+                    .toggleStyle(AudioToggleStyle(color: .accentColor))
                     Carousel(isPlaying: $playing)
                         .environmentObject(viewModel)
                         .environmentObject(authModel)
-                        .frame(height: screenSize.height*0.075)
+//                        .frame(height: screenSize.height*0.075)
                         .frame(width: screenSize.width)
                         .ignoresSafeArea()
                         .padding(.vertical)
-                    Spacer()
+//                    Spacer()
                     ZStack {
                         ScrollViewReader { proxy in
                             ScrollView (.horizontal, showsIndicators: false) {
@@ -67,7 +72,7 @@ struct CatalogChannelView: View {
                                                          publisherIsTapped: $publisherIsTapped)
                                         .environmentObject(viewModel)
                                         .environmentObject(authModel)
-                                        .frame(width: screenSize.width, height: screenSize.height * 0.8)
+                                        .frame(width: screenSize.width, height: screenSize.height * 0.7)
                                         .id(channel)
                                     }
                                 }
@@ -81,20 +86,21 @@ struct CatalogChannelView: View {
                                     proxy.scrollTo(newChannel, anchor: .leading)
                                 }
                             }
-                            .frame(width: screenSize.width, height: screenSize.height * 0.8)
+                            .frame(width: screenSize.width, height: screenSize.height * 0.7)
                             .gesture(DragGesture()
                                 .onChanged(onDragChanged)
                                 .onEnded(onDragEnded)
                             )
                         }
                     }
-                    .frame(height: screenSize.height * 0.8)
+                    .frame(height: screenSize.height * 0.7)
                     .onOpenURL { incomingURL in
                         print("App was opened via URL: \(incomingURL)")
                         Task {
                             await handleIncomingURL(incomingURL)
                         }
                     }
+                    Spacer()
                 }
                 .onAppear {
                     startTime = Date()
@@ -137,6 +143,7 @@ struct CatalogChannelView: View {
                         .environmentObject(authModel)
                     .hidden()
                 }
+                Spacer()
             }
         }
         .overlay(
@@ -145,6 +152,9 @@ struct CatalogChannelView: View {
                     withAnimation {
                         TutorialView(showTutorial: $hasSeenTutorial)
                     }
+                }
+                if !viewModel.isVideoMode && audioPopupShown {
+                    AudioModePopUp(audioPopupShown: $audioPopupShown)
                 }
             }
         )

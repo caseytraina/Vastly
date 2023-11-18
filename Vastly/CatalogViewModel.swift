@@ -13,6 +13,7 @@ import FirebaseFirestoreSwift
 import FirebaseStorage
 import Foundation
 import SwiftUI
+import FirebaseFunctions
 
 // TODO: Track video indices in respective channels
 
@@ -301,6 +302,8 @@ final class Catalog {
         return foundVideo
     }
     
+    
+    
     private func updateChannelHistory() {
         channelHistory.append(currentChannel)
     }
@@ -330,6 +333,7 @@ class CatalogViewModel: ObservableObject {
     // This public interface should be read-only, we should't be playing / pausing
     // or seeking via this variable, that should be handled in the public funcs below
     @Published var playerManager: CatalogPlayerManager?
+    @Published var isVideoMode = true
     
     var authModel: AuthViewModel
     
@@ -417,6 +421,11 @@ class CatalogViewModel: ObservableObject {
         }
     }
     
+    func toggleVideoMode() {
+        self.isVideoMode.toggle()
+    }
+
+    
     func getThumbnail(video: Video) -> URL? {
         var urlString = video.url?.absoluteString
         urlString = urlString?.replacingOccurrences(of: "?tr=f-auto", with: "/ik-thumbnail.jpg")
@@ -452,16 +461,17 @@ class CatalogViewModel: ObservableObject {
             do {
                 let channelVideos = ChannelVideos(channel: channel, user: self.authModel.current_user, authors: authors)
                 
-                let snapshot = try await storageRef
-                    .whereField("channels", arrayContains: channel.id)
-                    .order(by: "likedCount", descending: true)
-                    .limit(to: 15).getDocuments()
-                
-                for document in snapshot.documents {
-                    let unfilteredVideo = try document.data(as: FirebaseData.self)
-                    let id = document.documentID
-                    channelVideos.addVideo(id: id, unfilteredVideo: unfilteredVideo)
-                }
+                await self.addVideosTo(channelVideos)
+//                let snapshot = try await storageRef
+//                    .whereField("channels", arrayContains: channel.id)
+//                    .order(by: "likedCount", descending: true)
+//                    .limit(to: 15).getDocuments()
+//                
+//                for document in snapshot.documents {
+//                    let unfilteredVideo = try document.data(as: FirebaseData.self)
+//                    let id = document.documentID
+//                    channelVideos.addVideo(id: id, unfilteredVideo: unfilteredVideo)
+//                }
                 self.catalog.addChannel(channelVideos)
             } catch {
                 print("error with video: \(error)")
@@ -469,8 +479,8 @@ class CatalogViewModel: ObservableObject {
         }
     }
     
-    func setTemporaryChannel(videos: [Video]) -> Channel {
-        let chan = Channel(id: UUID().uuidString, order: 0, title: "Search", color: .white, isActive: false)
+    func setTemporaryChannel(videos: [Video], name: String) -> Channel {
+        let chan = Channel(id: UUID().uuidString, order: 0, title: name, color: .white, isActive: false)
         var channel = ChannelVideos(channel: chan)
         channel.setVideos(videos)
         self.catalog.addChannel(channel)
@@ -562,6 +572,37 @@ class CatalogViewModel: ObservableObject {
         let urlStringUnkept: String = IMAGEKIT_ENDPOINT + fixedPath
         
         return URL(string: urlStringUnkept) ?? URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Question_mark_%28black%29.svg/800px-Question_mark_%28black%29.svg.png")!
+    }
+    
+    func addVideosTo(_ channel: ChannelVideos) async {
+            
+        do {
+            
+            guard let currentUser = self.authModel.current_user else { return  }
+            let functions = Functions.functions()
+            functions.httpsCallable("getUnviewedVideos").call(["userId": currentUser.phoneNumber ?? currentUser.email, "channelID" : channel.channel.id]) { (result, error) in
+                if let error = error {
+                    print("Error: \(error.localizedDescription)")
+                }
+                
+                if let dataArray = result?.data as? [[String: [String: Any]]] {
+                    // Retrieve the key and value for the first dictionary in the array
+                    var newVideos: [Video] = []
+                    for unfilteredVideo in dataArray {
+                        let video = self.resultToVideo(id: unfilteredVideo.first?.key ?? UUID().uuidString, data: unfilteredVideo.first?.value)
+                        if let video {
+                            newVideos.append(video)
+                        }
+                    }
+                    channel.setVideos(newVideos)
+                }
+            }
+        } catch {
+            print("error with video: \(error)")
+        }
+
+        
+        
     }
     
     // This function accepts a storage regerence and returns all documents at the given reference in Firebase.

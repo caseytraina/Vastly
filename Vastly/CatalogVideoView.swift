@@ -31,7 +31,6 @@ struct CatalogVideoView: View {
     
     @Binding var isPlaying: Bool
     
-    @State var videoMode: Bool = true
     @State var liked: Bool = false
 
     @State private var playerProgress: Double = 0
@@ -92,6 +91,9 @@ struct CatalogVideoView: View {
                             
                         }
                     }
+//                    .onChange(of: viewModel.isVideoMode) { newVideoMode
+//
+//                    }
                     .onChange(of: self.viewModel.catalog.currentVideo) { newVideo in
                         if channel == currentChannel.channel {
                             
@@ -137,13 +139,6 @@ struct CatalogVideoView: View {
                     .lineLimit(2)
                     .lineSpacing(0)
                 Spacer()
-                Toggle(isOn: $videoMode) {
-                    
-                }
-                .toggleStyle(AudioToggleStyle(color: channel.color))
-                .padding(.horizontal, 10)
-                .frame(width: screenSize.width * 0.1)
-                .padding(.trailing)
             }
             .padding(.horizontal, 10)
             
@@ -159,13 +154,13 @@ struct CatalogVideoView: View {
                         ZStack(alignment: .top) {
                             
                             ZStack(alignment: .top) {
-                                FullscreenVideoPlayer(videoMode: $videoMode,
+                                FullscreenVideoPlayer(videoMode: $viewModel.isVideoMode,
                                                       video: video)
                                 .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                 .padding(0)
                                 .environmentObject(viewModel)
                                 
-                                if !videoMode {
+                                if !viewModel.isVideoMode {
                                     AudioOverlay(author: video.author, video: video, playing: $isPlaying)
                                         .environmentObject(viewModel)
                                 }

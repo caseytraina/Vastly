@@ -29,6 +29,8 @@ class VideoViewModel: ObservableObject {
             }
         }
     }
+    
+    @Published var isVideoMode = true
 
     @Published var channels: [Channel] = [FOR_YOU_CHANNEL]
     var authors: [Author] = []
@@ -117,6 +119,7 @@ class VideoViewModel: ObservableObject {
         return nil
     }
     
+
     func resultToVideo(id: String, data: Any) -> Video? {
         guard let dataDict = data as? [String: Any] else {
             return nil

@@ -92,7 +92,7 @@ struct SearchVideoView: View {
                             }
                             
 //                            videoViewModel.playerManager?.changeToIndex(to: current_playing, shouldPlay: isPlaying)
-                            tempChannel = viewModel.setTemporaryChannel(videos: vids)
+                            tempChannel = viewModel.setTemporaryChannel(videos: vids, name: "Search")
                             viewModel.changeToIndex(current_playing)
                             
 //                            previous = current_playing

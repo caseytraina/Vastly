@@ -49,12 +49,15 @@ class CatalogPlayerManager: ObservableObject {
             print("background value changed: \(self.isInBackground)")
         }
     }
+    
+    @Published var isVideoMode: Bool
 //    @State private var statusObserver: AnyCancellable?
 
     
-    init(_ catalog: Catalog) {
+    init(_ catalog: Catalog, isVideoMode: Published<Bool>) {
         print("INIT: Catalog Player Manager")
         self.catalog = catalog
+        self._isVideoMode = isVideoMode
 //        setupCommandCenter()
     }
     
@@ -111,7 +114,9 @@ class CatalogPlayerManager: ObservableObject {
     
     // plays the video.
     func play(for video: Video) {
-        getPlayer(for: video).play()
+        let player = getPlayer(for: video)
+        observePlayer(video: video, to: player)
+        player.play()
     }
 
     // this function initializes the physical command center controls.
@@ -316,6 +321,15 @@ class CatalogPlayerManager: ObservableObject {
         }
     }
     
+    func seekTo(time: CMTime) {
+        if let video = self.getCurrentVideo() {
+            let player = self.getPlayer(for: video)
+            let currentTime = player.currentTime().seconds
+            player.seek(to: time) // skip forward by 15 seconds
+            self.updateNowPlayingInfo(for: video)
+        }
+    }
+    
     func seekBackward(by increment: Double) {
         if let video = self.getCurrentVideo() {
             let player = self.getPlayer(for: video)
@@ -365,14 +379,7 @@ class CatalogPlayerManager: ObservableObject {
                         }
                     })!
             )
-            
-//            switchedPlayer()
-        observePlayer(video: video, to: player)
-            
-//        }
     }
-    
-    
     
     private func observePlayer(video: Video, to player: AVPlayer) {
     
@@ -410,16 +417,28 @@ class CatalogPlayerManager: ObservableObject {
                 object: player.currentItem,
                 queue: .main
             ) { _ in
-//                recent_change = true
-//                playSound()
-//                videoCompleted(for: getVideo(current_playing), with: authModel.user, profile: authModel.current_user)
-//                player.seek(to: CMTime.zero)
-//    
-//                player.pause()
-//                current_playing += 1;
-    //            recent_change = false
+
+                self.playSound()
+                self.seekTo(time: CMTime(value: 0, timescale: 1000))
+                self.pauseCurrentVideo()
+                self.catalog.nextVideo()
+                self.playCurrentVideo()
+
             }
         }
+    
+    private func playSound() {
+
+        if let path = Bundle.main.path(forResource: "Blow", ofType: "aiff") {
+            let soundUrl = URL(fileURLWithPath: path)
+            do {
+                let audioPlayer = try AVAudioPlayer(contentsOf: soundUrl)
+                audioPlayer.play()
+            } catch {
+                print("Error initializing AVAudioPlayer.")
+            }
+        }
+    }
         
     
     

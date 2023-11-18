@@ -97,19 +97,20 @@ struct CatalogVideoView: View {
                     .onChange(of: self.viewModel.catalog.currentVideo) { newVideo in
                         if channel == currentChannel.channel {
                             
+                            if let newVideo = newVideo {
+                                // self.trackAVStatus(for: newVideo)
+                                DispatchQueue.main.async {
+                                    liked = videoIsLiked(newVideo)
+                                }
+                                self.shareURL = videoShareURL(newVideo)
+                            }
+                            
                             let newVideoIndex = self.viewModel.catalog.currentVideoIndex()
                             withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(newVideoIndex, anchor: .top)
                             }
                             
-                            if let newVideo = newVideo {
-                                // self.trackAVStatus(for: newVideo)
-                                DispatchQueue.main.async {
-                                    liked = false
-                                    liked = videoIsLiked(newVideo)
-                                }
-                                self.shareURL = videoShareURL(newVideo)
-                            }
+
                         }
                     }
                     .frame(width: geo.size.width, height: geo.size.height)

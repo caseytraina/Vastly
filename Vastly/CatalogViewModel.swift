@@ -343,7 +343,7 @@ class CatalogViewModel: ObservableObject {
         
         Task {
             await self.getCatalog()
-            self.playerManager = CatalogPlayerManager(self.catalog)
+            self.playerManager = CatalogPlayerManager(self.catalog, isVideoMode: self._isVideoMode)
             self.playerManager?.onChange = { [weak self] in
                 self?.objectWillChange.send()
             }

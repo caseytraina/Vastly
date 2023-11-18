@@ -105,6 +105,11 @@ struct CatalogChannelView: View {
                 .onAppear {
                     startTime = Date()
                 }
+                .onDisappear {
+                    if viewModel.isVideoMode {
+                        viewModel.pauseCurrentVideo()
+                    }
+                }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
                     DispatchQueue.main.async {
                         updateMetadata()

@@ -84,8 +84,8 @@ struct ProgressBar: View {
                     .updating($dragState) { drag, state, transaction in
                         state = .dragging(translation: drag.translation)
                     }
-//                    .onEnded(onDragEnded)
-//                    .onChanged(onDragChanged)
+                    .onEnded(onDragEnded)
+                    .onChanged(onDragChanged)
             )
             .onTapGesture(count: 1) {
                 isPlaying.toggle()
@@ -104,48 +104,58 @@ struct ProgressBar: View {
         }
     }
     
-//    private func onDragEnded(drag: DragGesture.Value) {
-//        beingDragged = false
-//        let width = drag.translation.width
-////        self.value = Double(width / UIScreen.main.bounds.width)
-//        self.value = dragStart + Double(width / UIScreen.main.bounds.width)
-//
-//        let trueValue = Double(drag.translation.width / UIScreen.main.bounds.width)
-////        self.value = dragStart + trueValue
-//        // Get the total duration of the video
-//        guard let duration = videoViewModel.playerManager?.getPlayer(for: video).items().last?.duration else { return }
-//        guard let currentTime = videoViewModel.playerManager?.getPlayer(for: video).items().last?.currentTime().seconds else { return }
-//
-//        // Calculate the new time based on the proportion of the video's duration
-////        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
-//        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
-//
-//        // Seek to the new time in the video
-//        videoViewModel.playerManager?.getPlayer(for: video).items().last?.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
-////        dragStart = self.value
-//        dragStart = self.value
-//    }
-//    
-//    private func onDragChanged(drag: DragGesture.Value) {
-//        beingDragged = true
-//        let width = drag.translation.width
-////        self.value = Double(width / UIScreen.main.bounds.width)
-//        self.value = dragStart + Double(width / UIScreen.main.bounds.width)
-//
-//        let trueValue = Double(drag.translation.width / UIScreen.main.bounds.width)
-////        self.value = dragStart + trueValue
-//        // Get the total duration of the video
-//        guard let duration = videoViewModel.playerManager?.getPlayer(for: video).items().last?.duration else { return }
-//        guard let currentTime = videoViewModel.playerManager?.getPlayer(for: video).items().last?.currentTime().seconds else { return }
-//
-//        // Calculate the new time based on the proportion of the video's duration
-////        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
-//        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
-//
-//        // Seek to the new time in the video
-//        videoViewModel.playerManager?.getPlayer(for: video).items().last?.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
-//
-//    }
+    private func onDragEnded(drag: DragGesture.Value) {
+        beingDragged = false
+        let width = drag.translation.width
+//        self.value = Double(width / UIScreen.main.bounds.width)
+        let value = dragStart + Double(width / UIScreen.main.bounds.width)
+
+        let trueValue = Double(drag.translation.width / UIScreen.main.bounds.width)
+//        self.value = dragStart + trueValue
+        // Get the total duration of the video
+        
+        if let progress = videoViewModel.playerManager?.playerTimes[video.id] {
+            if let duration = videoViewModel.playerManager?.getDurationOfVideo(video: video) {
+                
+                //
+                //        guard let duration = videoViewModel.playerManager?.getPlayer(for: video).items().last?.duration else { return }
+                //        guard let currentTime = videoViewModel.playerManager?.getPlayer(for: video).items().last?.currentTime().seconds else { return }
+                
+                // Calculate the new time based on the proportion of the video's duration
+                //        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
+                let newTime = CMTime(seconds: duration.seconds * value, preferredTimescale: duration.timescale)
+                
+                // Seek to the new time in the video
+//                videoViewModel.playerManager?.getPlayer(for: video).items().last?.seek(to: newTime, toleranceBefore: .zero, toleranceAfter: .zero)
+                videoViewModel.playerManager?.seekTo(time: newTime)
+                //        dragStart = self.value
+                dragStart = value
+            }
+        }
+    }
+    
+    private func onDragChanged(drag: DragGesture.Value) {
+        beingDragged = true
+        let width = drag.translation.width
+//        self.value = Double(width / UIScreen.main.bounds.width)
+        let value = dragStart + Double(width / UIScreen.main.bounds.width)
+
+        let trueValue = Double(drag.translation.width / UIScreen.main.bounds.width)
+//        self.value = dragStart + trueValue
+        // Get the total duration of the video
+        if let progress = videoViewModel.playerManager?.playerTimes[video.id] {
+            if let duration = videoViewModel.playerManager?.getDurationOfVideo(video: video) {
+                
+                // Calculate the new time based on the proportion of the video's duration
+                //        let newTime = CMTime(seconds: duration.seconds * self.value, preferredTimescale: duration.timescale)
+                let newTime = CMTime(seconds: duration.seconds * value, preferredTimescale: duration.timescale)
+                
+                // Seek to the new time in the video
+                videoViewModel.playerManager?.seekTo(time: newTime)
+            }
+        }
+
+    }
 //    
     enum DragState {
         case inactive

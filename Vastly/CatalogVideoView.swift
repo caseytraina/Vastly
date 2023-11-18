@@ -17,15 +17,8 @@ struct CatalogVideoView: View {
     
     // The channel that we want to render (might not be the current active channel)
     var channel: Channel
-    
     // The channel which is currently being viewed
     var currentChannel: ChannelVideos
-    
-    @State private var cancellables = Set<AnyCancellable>()
-
-    @State private var statusObserver: AnyCancellable?
-    @State var isLoaded = true // TEMPORARY BEFORE STATUS OBSERVERS ADDED
-    @State var videoFailed = false
 
     @State var videoListNum = 1
     
@@ -33,21 +26,12 @@ struct CatalogVideoView: View {
     
     @State var liked: Bool = false
 
-    @State private var playerProgress: Double = 0
-    @State private var playerDuration: CMTime = CMTime()
-    @State private var playerTime: CMTime = CMTime()
-
     @State private var recent_change = false
-
-    @State private var timeObserverToken: Any?
-    @State private var endObserverToken: Any?
-    @State private var timedPlayer: AVPlayer?
 
     @State private var bioExpanded = false
     
     @Binding var dragOffset: Double
     
-    @State var audioPlayer: AVAudioPlayer?
     @State var shareURL: URL?
     @Binding var publisherIsTapped: Bool
 
@@ -192,7 +176,6 @@ struct CatalogVideoView: View {
                     .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)// + PROGRESS_BAR_HEIGHT)
             }
             
-
             VStack(alignment: .center) {
 
                 
@@ -207,8 +190,6 @@ struct CatalogVideoView: View {
                         .brightness(0.4)
                 } // end hstack
                 .frame(width: PROGRESS_BAR_WIDTH)
-//                .frame(width: geoWidth)
-         
                 
                 HStack {
                     
@@ -256,9 +237,6 @@ struct CatalogVideoView: View {
 
                     Spacer()
                 } // end author hstack
-                
-                
-                
                 
                 VStack(alignment: .leading) {  // start of bio vstack
                     SeeMoreText(text: video.bio, size: 16, bold: false, alignment: .leading, color: .gray, expanded: $bioExpanded)
@@ -376,119 +354,6 @@ struct CatalogVideoView: View {
             }
         }
     }
-    
-//    private func trackAVStatus(for video: Video) {
-//        statusObserver?.cancel()
-//
-//        if let player = viewModel.playerManager?.getPlayer(for: video) {
-//            statusObserver = AnyCancellable(
-//                (player.currentItem?
-//                    .publisher(for: \.status)
-//                    .sink { status in
-//                        switch status {
-//                        case .unknown:
-//                            // Handle unknown status
-//                            print("UNKNOWN")
-//                            videoFailed = false
-//
-//                            isLoaded = false
-//                        case .readyToPlay:
-//                            isLoaded = true
-//                            videoFailed = false
-////                            isPlaying = true
-//                            viewModel.playerManager?.playCurrentVideo()
-//                        case .failed:
-//                            // Handle failed status
-//                            videoFailed = true
-////                            viewModel.videos[activeChannel]?.remove(at: current_playing)
-////                            videoListNum -= 1
-////                            print("DELETED")
-////                            nextVideo()
-//                            isLoaded = false
-//                        @unknown default:
-//                            // Handle other unknown cases
-//                            videoFailed = false
-//                            isLoaded = false
-//                        }
-//                    })!
-//            )
-//            
-//            switchedPlayer()
-//            observePlayer(to: player)
-//            
-//        }
-//    }
-    
-//    private func switchedPlayer() {
-//        cancellables.forEach { $0.cancel() }
-//        cancellables.removeAll()
-//        viewModel.playerManager?.getPlayer(for: getVideo(current_playing))
-//            .publisher(for: \.rate)
-//            .sink { newRate in
-//                if newRate == 0 && !recent_change {
-//                    isPlaying = false
-//                } else {
-//                    isPlaying = true
-//                }
-//                viewModel.playerManager?.updateNowPlayingInfo(for: getVideo(current_playing))
-//                recent_change = false
-//            }
-//            .store(in: &cancellables)
-//    }
-//    
-    private func playSound() {
 
-        if let path = Bundle.main.path(forResource: "Blow", ofType: "aiff") {
-            let soundUrl = URL(fileURLWithPath: path)
-            do {
-                audioPlayer = try AVAudioPlayer(contentsOf: soundUrl)
-                audioPlayer?.play()
-            } catch {
-                print("Error initializing AVAudioPlayer.")
-            }
-        }
-    }
-    
-//    private func observePlayer(to player: AVPlayer) {
-//                
-////        DispatchQueue.global(qos: .userInitiated).async {
-//        print("Attached observer to \(player.currentItem)")
-//            
-//        player.currentItem?.asset.loadValuesAsynchronously(forKeys: ["duration"]) {
-//                DispatchQueue.main.async {
-//                    let duration = player.currentItem?.asset.duration
-//                    self.playerDuration = duration ?? CMTime(value: 0, timescale: 1000)
-//                    
-//                    timeObserverToken = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1000), queue: .main) { time in
-//                        self.playerTime = time
-//                        self.playerProgress = time.seconds / (duration?.seconds ?? 1.0)
-//                        self.timedPlayer = player
-//                    }
-//                }
-//            }
-//        
-//        print("Started Observing Video")
-//        
-//        if let endObserverToken = endObserverToken {
-//            NotificationCenter.default.removeObserver(endObserverToken)
-//            self.endObserverToken = nil
-//        }
-//        
-//        endObserverToken = NotificationCenter.default.addObserver(
-//            forName: .AVPlayerItemDidPlayToEndTime,
-//            object: player.currentItem,
-//            queue: .main
-//        ) { _ in
-//            recent_change = true
-//            playSound()
-//            videoCompleted(for: getVideo(current_playing), with: authModel.user, profile: authModel.current_user)
-//            player.seek(to: CMTime.zero)
-//
-//            player.pause()
-//            current_playing += 1;
-////            recent_change = false
-//        }
-//    }
-//    
 }
 

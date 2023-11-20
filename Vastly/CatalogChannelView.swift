@@ -25,9 +25,6 @@ struct CatalogChannelView: View {
     @State var opacity = 1.0
     @State var dragOffset = 0.0
 
-    @State var startTime = Date()
-    @State var endTime = Date()
-
     @AppStorage("hasSeenTutorial") private var hasSeenTutorial: Bool = false
     
     @State var isChannel = true
@@ -101,9 +98,6 @@ struct CatalogChannelView: View {
                         }
                     }
                     Spacer()
-                }
-                .onAppear {
-                    startTime = Date()
                 }
                 .onDisappear {
                     if viewModel.isVideoMode {
@@ -217,35 +211,12 @@ struct CatalogChannelView: View {
     }
     
     private func channelChanged(newChannel: Channel) {
-        endTime = Date()
-        
         let impact = UIImpactFeedbackGenerator(style: .medium)
         impact.impactOccurred()
         
         let catalog = viewModel.catalog
         if let currentVideo = catalog.currentVideo {
             channelClicked(for: newChannel, with: authModel.user)
-            videoClicked(for: currentVideo,
-                         with: authModel.user,
-                         profile: authModel.current_user,
-                         watchedIn: catalog.activeChannel)
-            
-            if let previousVideo = catalog.peekPreviousVideo() {
-                let duration = viewModel.playerManager?.getPlayer(for: previousVideo).currentTime().seconds
-                // This must be a value since we changed to a new channel
-                let previousChannel = catalog.peekPreviousChannelInHistory()!
-                videoWatched(
-                    from: startTime,
-                    to: endTime,
-                    for: previousVideo,
-                    time: duration ?? 0.0,
-                    watched: duration,
-                    with: authModel.user,
-                    profile: authModel.current_user,
-                    viewModel: viewModel,
-                    watchedIn: previousChannel.channel)
-            }
-            startTime = Date()
             updateMetadata()
         }
     }

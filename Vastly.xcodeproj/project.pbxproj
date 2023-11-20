@@ -128,6 +128,7 @@
 		AAA20DF92AE27C9F00061254 /* CatalogChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA20DF82AE27C9F00061254 /* CatalogChannelView.swift */; };
 		AAA20DFB2AE2804800061254 /* CatalogVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA20DFA2AE2804800061254 /* CatalogVideoView.swift */; };
 		AAA6B5532B078B3400E6EF57 /* VideoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA6B5522B078B3400E6EF57 /* VideoListView.swift */; };
+		AAA6B55D2B0BA07F00E6EF57 /* Catalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA6B55C2B0BA07F00E6EF57 /* Catalog.swift */; };
 		AAE1127C2AFE2F980049C3DB /* CatalogTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE1127B2AFE2F980049C3DB /* CatalogTest.swift */; };
 /* End PBXBuildFile section */
 
@@ -225,6 +226,7 @@
 		AAA20DF82AE27C9F00061254 /* CatalogChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogChannelView.swift; sourceTree = "<group>"; };
 		AAA20DFA2AE2804800061254 /* CatalogVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogVideoView.swift; sourceTree = "<group>"; };
 		AAA6B5522B078B3400E6EF57 /* VideoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoListView.swift; sourceTree = "<group>"; };
+		AAA6B55C2B0BA07F00E6EF57 /* Catalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Catalog.swift; sourceTree = "<group>"; };
 		AAE1127B2AFE2F980049C3DB /* CatalogTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogTest.swift; sourceTree = "<group>"; };
 		AAE1127D2AFE32950049C3DB /* Vastly.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Vastly.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -317,6 +319,7 @@
 				02583E162A1AFAE1008CDA59 /* AuthViewModel.swift */,
 				023EE7F12A0C5EF8004E09DD /* VideoViewModel.swift */,
 				02BCA9402A37D3280069E49A /* VideoObserver.swift */,
+				AAA6B55C2B0BA07F00E6EF57 /* Catalog.swift */,
 				AAA20DF42AE2617200061254 /* CatalogViewModel.swift */,
 				AAA20DF62AE268D500061254 /* CatalogPlayerManager.swift */,
 				AA0E9E402ABADD0F00224782 /* FirebaseDistributedCounter.swift */,
@@ -699,6 +702,7 @@
 				023EE7A62A0ADF6D004E09DD /* HomeView.swift in Sources */,
 				023EE7772A0ADF36004E09DD /* VastlyApp.swift in Sources */,
 				02583E172A1AFAE1008CDA59 /* AuthViewModel.swift in Sources */,
+				AAA6B55D2B0BA07F00E6EF57 /* Catalog.swift in Sources */,
 				02C5CCD32A4A25EC00C7280E /* TutorialView.swift in Sources */,
 				028381762A98873200FE25C0 /* PhoneLogin.swift in Sources */,
 				02583E092A19E2BA008CDA59 /* GreetingView.swift in Sources */,

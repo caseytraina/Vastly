@@ -32,87 +32,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "43"
             endingLineNumber = "43"
-            landmarkName = "CatalogVideoView"
-            landmarkType = "14">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "8F911F9F-9620-4134-BFD2-3CA085430529"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vastly/CatalogViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "310"
-            endingLineNumber = "310"
-            landmarkName = "updateChannelHistory()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "8F911F9F-9620-4134-BFD2-3CA085430529 - f7d89095875f072e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(5) suspend resume partial function for Vastly.CatalogViewModel.getCatalog() async -&gt; ()"
-                  moduleName = "Vastly"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/cabrillo/Documents/Developer/Vastly/Vastly/Vastly/CatalogViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "333"
-                  endingLineNumber = "333"
-                  offsetFromSymbolStart = "1244">
-               </Location>
-               <Location
-                  uuid = "8F911F9F-9620-4134-BFD2-3CA085430529 - 342038bd5cae5320"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(7) suspend resume partial function for Vastly.CatalogViewModel.getCatalog() async -&gt; ()"
-                  moduleName = "Vastly"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/cabrillo/Documents/Developer/Vastly/Vastly/Vastly/CatalogViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "333"
-                  endingLineNumber = "333"
-                  offsetFromSymbolStart = "1984">
-               </Location>
-               <Location
-                  uuid = "8F911F9F-9620-4134-BFD2-3CA085430529 - 1455f4b109650523"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(8) suspend resume partial function for Vastly.CatalogViewModel.getCatalog() async -&gt; ()"
-                  moduleName = "Vastly"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/cabrillo/Documents/Developer/Vastly/Vastly/Vastly/CatalogViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "333"
-                  endingLineNumber = "333"
-                  offsetFromSymbolStart = "1640">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9B2A10E4-2D54-418C-9828-ADD8421E65AD"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vastly/CatalogViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "307"
-            endingLineNumber = "307"
-            landmarkName = "getVideo(id:)"
-            landmarkType = "7">
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -316,8 +237,8 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "375"
-            endingLineNumber = "375"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
             landmarkName = "pauseCurrentVideo()"
             landmarkType = "7">
          </BreakpointContent>
@@ -332,10 +253,10 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "505"
-            endingLineNumber = "505"
-            landmarkName = "getChannels()"
-            landmarkType = "7">
+            startingLineNumber = "253"
+            endingLineNumber = "253"
+            landmarkName = "CatalogViewModel"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -348,8 +269,8 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "356"
-            endingLineNumber = "356"
+            startingLineNumber = "53"
+            endingLineNumber = "53"
             landmarkName = "init(authModel:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -364,8 +285,8 @@
             filePath = "Vastly/CatalogChannelView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "191"
-            endingLineNumber = "191"
+            startingLineNumber = "185"
+            endingLineNumber = "185"
             landmarkName = "onDragEnded(_:)"
             landmarkType = "7">
             <Locations>
@@ -412,8 +333,8 @@
             filePath = "Vastly/CatalogChannelView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "187"
-            endingLineNumber = "187"
+            startingLineNumber = "181"
+            endingLineNumber = "181"
             landmarkName = "onDragEnded(_:)"
             landmarkType = "7">
             <Locations>
@@ -453,54 +374,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7A7BCF13-DDFD-4B96-8251-5FB367476B93"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vastly/CatalogViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "184"
-            endingLineNumber = "184"
-            landmarkName = "Catalog"
-            landmarkType = "3">
-            <Locations>
-               <Location
-                  uuid = "7A7BCF13-DDFD-4B96-8251-5FB367476B93 - df759bb5451b4df5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Vastly.Catalog.currentChannelIndex.didset : Swift.Int"
-                  moduleName = "Vastly"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/cabrillo/Documents/Developer/Vastly/Vastly/Vastly/CatalogViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "175"
-                  endingLineNumber = "175"
-                  offsetFromSymbolStart = "84">
-               </Location>
-               <Location
-                  uuid = "7A7BCF13-DDFD-4B96-8251-5FB367476B93 - 1852506e67000648"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Vastly.Catalog.addChannel(Vastly.ChannelVideos) -&gt; ()"
-                  moduleName = "Vastly"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/cabrillo/Documents/Developer/Vastly/Vastly/Vastly/CatalogViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "176"
-                  endingLineNumber = "176"
-                  offsetFromSymbolStart = "40">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "3FB81B16-99E5-40B2-A3F1-7CC8C93BD365"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -508,8 +381,8 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "321"
-            endingLineNumber = "321"
+            startingLineNumber = "18"
+            endingLineNumber = "18"
             landmarkName = "CatalogViewModel"
             landmarkType = "3">
          </BreakpointContent>
@@ -524,10 +397,136 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "354"
-            endingLineNumber = "354"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
             landmarkName = "init(authModel:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F2EC55EC-B6D0-4B02-84E5-442A3A0BB2FF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Vastly/CatalogViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
+            landmarkName = "trackVideoChange()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "F2EC55EC-B6D0-4B02-84E5-442A3A0BB2FF - a13255a41a949371"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Vastly.CatalogViewModel.trackVideoChange() -&gt; ()"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cabrillo/Developer/Vastly/Vastly/CatalogViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "430"
+                  endingLineNumber = "430"
+                  offsetFromSymbolStart = "1000">
+               </Location>
+               <Location
+                  uuid = "F2EC55EC-B6D0-4B02-84E5-442A3A0BB2FF - a13255a41a949310"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Vastly.CatalogViewModel.trackVideoChange() -&gt; ()"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cabrillo/Developer/Vastly/Vastly/CatalogViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "429"
+                  endingLineNumber = "429"
+                  offsetFromSymbolStart = "968">
+               </Location>
+               <Location
+                  uuid = "F2EC55EC-B6D0-4B02-84E5-442A3A0BB2FF - a13255a41a949485"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Vastly.CatalogViewModel.trackVideoChange() -&gt; ()"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cabrillo/Developer/Vastly/Vastly/CatalogViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "410"
+                  endingLineNumber = "410"
+                  offsetFromSymbolStart = "1072">
+               </Location>
+               <Location
+                  uuid = "F2EC55EC-B6D0-4B02-84E5-442A3A0BB2FF - a13255a41a946d1a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Vastly.CatalogViewModel.trackVideoChange() -&gt; ()"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cabrillo/Developer/Vastly/Vastly/CatalogViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "103"
+                  endingLineNumber = "103"
+                  offsetFromSymbolStart = "604">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F8A7351E-52A0-4639-9E00-31C76DDD69EF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Vastly/CatalogViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "115"
+            endingLineNumber = "115"
+            landmarkName = "trackVideoChange()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "F8A7351E-52A0-4639-9E00-31C76DDD69EF - a13255a41a946a8e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Vastly.CatalogViewModel.trackVideoChange() -&gt; ()"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cabrillo/Developer/Vastly/Vastly/CatalogViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "115"
+                  endingLineNumber = "115"
+                  offsetFromSymbolStart = "2232">
+               </Location>
+               <Location
+                  uuid = "F8A7351E-52A0-4639-9E00-31C76DDD69EF - a13255a41a946a8e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Vastly.CatalogViewModel.trackVideoChange() -&gt; ()"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cabrillo/Developer/Vastly/Vastly/CatalogViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "115"
+                  endingLineNumber = "115"
+                  offsetFromSymbolStart = "2212">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

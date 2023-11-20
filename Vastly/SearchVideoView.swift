@@ -91,7 +91,7 @@ struct SearchVideoView: View {
                             
 //                            videoViewModel.playerManager?.changeToIndex(to: current_playing, shouldPlay: isPlaying)
                             tempChannel = viewModel.setTemporaryChannel(name: "Search", videos: vids)
-                            viewModel.changeToIndex(current_playing)
+                            viewModel.changeToVideoIndex(current_playing, shouldPlay: isPlaying)
                             
 //                            previous = current_playing
 //                            trackAVStatus(for: getVideo(current_playing))
@@ -119,7 +119,7 @@ struct SearchVideoView: View {
     //                            videoListNum = min(vids.count, videoListNum)
                                 
 //                                trackAVStatus(for: getVideo(newIndex))
-                                viewModel.changeToIndex(newIndex)
+                                viewModel.changeToVideoIndex(newIndex, shouldPlay: isPlaying)
 //                                videoViewModel.playerManager?.changeToIndex(to: newIndex, shouldPlay: isPlaying)
 //                                videoViewModel.playerManager?.updateNowPlayingInfo(for: getVideo(newIndex))
 

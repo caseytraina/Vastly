@@ -23,7 +23,6 @@ enum AccountType {
 }
 
 class AuthViewModel: ObservableObject {
-    
     @Published var user: User? {
         didSet {
             objectWillChange.send()
@@ -34,9 +33,16 @@ class AuthViewModel: ObservableObject {
     @Published var error: Error?
     
     @Published var current_user: Profile? = nil
-    @Published var liked_videos: [Video] = []
     @Published var searchQueries: [String]?
 
+    @Published var viewedVideosProcessing: Bool = true
+    @Published var likedVideosProcessing: Bool = true
+    
+    // This array shouldn't be used for source of truth for if something has been
+    // viewed, for that you should use the viewedVideos collection in the database
+    @Published var viewedVideos: [Video] = []
+    @Published var likedVideos: [Video] = []
+    
     init() {
         listenToAuthState()
     }
@@ -148,7 +154,7 @@ class AuthViewModel: ObservableObject {
         let db = Firestore.firestore()
         
         DispatchQueue.main.async {
-            self.liked_videos.removeAll(where: { $0.id == video.id })
+            self.likedVideos.removeAll(where: { $0.id == video.id })
         }
         
         let ref = db.collection("users").document(current_user?.phoneNumber ?? current_user?.email ?? "")
@@ -174,7 +180,7 @@ class AuthViewModel: ObservableObject {
         let userLikedRef = userRef.collection("likedVideos").document(video.id)
         
         DispatchQueue.main.async {
-            self.liked_videos.insert(video, at: 0)
+            self.likedVideos.insert(video, at: 0)
         }
         
         do {
@@ -365,5 +371,126 @@ class AuthViewModel: ObservableObject {
         }
     }
     
+    // This function turns a path to a URL of a cached and compressed video, connecting to our CDN imagekit which is a URL-based video and image delivery and transformation company.
+    private func getVideoURL(from location: String) -> URL? {
+        var allowedCharacters = CharacterSet.urlQueryAllowed
+        allowedCharacters.insert("/")
+        
+        var fixedPath = location.addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? ""
+        fixedPath = fixedPath.replacingOccurrences(of: "’", with: "%E2%80%99")
+        
+        let urlStringUnkept: String = IMAGEKIT_ENDPOINT + fixedPath + "?tr=f-auto"
+        if let url = URL(string: urlStringUnkept) {
+            return url
+        } else {
+            print("URL is invalid")
+            return EMPTY_VIDEO.url
+        }
+    }
+    
+    private func resultToVideo(id: String, data: Any, authors: [Author]) -> Video? {
+        guard let dataDict = data as? [String: Any] else {
+            return nil
+        }
+        
+        var video = Video(
+            id: id,
+            title:  dataDict["title"] as? String ?? "No title found",
+            author: authors.first(where: { $0.text_id == dataDict["author"] as? String ?? "" }) ?? EMPTY_AUTHOR,
+            bio: dataDict["bio"] as? String ?? "",
+            date: dataDict["date"] as? String ?? "", // assuming you meant "date" here
+            channels: dataDict["channels"] as? [String] ?? [],
+            url: self.getVideoURL(from: dataDict["fileName"] as? String ?? ""),
+            youtubeURL: dataDict["youtubeURL"] as? String)
+        
+        
+        return video
+    }
+    
+    func fetchLikedVideos(authors: [Author]) async {
+        if let liked_videos = self.current_user?.likedVideos {
+            let db = Firestore.firestore()
+            let ref = db.collection("videos")
+            
+            for id in liked_videos {
+                do {
+                    let doc = try await ref.document(id).getDocument()
+                    if doc.exists {
+                        print("Doc Found for \(id)")
+                        
+                        let data = doc.data()
+                        
+                        let video = resultToVideo(id: id, data: data, authors: authors)
+                        if let video {
+                            if !self.likedVideos.contains(where: { $0.id == video.id }) {
+                                DispatchQueue.main.async {
+                                    self.likedVideos.append(video)
+                                }
+                            }
+                        }
+                        
+                        if self.likedVideos.count > 5 {
+                            DispatchQueue.main.async {
+                                self.likedVideosProcessing = false
+                            }
+                        }
+                        
+                    } else {
+                        print("Doc not found for \(id)")
+                    }
+                    
+                } catch {
+                    print("Error getting viewing history: \(error)")
+                }
+            }
+        }
+        
+        DispatchQueue.main.async {
+            self.likedVideosProcessing = false
+        }
+    }
+    
+    // Populates self.viewedVideos to be shown in the history page
+    func fetchViewedVideos(authors: [Author]) async {
+        if let viewed_videos = self.current_user?.viewedVideos {
+            let db = Firestore.firestore()
+            let ref = db.collection("videos")
+            for id in viewed_videos {
+                do {
+                    let doc = try await ref.document(id).getDocument()
+                    if doc.exists {
+                        print("Doc Found for \(id)")
+                        
+                        let data = doc.data()
+                        
+                        let video = resultToVideo(id: id, data: data, authors: authors)
+                        
+                        if let video {
+                            if !self.viewedVideos.contains(where: { $0.id == video.id }) {
+                                DispatchQueue.main.async {
+                                    self.viewedVideos.append(video)
+                                }
+                            }
+                        }
+                        
+                        if self.viewedVideos.count > 5 {
+                            DispatchQueue.main.async {
+                                self.viewedVideosProcessing = false
+                            }
+                        }
+                        
+                    } else {
+                        print("Doc not found for \(id)")
+                    }
+                    
+                } catch {
+                    print("Error getting viewing history: \(error)")
+                }
+            }
+        }
+        DispatchQueue.main.async {
+            self.viewedVideosProcessing = false
+        }
+    }
     
 }

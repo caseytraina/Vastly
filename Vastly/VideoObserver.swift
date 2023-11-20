@@ -11,7 +11,7 @@ import SwiftUI
 import MediaPlayer
 
 /*
- This View Model governs all AVPlayers and their states, and controls the starting and stopping of videos. This exists as a child of the VideoViewModel. A given video can be described by its channel and current_index. videos[.foryou][0] describes the first video in the for you channel. Players is a flat array which correlates to videos based on their UUIDs
+ This View Model governs all AVPlayers and their states, and controls the starting and stopping of videos. This exists as a child of the CatalogViewModel. A given video can be described by its channel and current_index. videos[.foryou][0] describes the first video in the for you channel. Players is a flat array which correlates to videos based on their UUIDs
  */
 
 class VideoPlayerManager: ObservableObject {

@@ -11,7 +11,6 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject private var authModel: AuthViewModel
     @EnvironmentObject private var viewModel: CatalogViewModel
-    @EnvironmentObject private var videoViewModel: VideoViewModel
     
     var body: some View {
         Group {
@@ -19,7 +18,6 @@ struct ContentView: View {
                 HomeView()
                     .environmentObject(authModel)
                     .environmentObject(viewModel)
-                    .environmentObject(videoViewModel)
             } else {
                 GreetingView()
                     .environmentObject(authModel)

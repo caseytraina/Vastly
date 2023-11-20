@@ -14,9 +14,9 @@ struct ViewingHistory: View {
     var body: some View {
         VideoListView(title: "Viewing History",
                       icon: "clock.arrow.circlepath",
-                      videoList: $viewModel.viewed_videos,
-                      loading: $viewModel.viewedVideosProcessing,
-                      loadFunc: viewModel.fetchViewedVideos)
+                      videoList: $authModel.viewedVideos,
+                      loading: $authModel.viewedVideosProcessing,
+                      loadFunc: authModel.fetchViewedVideos)
         .environmentObject(viewModel)
         .environmentObject(authModel)
     }

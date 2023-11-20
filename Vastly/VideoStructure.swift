@@ -11,7 +11,7 @@ import SwiftUI
 import Firebase
 
 // Videos are queried from Firebase as FirebaseData, then translated into UnprocessedVideos before being used as type Video.
-// Read more about video querying in VideoViewModel
+// Read more about video querying in CatalogViewModel
 
 struct FirebaseData: Codable {
     let title: String?

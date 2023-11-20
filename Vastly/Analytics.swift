@@ -7,15 +7,7 @@
 
 import Foundation
 import Firebase
-import FirebaseCore
-import FirebaseAuth
-import FirebaseAnalytics
-import FirebaseFirestore
-import FirebaseFirestoreSwift
-
 import Amplitude
-
-import CoreMedia
 
 class Analytics {
     static func logScreenSwitch(to screen: String) {

@@ -12,7 +12,6 @@ struct LaunchAnimation: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
     @StateObject var viewModel: CatalogViewModel
-    @StateObject var videoViewModel: VideoViewModel
     
     @State var player: AVPlayer = AVPlayer(url: Bundle.main.url(forResource: "launchAnimation", withExtension: "mp4")!)
     @State private var endObserverToken: Any?
@@ -21,7 +20,6 @@ struct LaunchAnimation: View {
     
     init(authModel: AuthViewModel) {
         _viewModel = StateObject(wrappedValue: CatalogViewModel(authModel: authModel))
-        _videoViewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
     }
     
     var body: some View {
@@ -38,7 +36,6 @@ struct LaunchAnimation: View {
                     ContentView()
                         .environmentObject(authModel)
                         .environmentObject(viewModel)
-                        .environmentObject(videoViewModel)
                 }
             }
             .onAppear {

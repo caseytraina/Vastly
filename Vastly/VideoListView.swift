@@ -15,7 +15,7 @@ struct VideoListView: View {
     var icon: String
     @Binding var videoList: [Video]
     @Binding var loading: Bool
-    var loadFunc: (() async -> Void)
+    var loadFunc: (([Author]) async -> Void)
         
     @State var isLinkActive = false
     @State var isAnimating = false
@@ -113,7 +113,7 @@ struct VideoListView: View {
         .onAppear {
             if loading {
                 Task {
-                    await loadFunc()
+                    await loadFunc(viewModel.authors)
                     print("INIT: got videos.")
                 }
             }

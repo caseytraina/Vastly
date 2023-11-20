@@ -55,9 +55,6 @@
 		023EE7EE2A0C5DC6004E09DD /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023EE7ED2A0C5DC6004E09DD /* Constants.swift */; };
 		023EE7EF2A0C5DC6004E09DD /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023EE7ED2A0C5DC6004E09DD /* Constants.swift */; };
 		023EE7F02A0C5DC6004E09DD /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023EE7ED2A0C5DC6004E09DD /* Constants.swift */; };
-		023EE7F22A0C5EF8004E09DD /* VideoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023EE7F12A0C5EF8004E09DD /* VideoViewModel.swift */; };
-		023EE7F32A0C5EF8004E09DD /* VideoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023EE7F12A0C5EF8004E09DD /* VideoViewModel.swift */; };
-		023EE7F42A0C5EF8004E09DD /* VideoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023EE7F12A0C5EF8004E09DD /* VideoViewModel.swift */; };
 		025649A42A11FF4700C442AE /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 025649A32A11FF4700C442AE /* LoadingView.swift */; };
 		02583E052A19AB6C008CDA59 /* DeletedCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02583E042A19AB6C008CDA59 /* DeletedCode.swift */; };
 		02583E092A19E2BA008CDA59 /* GreetingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02583E082A19E2BA008CDA59 /* GreetingView.swift */; };
@@ -179,7 +176,6 @@
 		023EE7BE2A0B0BF2004E09DD /* VideoStructure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoStructure.swift; sourceTree = "<group>"; };
 		023EE7C42A0B1E96004E09DD /* MyText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyText.swift; sourceTree = "<group>"; };
 		023EE7ED2A0C5DC6004E09DD /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		023EE7F12A0C5EF8004E09DD /* VideoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoViewModel.swift; sourceTree = "<group>"; };
 		025649A32A11FF4700C442AE /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		02583E042A19AB6C008CDA59 /* DeletedCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletedCode.swift; sourceTree = "<group>"; };
 		02583E082A19E2BA008CDA59 /* GreetingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreetingView.swift; sourceTree = "<group>"; };
@@ -317,7 +313,6 @@
 				023EE7A82A0ADF7A004E09DD /* Views */,
 				023EE7BE2A0B0BF2004E09DD /* VideoStructure.swift */,
 				02583E162A1AFAE1008CDA59 /* AuthViewModel.swift */,
-				023EE7F12A0C5EF8004E09DD /* VideoViewModel.swift */,
 				02BCA9402A37D3280069E49A /* VideoObserver.swift */,
 				AAA6B55C2B0BA07F00E6EF57 /* Catalog.swift */,
 				AAA20DF42AE2617200061254 /* CatalogViewModel.swift */,
@@ -679,7 +674,6 @@
 				AAA6B5532B078B3400E6EF57 /* VideoListView.swift in Sources */,
 				02583E152A1AF88B008CDA59 /* PasswordConfirmView.swift in Sources */,
 				021E5A922A69BB9D00B120CD /* PageIndicator.swift in Sources */,
-				023EE7F22A0C5EF8004E09DD /* VideoViewModel.swift in Sources */,
 				023EE7BF2A0B0BF2004E09DD /* VideoStructure.swift in Sources */,
 				AAA20DF92AE27C9F00061254 /* CatalogChannelView.swift in Sources */,
 				02583E0D2A19EA67008CDA59 /* LogInView.swift in Sources */,
@@ -724,7 +718,6 @@
 				026F408D2B0892E4008C5785 /* AudioModePopUp.swift in Sources */,
 				022E6BEA2ADDD272005750EF /* NavBar.swift in Sources */,
 				029170232AB375CA00ADF426 /* SearchBar.swift in Sources */,
-				023EE7F32A0C5EF8004E09DD /* VideoViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -734,7 +727,6 @@
 			files = (
 				023EE7972A0ADF37004E09DD /* VastlyUITests.swift in Sources */,
 				021BEB1B2AE8D61C00857910 /* SeeMoreText.swift in Sources */,
-				023EE7F42A0C5EF8004E09DD /* VideoViewModel.swift in Sources */,
 				0291700F2AB14D8000ADF426 /* ViewingHistory.swift in Sources */,
 				029170242AB375CA00ADF426 /* SearchBar.swift in Sources */,
 				023EE7992A0ADF37004E09DD /* VastlyUITestsLaunchTests.swift in Sources */,

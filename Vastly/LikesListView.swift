@@ -14,9 +14,9 @@ struct LikesListView: View {
     var body: some View {
         VideoListView(title: "Bookmarks", 
                       icon: "book.pages",
-                      videoList: $authModel.liked_videos,
-                      loading: $viewModel.likedVideosProcessing,
-                      loadFunc: viewModel.fetchLikedVideos)
+                      videoList: $authModel.likedVideos,
+                      loading: $authModel.likedVideosProcessing,
+                      loadFunc: authModel.fetchLikedVideos)
         .environmentObject(viewModel)
         .environmentObject(authModel)
     }

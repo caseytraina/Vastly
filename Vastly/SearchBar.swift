@@ -8,10 +8,8 @@
 import SwiftUI
 import AlgoliaSearchClient
 
-struct NewSearchBar: View {
-    
+struct NewSearchBar: View {    
     @EnvironmentObject var authModel: AuthViewModel
-//    @EnvironmentObject var videoViewModel: VideoViewModel
     @EnvironmentObject var viewModel: CatalogViewModel
 
     var all_authors: [Author]

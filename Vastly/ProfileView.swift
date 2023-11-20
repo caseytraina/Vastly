@@ -112,7 +112,7 @@ struct ProfileView: View {
                     }
                 }
                 .onAppear {
-                    logScreenSwitch(to: "Profile Screen")
+                    Analytics.logScreenSwitch(to: "Profile Screen")
                 }
         }
     }

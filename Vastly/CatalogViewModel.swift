@@ -66,6 +66,7 @@ class CatalogViewModel: ObservableObject {
     }
     
     func playCurrentVideo() {
+        self.trackVideoClicked()
         self.playerManager?.playCurrentVideo()
     }
     
@@ -75,9 +76,11 @@ class CatalogViewModel: ObservableObject {
     
     func changeToChannel(_ channel: Channel, shouldPlay: Bool) {
         self.playerManager?.pauseCurrentVideo()
+        self.trackVideoWatched()
         self.catalog.changeToChannel(channel)
         self.currentChannel = self.catalog.currentChannel
         self.playerManager?.changeToChannel(channel, shouldPlay: shouldPlay)
+        Analytics.channelClicked(channel: channel, user: authModel.user, profile: authModel.current_user)
     }
     
     func changeToNextChannel(shouldPlay: Bool) {
@@ -93,7 +96,7 @@ class CatalogViewModel: ObservableObject {
     }
     
     // This is called right before we actually change the video
-    private func trackVideoChange() {
+    private func trackVideoWatched() {
         if let video = self.catalog.currentVideo {
             let watchedFor = getVideoTime(video).seconds
             let lengthOfVideo = getVideoDuration(video).seconds
@@ -126,7 +129,7 @@ class CatalogViewModel: ObservableObject {
         }
     }
     
-    private func trackNewVideo() {
+    private func trackVideoClicked() {
         if let video = self.catalog.currentVideo {
             Analytics.videoClicked(video: video, user: authModel.user, profile: authModel.current_user, watchedIn: currentChannel.channel)
         }
@@ -134,9 +137,8 @@ class CatalogViewModel: ObservableObject {
     
     func changeToVideoIndex(_ index: Int, shouldPlay: Bool) {
         self.pauseCurrentVideo()
-        self.trackVideoChange()
+        self.trackVideoWatched()
         self.catalog.changeToVideoIndex(index)
-        self.trackNewVideo()
         if shouldPlay {
             self.playCurrentVideo()
         }
@@ -144,9 +146,8 @@ class CatalogViewModel: ObservableObject {
     
     func changeToNextVideo(shouldPlay: Bool) {
         self.playerManager?.pauseCurrentVideo()
-        self.trackVideoChange()
+        self.trackVideoWatched()
         if let nextVideo = self.catalog.nextVideo() {
-            self.trackNewVideo()
             if shouldPlay {
                 self.playCurrentVideo()
             }
@@ -155,9 +156,8 @@ class CatalogViewModel: ObservableObject {
 
     func changeToPreviousVideo(shouldPlay: Bool) {
         self.playerManager?.pauseCurrentVideo()
-        self.trackVideoChange()
+        self.trackVideoWatched()
         if let previousVideo = self.catalog.previousVideo() {
-            self.trackNewVideo()
             if shouldPlay {
                 self.playCurrentVideo()
             }
@@ -180,7 +180,7 @@ class CatalogViewModel: ObservableObject {
     
     private func populateForYouChannel() async {
         let forYou = ChannelVideos(channel: FOR_YOU_CHANNEL,
-                                   user: self.authModel.current_user,
+                                   profile: self.authModel.current_user,
                                    authors: self.authors)
         let forYouVideos = await self.generateShapedForYou(max: 20)
         for idPlusFirebaseData in forYouVideos {
@@ -196,15 +196,12 @@ class CatalogViewModel: ObservableObject {
         await self.getAuthors()
         await self.populateForYouChannel()
         
-        self.catalog.user = self.authModel.user
-        self.catalog.profile = self.authModel.current_user
-        
         let db = Firestore.firestore()
         let storageRef = db.collection("videos")
         // Ignore the "FOR YOU" channel
         for channel in self.channels.dropFirst() {
             let channelVideos = ChannelVideos(channel: channel, 
-                                              user: self.authModel.current_user,
+                                              profile: self.authModel.current_user,
                                               authors: authors)
             
             await self.addVideosTo(channelVideos)

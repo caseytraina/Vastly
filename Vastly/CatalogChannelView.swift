@@ -216,7 +216,6 @@ struct CatalogChannelView: View {
         
         let catalog = viewModel.catalog
         if let currentVideo = catalog.currentVideo {
-            channelClicked(for: newChannel, with: authModel.user)
             updateMetadata()
         }
     }

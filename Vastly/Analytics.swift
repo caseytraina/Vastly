@@ -18,7 +18,22 @@ import Amplitude
 import CoreMedia
 
 class Analytics {
-    static func videoWatched(watchTime: Double, 
+    static func logScreenSwitch(to screen: String) {
+        Amplitude.instance().logEvent(
+            "Screen Switch",
+            withEventProperties: [
+                "To": screen as NSObject
+            ])
+    }
+
+    static func logSignUp(method: String) {
+        Amplitude.instance().logEvent(
+            "Sign Up",
+            withEventProperties: ["Method": method]
+        )
+    }
+    
+    static func videoWatched(watchTime: Double,
                              percentageWatched: Double,
                              video: Video,
                              user: User?, 
@@ -45,70 +60,46 @@ class Analytics {
             withEventProperties: properties
         )
     }
-}
-
-private func commonProperties(video: Video) -> [String: NSObject] {
-    return [
-        "Video ID": video.id as NSObject,
-        "Video Title": video.title as NSObject,
-        "Video Channels": video.channels as NSObject,
-        "Author": (video.author.name ?? "") as NSObject
-    ]
-}
-
-private func commonProperties(user: User?, profile: Profile?) -> [String: NSObject] {
-    return [
-        "User ID": (user?.uid ?? "") as NSObject,
-        "Name": (profile?.name() ?? "") as NSObject
-    ]
-}
-
-private func commonProperties(video: Video, user: User?, profile: Profile?) -> [String: NSObject] {
-    let videoProperties = commonProperties(video: video)
-    let userProperties = commonProperties(user: user, profile: profile)
     
-    var common: [String: NSObject] = [:]
-    for (prop, val) in videoProperties {
-        common[prop] = val
+    static func channelClicked(channel: Channel,
+                               user: User?,
+                               profile: Profile?) {
+        var properties = commonProperties(user: user, profile: profile)
+        properties["Channel"] = channel.id as NSObject
+        
+        Amplitude.instance().logEvent(
+            "Channel Clicked",
+            withEventProperties: properties)
     }
-    for (prop, val) in userProperties {
-        common[prop] = val
+
+    private static func commonProperties(video: Video) -> [String: NSObject] {
+        return [
+            "Video ID": video.id as NSObject,
+            "Video Title": video.title as NSObject,
+            "Video Channels": video.channels as NSObject,
+            "Author": (video.author.name ?? "") as NSObject
+        ]
     }
-    
-    return common
-}
 
-func videoCompleted(for video: Video, with user: User?, profile: Profile?) {
-    Amplitude.instance().logEvent(
-        "Video Completed",
-        withEventProperties: commonProperties(video: video, user: user, profile: profile)
-    )
-}
+    private static func commonProperties(user: User?, profile: Profile?) -> [String: NSObject] {
+        return [
+            "User ID": (user?.uid ?? "") as NSObject,
+            "Name": (profile?.name() ?? "") as NSObject
+        ]
+    }
 
-func channelClicked(for channel: Channel, with user: User?) {
-    var properties = commonProperties(user: user, profile: nil)
-    properties["Channel"] = channel.id as NSObject
-    
-    Amplitude.instance().logEvent(
-        "Channel Clicked",
-        withEventProperties: properties)
-}
-
-func logLogin() {
-    Amplitude.instance().logEvent("Log In")
-}
-
-func logSignUp(method: String) {
-    Amplitude.instance().logEvent(
-        "Sign Up",
-        withEventProperties: ["Method": method]
-    )
-}
-
-func logScreenSwitch(to screen: String) {
-    Amplitude.instance().logEvent(
-        "Screen Switch",
-        withEventProperties: [
-            "To": screen as NSObject
-        ])
+    private static func commonProperties(video: Video, user: User?, profile: Profile?) -> [String: NSObject] {
+        let videoProperties = commonProperties(video: video)
+        let userProperties = commonProperties(user: user, profile: profile)
+        
+        var common: [String: NSObject] = [:]
+        for (prop, val) in videoProperties {
+            common[prop] = val
+        }
+        for (prop, val) in userProperties {
+            common[prop] = val
+        }
+        
+        return common
+    }
 }

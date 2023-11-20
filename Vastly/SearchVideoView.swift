@@ -553,7 +553,6 @@ struct SearchVideoView: View {
         ) { _ in
             recent_change = true
             playSound()
-            videoCompleted(for: getVideo(current_playing), with: authModel.user, profile: authModel.current_user)
             player.seek(to: CMTime.zero)
 
             player.pause()

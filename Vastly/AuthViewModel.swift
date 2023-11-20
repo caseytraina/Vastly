@@ -229,7 +229,7 @@ class AuthViewModel: ObservableObject {
             // Upload data
             try await db.collection("users").document(credential).setData(data, merge: true)
             print("User info saved successfully.")
-            logSignUp(method: "Native In-App")
+            Analytics.logSignUp(method: "Native In-App")
         } catch {
             print("Failed to save user info: \(error.localizedDescription)")
         }

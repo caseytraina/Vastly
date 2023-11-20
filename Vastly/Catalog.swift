@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import Firebase
-import FirebaseFirestore
 
 /*
  CatalogModel is responsible for the querying and handling of video data in-app. CatalogModel handles all video operations, except for the actual playing of the videos. That is controlled in VideoObserver.
@@ -23,15 +21,15 @@ class ChannelVideos: Identifiable, Hashable {
     
     private(set) var channel: Channel
     // Keep the context of who this is for, for filtering and sorting
-    private(set) var user: Profile?
+    private(set) var profile: Profile?
     private(set) var authors: [Author] = []
     
     // Don't access these directly, use the public functions
     private(set) var videos: [Video] = []
     private(set) var currentVideoIndex = 0
     
-    init(channel: Channel, user: Profile?, authors: [Author]) {
-        self.user = user
+    init(channel: Channel, profile: Profile?, authors: [Author]) {
+        self.profile = profile
         self.authors = authors
         self.channel = channel
     }
@@ -47,7 +45,7 @@ class ChannelVideos: Identifiable, Hashable {
     
     func addVideo(id: String, unfilteredVideo: FirebaseData) {
         let punctuation: Set<Character> = ["?", "@", "#", "%", "^", "*"]
-        if !(user?.viewedVideos?.contains(where: { $0 == id }) ?? false) {
+        if !(profile?.viewedVideos?.contains(where: { $0 == id }) ?? false) {
             if var loc = unfilteredVideo.location {
                 loc.removeAll(where: { punctuation.contains($0) })
                 let unprocessedVideo = UnprocessedVideo(
@@ -171,8 +169,6 @@ final class Catalog {
     }
     // This is just a helper variable to access the channel directly
     private(set) var activeChannel: Channel = FOR_YOU_CHANNEL
-    var user: User?
-    var profile: Profile?
     
     // This is the main control for which channel we are in, this is the main
     // source of truth in this model

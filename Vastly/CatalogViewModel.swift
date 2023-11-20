@@ -455,7 +455,9 @@ class CatalogViewModel: ObservableObject {
         let storageRef = db.collection("videos")
         // Ignore the "FOR YOU" channel
         for channel in self.channels.dropFirst() {
-            let channelVideos = ChannelVideos(channel: channel, user: self.authModel.current_user, authors: authors)
+            let channelVideos = ChannelVideos(channel: channel, 
+                                              user: self.authModel.current_user,
+                                              authors: authors)
             
             await self.addVideosTo(channelVideos)
             self.catalog.addChannel(channelVideos)
@@ -471,13 +473,6 @@ class CatalogViewModel: ObservableObject {
     func leaveTemporaryChannel(channel: Channel) {
         self.catalog.leaveTemporaryChannel(channel: channel)
         self.channels.removeAll(where: {$0 == channel})
-//        
-//        if let prev = self.catalog.peekPreviousChannelInHistory()?.channel {
-//            self.changeToChannel(prev, shouldPlay: false)
-//            
-//            
-////            self.catalog.catalog.removeAll(where: {$0.channel == channel})
-//        }
     }
     
     // This function queries all of the authors from firebase, housing them in a local array to be used to apply to videos.

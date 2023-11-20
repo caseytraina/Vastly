@@ -57,43 +57,6 @@ func videoClicked(for video: Video, with user: User?, profile: Profile?, watched
     )
 }
 
-//func videoSwiped()
-//func videoPaused()
-// Deprecated, use catalog video model
-func videoWatched(from start: Date, to end: Date, for video: Video, time: Double,
-                  watched: Double?, with user: User?, profile: Profile?, viewModel: VideoViewModel, watchedIn: Channel) {
-    let watchTime = watched ?? end.timeIntervalSince(start).magnitude
-    let realTime = watchTime >= time ? time : watchTime
-    let percentage = ceil((realTime/time) * 100)
-    
-    // TODO: This should be moved somewhere else, doesn't belong in analytics
-    let db = Firestore.firestore()
-    let userRef = db.collection("users").document(profile?.phoneNumber ?? profile?.email ?? "")
-    let videoRef = db.collection("videos").document(video.id)
-    let userViewedRef = userRef.collection("viewedVideos").document(video.id)
-    
-    if realTime > 3 { // CHECK ID OR TITLE
-        userViewedRef.setData([
-            "createdAt": Timestamp(date: Date()),
-            "watchTime": watchTime,
-            "watchPercentage": percentage,
-            "inChannel": watchedIn.id
-        ])
-        videoRef.updateData([
-            "viewedCount": FieldValue.increment(Int64(1))
-        ])
-        viewModel.viewed_videos.insert(video, at: 0)// append(video)
-    }
-    
-    var properties = commonProperties(video: video, user: user, profile: profile)
-    properties["Watch Time"] = watchTime as NSNumber
-    properties["Watch Percentage"] = percentage as NSNumber
-    properties["Watched In Channel"] = watchedIn.id as NSObject
-    Amplitude.instance().logEvent(
-        "Video Watched",
-        withEventProperties: properties)
-}
-
 func videoWatched(from start: Date, to end: Date, for video: Video, time: Double,
                   watched: Double?, with user: User?, profile: Profile?, viewModel: CatalogViewModel, watchedIn: Channel) {
     let watchTime = watched ?? end.timeIntervalSince(start).magnitude

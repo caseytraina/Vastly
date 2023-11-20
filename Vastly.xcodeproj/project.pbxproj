@@ -119,7 +119,6 @@
 		02FC35342A71B2360075C2B6 /* VideoFailedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FC35332A71B2360075C2B6 /* VideoFailedView.swift */; };
 		02FC35362A72B9810075C2B6 /* AudioToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FC35352A72B9810075C2B6 /* AudioToggle.swift */; };
 		02FC35382A72BE390075C2B6 /* AudioOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FC35372A72BE390075C2B6 /* AudioOverlay.swift */; };
-		AA0E9E412ABADD0F00224782 /* FirebaseDistributedCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0E9E402ABADD0F00224782 /* FirebaseDistributedCounter.swift */; };
 		AAA20DF52AE2617200061254 /* CatalogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA20DF42AE2617200061254 /* CatalogViewModel.swift */; };
 		AAA20DF72AE268D500061254 /* CatalogPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA20DF62AE268D500061254 /* CatalogPlayerManager.swift */; };
 		AAA20DF92AE27C9F00061254 /* CatalogChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA20DF82AE27C9F00061254 /* CatalogChannelView.swift */; };
@@ -216,7 +215,6 @@
 		02FC35332A71B2360075C2B6 /* VideoFailedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoFailedView.swift; sourceTree = "<group>"; };
 		02FC35352A72B9810075C2B6 /* AudioToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioToggle.swift; sourceTree = "<group>"; };
 		02FC35372A72BE390075C2B6 /* AudioOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioOverlay.swift; sourceTree = "<group>"; };
-		AA0E9E402ABADD0F00224782 /* FirebaseDistributedCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDistributedCounter.swift; sourceTree = "<group>"; };
 		AAA20DF42AE2617200061254 /* CatalogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogViewModel.swift; sourceTree = "<group>"; };
 		AAA20DF62AE268D500061254 /* CatalogPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPlayerManager.swift; sourceTree = "<group>"; };
 		AAA20DF82AE27C9F00061254 /* CatalogChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogChannelView.swift; sourceTree = "<group>"; };
@@ -317,7 +315,6 @@
 				AAA6B55C2B0BA07F00E6EF57 /* Catalog.swift */,
 				AAA20DF42AE2617200061254 /* CatalogViewModel.swift */,
 				AAA20DF62AE268D500061254 /* CatalogPlayerManager.swift */,
-				AA0E9E402ABADD0F00224782 /* FirebaseDistributedCounter.swift */,
 				02C5CCD02A4A04C900C7280E /* Analytics.swift */,
 				023EE7A92A0ADFDF004E09DD /* ScrollingStackModifier.swift */,
 				023EE7762A0ADF36004E09DD /* VastlyApp.swift */,
@@ -364,7 +361,6 @@
 		023EE7A82A0ADF7A004E09DD /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				02611E5A2AA7B572007029BB /* Not In Use */,
 				02611E542AA77985007029BB /* Items */,
 				02E0AB3E2A7C0E4B00405704 /* Onboarding */,
 				023EE7782A0ADF36004E09DD /* ContentView.swift */,
@@ -419,13 +415,6 @@
 				021BEB182AE8D61C00857910 /* SeeMoreText.swift */,
 			);
 			name = Items;
-			sourceTree = "<group>";
-		};
-		02611E5A2AA7B572007029BB /* Not In Use */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Not In Use";
 			sourceTree = "<group>";
 		};
 		02DCE3F02AE48C68002F8EF7 /* Frameworks */ = {
@@ -651,7 +640,6 @@
 				023EE7802A0ADF37004E09DD /* Persistence.swift in Sources */,
 				02583E052A19AB6C008CDA59 /* DeletedCode.swift in Sources */,
 				02583E202A1B462A008CDA59 /* VideoLoadingView.swift in Sources */,
-				AA0E9E412ABADD0F00224782 /* FirebaseDistributedCounter.swift in Sources */,
 				029AEAAD2A852791002A09DF /* Carousel.swift in Sources */,
 				02583E0F2A1AEF4E008CDA59 /* TextField.swift in Sources */,
 				02FC35382A72BE390075C2B6 /* AudioOverlay.swift in Sources */,

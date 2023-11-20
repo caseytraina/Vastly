@@ -13,9 +13,7 @@ import AVKit
 import AVFoundation
 import AudioToolbox
 
-struct SearchVideoView: View {
-    
-//    @EnvironmentObject var videoViewModel: VideoViewModel
+struct SearchVideoView: View {    
     @EnvironmentObject var viewModel: CatalogViewModel
     @EnvironmentObject var authModel: AuthViewModel
 
@@ -92,7 +90,7 @@ struct SearchVideoView: View {
                             }
                             
 //                            videoViewModel.playerManager?.changeToIndex(to: current_playing, shouldPlay: isPlaying)
-                            tempChannel = viewModel.setTemporaryChannel(videos: vids, name: "Search")
+                            tempChannel = viewModel.setTemporaryChannel(name: "Search", videos: vids)
                             viewModel.changeToIndex(current_playing)
                             
 //                            previous = current_playing

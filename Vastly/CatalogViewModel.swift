@@ -44,6 +44,11 @@ class ChannelVideos: Identifiable, Hashable {
         self.channel = channel
     }
     
+    init(channel: Channel, videos: [Video]) {
+        self.channel = channel
+        self.videos = videos
+    }
+    
     init(channel: Channel) {
         self.channel = channel
     }
@@ -191,19 +196,22 @@ final class Catalog {
         return self.currentChannelIndex < (totalChannels - 1)
     }
     
-    func setTemporaryChannel(videos: [Video]) -> Channel {
-        let chan = Channel(id: UUID().uuidString, order: 0, title: "Search", color: .white, isActive: false)
-        var channel = ChannelVideos(channel: chan)
-        channel.setVideos(videos)
-        self.addChannel(channel)
-        self.changeToChannel(chan)
-        return chan
+    private func removeChannel(_ channel: Channel) {
+        self.catalog.removeAll(where: {$0.channel == channel})
+    }
+    
+    func setTemporaryChannel(name: String, videos: [Video]) -> Channel {
+        let channel = Channel(id: UUID().uuidString, order: 0, title: name, color: .white, isActive: false)
+        let channelVideos = ChannelVideos(channel: channel, videos: videos)
+        self.addChannel(channelVideos)
+        self.changeToChannel(channelVideos)
+        return channel
     }
     
     func leaveTemporaryChannel(channel: Channel) {
-        if let myChannel = self.channelHistory.last?.channel {
-            self.changeToChannel(myChannel)
-            self.catalog.removeAll(where: {$0.channel == channel})
+        if let previousChannel = peekPreviousChannelInHistory() {
+            self.changeToChannel(previousChannel)
+            self.removeChannel(channel)
         }
     }
     
@@ -217,13 +225,6 @@ final class Catalog {
     
     func channelVideos(for channel: Channel) -> [Video]? {
         return self.catalog.first(where:  { $0.channel == channel })?.videos
-    }
-    
-    func channelToChannelVideos(channel: Channel) -> ChannelVideos? {
-        if let channel = catalog.first(where:  {$0.channel == channel}) {
-            return channel
-        }
-        return nil
     }
     
     // You can navigate to a channel not next, so this maintains that order
@@ -279,6 +280,10 @@ final class Catalog {
         self.currentVideo = vid
     }
     
+    func changeToChannel(_ channel: ChannelVideos) {
+        self.changeToChannel(channel.channel)
+    }
+    
     func changeToChannel(_ channel: Channel) {
         if let newChannelIndex = self.catalog.firstIndex(where: { channelVideo in
             return channelVideo.channel == channel
@@ -301,8 +306,6 @@ final class Catalog {
         }
         return foundVideo
     }
-    
-    
     
     private func updateChannelHistory() {
         channelHistory.append(currentChannel)
@@ -378,11 +381,6 @@ class CatalogViewModel: ObservableObject {
         self.catalog.changeToChannel(channel)
         self.currentChannel = self.catalog.currentChannel
         self.playerManager?.changeToChannel(channel, shouldPlay: shouldPlay)
-        if shouldPlay {
-            self.playCurrentVideo()
-        } else {
-            self.pauseCurrentVideo()
-        }
     }
     
     func changeToNextChannel(shouldPlay: Bool) {
@@ -424,7 +422,6 @@ class CatalogViewModel: ObservableObject {
     func toggleVideoMode() {
         self.isVideoMode.toggle()
     }
-
     
     func getThumbnail(video: Video) -> URL? {
         var urlString = video.url?.absoluteString
@@ -458,44 +455,29 @@ class CatalogViewModel: ObservableObject {
         let storageRef = db.collection("videos")
         // Ignore the "FOR YOU" channel
         for channel in self.channels.dropFirst() {
-            do {
-                let channelVideos = ChannelVideos(channel: channel, user: self.authModel.current_user, authors: authors)
-                
-                await self.addVideosTo(channelVideos)
-//                let snapshot = try await storageRef
-//                    .whereField("channels", arrayContains: channel.id)
-//                    .order(by: "likedCount", descending: true)
-//                    .limit(to: 15).getDocuments()
-//                
-//                for document in snapshot.documents {
-//                    let unfilteredVideo = try document.data(as: FirebaseData.self)
-//                    let id = document.documentID
-//                    channelVideos.addVideo(id: id, unfilteredVideo: unfilteredVideo)
-//                }
-                self.catalog.addChannel(channelVideos)
-            } catch {
-                print("error with video: \(error)")
-            }
+            let channelVideos = ChannelVideos(channel: channel, user: self.authModel.current_user, authors: authors)
+            
+            await self.addVideosTo(channelVideos)
+            self.catalog.addChannel(channelVideos)
         }
     }
     
-    func setTemporaryChannel(videos: [Video], name: String) -> Channel {
-        let chan = Channel(id: UUID().uuidString, order: 0, title: name, color: .white, isActive: false)
-        var channel = ChannelVideos(channel: chan)
-        channel.setVideos(videos)
-        self.catalog.addChannel(channel)
-        self.channels.append(chan)
-        self.changeToChannel(chan, shouldPlay: true)
-        return chan
+    func setTemporaryChannel(name: String, videos: [Video]) -> Channel {
+        let channel = self.catalog.setTemporaryChannel(name: name, videos: videos)
+        self.channels.append(channel)
+        return channel
     }
     
     func leaveTemporaryChannel(channel: Channel) {
-        if let prev = self.catalog.channelHistory.last?.channel {
-            self.changeToChannel(prev, shouldPlay: false)
-            self.channels.removeAll(where: {$0 == channel})
-            
-//            self.catalog.catalog.removeAll(where: {$0.channel == channel})
-        }
+        self.catalog.leaveTemporaryChannel(channel: channel)
+        self.channels.removeAll(where: {$0 == channel})
+//        
+//        if let prev = self.catalog.peekPreviousChannelInHistory()?.channel {
+//            self.changeToChannel(prev, shouldPlay: false)
+//            
+//            
+////            self.catalog.catalog.removeAll(where: {$0.channel == channel})
+//        }
     }
     
     // This function queries all of the authors from firebase, housing them in a local array to be used to apply to videos.
@@ -575,34 +557,29 @@ class CatalogViewModel: ObservableObject {
     }
     
     func addVideosTo(_ channel: ChannelVideos) async {
-            
-        do {
-            
-            guard let currentUser = self.authModel.current_user else { return  }
-            let functions = Functions.functions()
-            functions.httpsCallable("getUnviewedVideos").call(["userId": currentUser.phoneNumber ?? currentUser.email, "channelID" : channel.channel.id]) { (result, error) in
-                if let error = error {
-                    print("Error: \(error.localizedDescription)")
-                }
-                
-                if let dataArray = result?.data as? [[String: [String: Any]]] {
-                    // Retrieve the key and value for the first dictionary in the array
-                    var newVideos: [Video] = []
-                    for unfilteredVideo in dataArray {
-                        let video = self.resultToVideo(id: unfilteredVideo.first?.key ?? UUID().uuidString, data: unfilteredVideo.first?.value)
-                        if let video {
-                            newVideos.append(video)
-                        }
-                    }
-                    channel.setVideos(newVideos)
-                }
+        guard let currentUser = self.authModel.current_user else { return  }
+        let functions = Functions.functions()
+        functions.httpsCallable("getUnviewedVideos").call([
+            "userId": currentUser.phoneNumber ?? currentUser.email,
+            "channelID" : channel.channel.id]) { (result, error) in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
             }
-        } catch {
-            print("error with video: \(error)")
+            
+            if let dataArray = result?.data as? [[String: [String: Any]]] {
+                // Retrieve the key and value for the first dictionary in the array
+                var newVideos: [Video] = []
+                for unfilteredVideo in dataArray {
+                    let video = self.resultToVideo(
+                        id: unfilteredVideo.first?.key ?? UUID().uuidString,
+                        data: unfilteredVideo.first?.value)
+                    if let video {
+                        newVideos.append(video)
+                    }
+                }
+                channel.setVideos(newVideos)
+            }
         }
-
-        
-        
     }
     
     // This function accepts a storage regerence and returns all documents at the given reference in Firebase.

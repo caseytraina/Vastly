@@ -12,18 +12,12 @@ import MediaPlayer
 
 struct FullscreenVideoPlayer: UIViewControllerRepresentable {
     
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogViewModel
     
 //    var player: AVPlayer?
     @Binding var videoMode: Bool
-    
-//    var index: Int
-//    @Binding var activeChannel: Channel
-//
     var video: Video
-    @Binding var activeChannel: Channel
 
-    
     func makeUIViewController(context: Context) -> AVPlayerViewController {
         let controller = AVPlayerViewController()
         

@@ -19,7 +19,6 @@ struct PasswordConfirmView: View {
     @State var isHidden = true
     @State var hiddenText = ""
     @EnvironmentObject private var authModel: AuthViewModel
-//    @EnvironmentObject var viewModel: VideoViewModel
 
     var body: some View {
 

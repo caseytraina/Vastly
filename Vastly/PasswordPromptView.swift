@@ -14,7 +14,6 @@ struct PasswordPromptView: View {
     @Binding var password: String
     
     @EnvironmentObject private var authModel: AuthViewModel
-//    @EnvironmentObject var viewModel: VideoViewModel
 
     var body: some View {
 

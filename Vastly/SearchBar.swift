@@ -8,10 +8,9 @@
 import SwiftUI
 import AlgoliaSearchClient
 
-struct NewSearchBar: View {
-    
+struct NewSearchBar: View {    
     @EnvironmentObject var authModel: AuthViewModel
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogViewModel
 
     var all_authors: [Author]
     
@@ -30,8 +29,6 @@ struct NewSearchBar: View {
 
     @State var isLinkActive = false
     @FocusState private var textFocused: Bool
-    
-//    var viewModel: VideoViewModel
     
     @StateObject var controller: NewAlgoliaController
     @State var text = ""

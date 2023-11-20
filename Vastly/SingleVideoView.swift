@@ -12,7 +12,7 @@ import AVKit
 struct SingleVideoView: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogViewModel
     
     @State var channel: Channel = FOR_YOU_CHANNEL
     
@@ -35,15 +35,10 @@ struct SingleVideoView: View {
     @State var bioExpanded = false
 
     @State var shareURL: URL?
-    ///ik-thumbnail.jpg
-    ///
-    ///
     var body: some View {
         ZStack {
             Color("BackgroundColor")
                 .ignoresSafeArea()
-//            LinearGradient(gradient: Gradient(colors: myGradient(channel_index: 0)), startPoint: .topLeading, endPoint: .bottom)
-//                .ignoresSafeArea()
             GeometryReader { geo in
                 VStack(alignment: .leading) {
 
@@ -64,7 +59,7 @@ struct SingleVideoView: View {
                     ZStack {
                         
                         ZStack {
-                            FullscreenVideoPlayer(videoMode: $videoMode, video: video, activeChannel: $channel)
+                            FullscreenVideoPlayer(videoMode: $videoMode, video: video)
                                 .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                                 .padding(0)
                                 .environmentObject(viewModel)
@@ -82,7 +77,7 @@ struct SingleVideoView: View {
                             }
                         }
                             
-                        ProgressBar(value: $playerProgress, activeChannel: $channel, video: video, isPlaying: $isPlaying)
+                        ProgressBar(video: video, isPlaying: $isPlaying)
                             .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)
                             .padding(0)
                             .environmentObject(viewModel)
@@ -93,12 +88,12 @@ struct SingleVideoView: View {
                     VStack(alignment: .center) {
                         
                         HStack(alignment: .top) {
-                            MyText(text: playerTime.asString, size: 12, bold: false, alignment: .leading, color: .gray)
+                            MyText(text: viewModel.getVideoTime(video).asString, size: 12, bold: false, alignment: .leading, color: .gray)
                                 .lineLimit(1)
                                 .brightness(0.4)
                             
                             Spacer()
-                            MyText(text: playerDuration.asString, size: 12, bold: false, alignment: .leading, color: .gray)
+                            MyText(text: viewModel.getVideoDuration(video).asString, size: 12, bold: false, alignment: .leading, color: .gray)
                                 .lineLimit(1)
                                 .brightness(0.4)
                         } // end hstack
@@ -349,26 +344,6 @@ struct SingleVideoView: View {
 //            }
         }
     }
-    
-    
-    private func myGradient(channel_index: Int) -> [Color] {
-        
-//        let background = Color(red: 18.0/255, green: 18.0/255, blue: 18.0/255)
-        let background = Color(red: 5/255, green: 5/255, blue: 5/255)
-
-        let channel_color = viewModel.channels[channel_index].color.opacity(0.8)
-
-//        let purple = Color(red: 0.3803921568627451, green: 0.058823529411764705, blue: 0.4980392156862745)
-        var gradient: [Color] = [channel_color]
-        
-        for _ in 0..<5 {
-            gradient.append(background)
-        }
-        return gradient
-    }
-    
-    
-    
 }
 
 //struct SingleVideoView_Previews: PreviewProvider {

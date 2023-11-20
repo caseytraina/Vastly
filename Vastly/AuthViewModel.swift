@@ -23,7 +23,6 @@ enum AccountType {
 }
 
 class AuthViewModel: ObservableObject {
-    
     @Published var user: User? {
         didSet {
             objectWillChange.send()
@@ -34,10 +33,15 @@ class AuthViewModel: ObservableObject {
     @Published var error: Error?
     
     @Published var current_user: Profile? = nil
-    @Published var liked_videos: [Video] = []
     @Published var searchQueries: [String]?
 
-//    var viewModel: VideoViewModel?
+    @Published var viewedVideosProcessing: Bool = true
+    @Published var likedVideosProcessing: Bool = true
+    
+    // This array shouldn't be used for source of truth for if something has been
+    // viewed, for that you should use the viewedVideos collection in the database
+    @Published var viewedVideos: [Video] = []
+    @Published var likedVideos: [Video] = []
     
     init() {
         listenToAuthState()
@@ -150,7 +154,7 @@ class AuthViewModel: ObservableObject {
         let db = Firestore.firestore()
         
         DispatchQueue.main.async {
-            self.liked_videos.removeAll(where: { $0.id == video.id })
+            self.likedVideos.removeAll(where: { $0.id == video.id })
         }
         
         let ref = db.collection("users").document(current_user?.phoneNumber ?? current_user?.email ?? "")
@@ -176,7 +180,7 @@ class AuthViewModel: ObservableObject {
         let userLikedRef = userRef.collection("likedVideos").document(video.id)
         
         DispatchQueue.main.async {
-            self.liked_videos.insert(video, at: 0)
+            self.likedVideos.insert(video, at: 0)
         }
         
         do {
@@ -231,7 +235,7 @@ class AuthViewModel: ObservableObject {
             // Upload data
             try await db.collection("users").document(credential).setData(data, merge: true)
             print("User info saved successfully.")
-            logSignUp(method: "Native In-App")
+            Analytics.logSignUp(method: "Native In-App")
         } catch {
             print("Failed to save user info: \(error.localizedDescription)")
         }
@@ -248,7 +252,7 @@ class AuthViewModel: ObservableObject {
         do {
             self.current_user = try await fetch(docRef: storageRef)
         } catch {
-            print(error)
+            print("error getting user: \(error)")
         }
     }
     
@@ -367,5 +371,90 @@ class AuthViewModel: ObservableObject {
         }
     }
     
+    func fetchLikedVideos(authors: [Author]) async {
+        if let liked_videos = self.current_user?.likedVideos {
+            let db = Firestore.firestore()
+            let ref = db.collection("videos")
+            
+            for id in liked_videos {
+                do {
+                    let doc = try await ref.document(id).getDocument()
+                    if doc.exists {
+                        print("Doc Found for \(id)")
+                        
+                        let data = doc.data()
+                        
+                        let video = Video.resultToVideo(id: id, data: data, authors: authors)
+                        if let video {
+                            if !self.likedVideos.contains(where: { $0.id == video.id }) {
+                                DispatchQueue.main.async {
+                                    self.likedVideos.append(video)
+                                }
+                            }
+                        }
+                        
+                        if self.likedVideos.count > 5 {
+                            DispatchQueue.main.async {
+                                self.likedVideosProcessing = false
+                            }
+                        }
+                        
+                    } else {
+                        print("Doc not found for \(id)")
+                    }
+                    
+                } catch {
+                    print("Error getting viewing history: \(error)")
+                }
+            }
+        }
+        
+        DispatchQueue.main.async {
+            self.likedVideosProcessing = false
+        }
+    }
+    
+    // Populates self.viewedVideos to be shown in the history page
+    func fetchViewedVideos(authors: [Author]) async {
+        if let viewed_videos = self.current_user?.viewedVideos {
+            let db = Firestore.firestore()
+            let ref = db.collection("videos")
+            for id in viewed_videos {
+                do {
+                    let doc = try await ref.document(id).getDocument()
+                    if doc.exists {
+                        print("Doc Found for \(id)")
+                        
+                        let data = doc.data()
+                        
+                        let video = Video.resultToVideo(id: id, data: data, authors: authors)
+                        
+                        if let video {
+                            if !self.viewedVideos.contains(where: { $0.id == video.id }) {
+                                DispatchQueue.main.async {
+                                    self.viewedVideos.append(video)
+                                }
+                            }
+                        }
+                        
+                        if self.viewedVideos.count > 5 {
+                            DispatchQueue.main.async {
+                                self.viewedVideosProcessing = false
+                            }
+                        }
+                        
+                    } else {
+                        print("Doc not found for \(id)")
+                    }
+                    
+                } catch {
+                    print("Error getting viewing history: \(error)")
+                }
+            }
+        }
+        DispatchQueue.main.async {
+            self.viewedVideosProcessing = false
+        }
+    }
     
 }

@@ -10,7 +10,7 @@ import SwiftUI
 struct ProfileView: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogViewModel
     
     @State var isAnimating = false
     
@@ -66,7 +66,7 @@ struct ProfileView: View {
                         }
                         
                         NavigationLink(destination: {
-                            ViewingHistory(isPlaying: $isPlaying)
+                            ViewingHistory()
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
                         }, label: {
@@ -94,9 +94,7 @@ struct ProfileView: View {
 
                         Spacer()
                         Button(action: {
-                            if let manager = viewModel.playerManager {
-                                manager.pauseCurrentVideo()
-                            }
+                            viewModel.pauseCurrentVideo()
                             Task {
                                 do {
                                     isPlaying = false
@@ -107,31 +105,16 @@ struct ProfileView: View {
                             }
                             
                         }, label: {
-                            MyText(text: "Sign Out", size: geo.size.width * 0.05, bold: true, alignment: .center, color: .red)
+                            MyText(text: "Sign Out", size: geo.size.width * 0.05, bold: true, alignment: .center, color: .gray)
                         })
+                        Spacer()
                         
                     }
                 }
                 .onAppear {
-                    logScreenSwitch(to: "Profile Screen")
+                    Analytics.logScreenSwitch(to: "Profile Screen")
                 }
         }
-    }
-    
-    private func myGradient(channel_index: Int) -> [Color] {
-        
-//        let background = Color(red: 18.0/255, green: 18.0/255, blue: 18.0/255)
-        let background = Color(red: 5/255, green: 5/255, blue: 5/255)
-
-        let channel_color = viewModel.channels[channel_index].color.opacity(0.8)
-
-//        let purple = Color(red: 0.3803921568627451, green: 0.058823529411764705, blue: 0.4980392156862745)
-        var gradient: [Color] = [channel_color]
-        
-        for _ in 0..<5 {
-            gradient.append(background)
-        }
-        return gradient
     }
 }
 

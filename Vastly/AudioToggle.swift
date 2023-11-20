@@ -16,58 +16,39 @@ struct AudioToggleStyle: ToggleStyle {
  
     func makeBody(configuration: Configuration) -> some View {
  
-            HStack {
-                configuration.label
-     
-                Spacer()
-     
-                ZStack {
+        HStack {
+            configuration.label
+            MyText(text: "Watch", size: 18, bold: true, alignment: .center, color: configuration.isOn ? .accentColor : .gray)
+                .padding(.horizontal)
+                .padding(.vertical, 10)
+                .brightness(configuration.isOn ? 0 : 0.3)
+                .background(
+                RoundedRectangle(cornerRadius: 100)
+                    .foregroundStyle(configuration.isOn ? Color.accentColor : .clear)
+                    .brightness(configuration.isOn ? 0.5 : 0)
+                )
+            MyText(text: "Listen", size: 18, bold: true, alignment: .center, color: configuration.isOn ? .gray : .accentColor)
+                .brightness(configuration.isOn ? 0.3 : 0)
+                .padding(.horizontal)
+                .padding(.vertical, 10)
+                .background(
                     RoundedRectangle(cornerRadius: 100)
-                        .fill(configuration.isOn ? Color("BackgroundColor") : Color("BackgroundColor"))
-                        .overlay {
-                            Circle()
-                                .frame(width: screenSize.width * 0.055)
-                                .foregroundColor(.white)
-
-                                .offset(x: configuration.isOn ? -screenSize.width * 0.0375 : screenSize.width * 0.0375)
-                        }
-                        .frame(width: screenSize.width * 0.15, height: 32)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 100)
-                                .stroke(Color.white, lineWidth: 1)
-                        )
-                        .onTapGesture {
-                            
-                        }
-                        .highPriorityGesture(TapGesture()
-                            .onEnded{
-                                withAnimation(.spring()) {
-                                    configuration.isOn.toggle()
-                                }
-                            })
-                    
-                    ZStack {
-                        Image(systemName: "video.fill")
-                            .foregroundColor(configuration.isOn ? color : .white)
-                            .font(.system(size: screenSize.width * 0.025, weight: .light))
-                            .offset(x: -screenSize.width * 0.0375)
-                            
-    //                        .resizable()
-    //                        .scaledToFill()
-
-                        Image(systemName: "headphones")
-                            .foregroundColor(configuration.isOn ? .white : color)
-                            .font(.system(size: screenSize.width * 0.025, weight: .light))
-                            .offset(x: screenSize.width * 0.0375)
-
-
-    //                        .resizable()
-    //                        .scaledToFill()
-                    }
-                    
-                    
+                        .foregroundStyle(configuration.isOn ? .clear : Color.accentColor)
+                        .brightness(configuration.isOn ? 0 : 0.5)
+                )
+        }
+        .overlay(
+        RoundedRectangle(cornerRadius: 100)
+            .stroke(.white, lineWidth: 2)
+        )
+        .highPriorityGesture(TapGesture()
+            .onEnded{
+                withAnimation(.spring()) {
+                    configuration.isOn.toggle()
                 }
-            }
+        })
+        
+
         
     }
 }

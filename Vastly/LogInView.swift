@@ -12,7 +12,6 @@ struct LogInView: View {
     @Binding var email: String
     @Binding var password: String
     @EnvironmentObject private var authModel: AuthViewModel
-//    @EnvironmentObject var viewModel: VideoViewModel
 
     @State var successful = true
     

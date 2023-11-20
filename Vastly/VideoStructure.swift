@@ -11,7 +11,7 @@ import SwiftUI
 import Firebase
 
 // Videos are queried from Firebase as FirebaseData, then translated into UnprocessedVideos before being used as type Video.
-// Read more about video querying in VideoViewModel
+// Read more about video querying in CatalogViewModel
 
 struct FirebaseData: Codable {
     let title: String?
@@ -44,6 +44,23 @@ struct UnprocessedVideo: Codable {
     let location: String
     let youtubeURL: String?
     
+    // This function turns a path to a URL of a cached and compressed video, connecting to our CDN imagekit which is a URL-based video and image delivery and transformation company.
+    func getVideoURL() -> URL? {
+        var allowedCharacters = CharacterSet.urlQueryAllowed
+        allowedCharacters.insert("/")
+        
+        var fixedPath = self.location.addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? ""
+        fixedPath = fixedPath.replacingOccurrences(of: "’", with: "%E2%80%99")
+        
+        let urlStringUnkept: String = IMAGEKIT_ENDPOINT + fixedPath + "?tr=f-auto"
+        if let url = URL(string: urlStringUnkept) {
+            return url
+        } else {
+            print("URL is invalid")
+            return EMPTY_VIDEO.url
+        }
+    }
+    
     enum CodingKeys: String, CodingKey {
         case id
         case title
@@ -57,7 +74,11 @@ struct UnprocessedVideo: Codable {
     
 }
 
-struct Video: Identifiable {
+struct Video: Identifiable, Equatable {
+    static func == (lhs: Video, rhs: Video) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     let id: String
     let title: String
     let author: Author
@@ -66,8 +87,49 @@ struct Video: Identifiable {
     var channels: [String]
     var url: URL?
     var youtubeURL: String?
-    func introTextToSpeechURL() -> URL? {
-        return URL(string: "https://storage.googleapis.com/rizeo-40249-tts/videos/\(self.id).mp3")
+    
+    func getThumbnail() -> URL? {
+        var urlString = self.url?.absoluteString
+        
+        urlString = urlString?.replacingOccurrences(of: "?tr=f-auto", with: "/ik-thumbnail.jpg")
+        
+        return URL(string: urlString ?? "")
+    }
+    
+    // This function turns a path to a URL of a cached and compressed video, connecting to our CDN imagekit which is a URL-based video and image delivery and transformation company.
+    static func getVideoURL(from location: String) -> URL? {
+        var allowedCharacters = CharacterSet.urlQueryAllowed
+        allowedCharacters.insert("/")
+        
+        var fixedPath = location.addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? ""
+        fixedPath = fixedPath.replacingOccurrences(of: "’", with: "%E2%80%99")
+        
+        let urlStringUnkept: String = IMAGEKIT_ENDPOINT + fixedPath + "?tr=f-auto"
+        if let url = URL(string: urlStringUnkept) {
+            return url
+        } else {
+            print("URL is invalid")
+            return EMPTY_VIDEO.url
+        }
+    }
+    
+    static func resultToVideo(id: String, data: Any, authors: [Author]) -> Video? {
+        guard let dataDict = data as? [String: Any] else {
+            return nil
+        }
+        
+        let video = Video(
+            id: id,
+            title:  dataDict["title"] as? String ?? "No title found",
+            author: authors.first(where: { $0.text_id == dataDict["author"] as? String ?? "" }) ?? EMPTY_AUTHOR,
+            bio: dataDict["bio"] as? String ?? "",
+            date: dataDict["date"] as? String ?? "", // assuming you meant "date" here
+            channels: dataDict["channels"] as? [String] ?? [],
+            url: Video.getVideoURL(from: dataDict["fileName"] as? String ?? ""),
+            youtubeURL: dataDict["youtubeURL"] as? String)
+        
+        
+        return video
     }
 }
 

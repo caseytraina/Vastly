@@ -8,11 +8,10 @@
 import SwiftUI
 import AVKit
 
-
 struct LaunchAnimation: View {
     
     @EnvironmentObject private var authModel: AuthViewModel
-    @StateObject var viewModel: VideoViewModel
+    @StateObject var viewModel: CatalogViewModel
     
     @State var player: AVPlayer = AVPlayer(url: Bundle.main.url(forResource: "launchAnimation", withExtension: "mp4")!)
     @State private var endObserverToken: Any?
@@ -20,8 +19,7 @@ struct LaunchAnimation: View {
     @State var completed = false
     
     init(authModel: AuthViewModel) {
-        _viewModel = StateObject(wrappedValue: VideoViewModel(authModel: authModel))
-//        let playerItem =
+        _viewModel = StateObject(wrappedValue: CatalogViewModel(authModel: authModel))
     }
     
     var body: some View {
@@ -31,19 +29,9 @@ struct LaunchAnimation: View {
                     ZStack {
                         Color.accentColor // color of background of animation
                             .ignoresSafeArea()
-                        
                         LaunchScreenPlayer(player: $player)
-//                        VideoPlayer(player: player)
                             .ignoresSafeArea()
-//                            .scaledToFill()
-//                            .position(x: 0)
-//                            .frame(maxWidth: geo.size.width, maxHeight: geo.size.height)
-//                            .aspectRatio(CGSize(width: 750, height: 1624), contentMode: .fill)
-//                            .clipped()
-
                     }
-    //                    .ignoresSafeArea()
-    //                    .position(x: screenSize.width / 2, y: screenSize.height / 2)
                 } else {
                     ContentView()
                         .environmentObject(authModel)
@@ -65,24 +53,14 @@ struct LaunchAnimation: View {
                     self.endObserverToken = nil
 
                 }
-                
-                
-                
-        }
+            }
         }
     }
 }
 
-//struct LaunchAnimation_Previews: PreviewProvider {
-//    static var previews: some View {
-//        LaunchAnimation()
-//    }
-//}
-
-
 struct LaunchScreenPlayer: UIViewControllerRepresentable {
     
-    @EnvironmentObject var viewModel: VideoViewModel
+    @EnvironmentObject var viewModel: CatalogViewModel
     
     @Binding var player: AVPlayer
     

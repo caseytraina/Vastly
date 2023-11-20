@@ -186,42 +186,6 @@ class CatalogViewModel: ObservableObject {
         self.changeToChannel(FOR_YOU_CHANNEL, shouldPlay: true)
     }
     
-    // This function turns a path to a URL of a cached and compressed video, connecting to our CDN imagekit which is a URL-based video and image delivery and transformation company.
-    private func getVideoURL(from location: String) -> URL? {
-        var allowedCharacters = CharacterSet.urlQueryAllowed
-        allowedCharacters.insert("/")
-        
-        var fixedPath = location.addingPercentEncoding(withAllowedCharacters: allowedCharacters) ?? ""
-        fixedPath = fixedPath.replacingOccurrences(of: "’", with: "%E2%80%99")
-        
-        let urlStringUnkept: String = IMAGEKIT_ENDPOINT + fixedPath + "?tr=f-auto"
-        if let url = URL(string: urlStringUnkept) {
-            return url
-        } else {
-            print("URL is invalid")
-            return EMPTY_VIDEO.url
-        }
-    }
-    
-    private func resultToVideo(id: String, data: Any) -> Video? {
-        guard let dataDict = data as? [String: Any] else {
-            return nil
-        }
-        
-        var video = Video(
-            id: id,
-            title:  dataDict["title"] as? String ?? "No title found",
-            author: self.authors.first(where: { $0.text_id == dataDict["author"] as? String ?? "" }) ?? EMPTY_AUTHOR,
-            bio: dataDict["bio"] as? String ?? "",
-            date: dataDict["date"] as? String ?? "", // assuming you meant "date" here
-            channels: dataDict["channels"] as? [String] ?? [],
-            url: self.getVideoURL(from: dataDict["fileName"] as? String ?? ""),
-            youtubeURL: dataDict["youtubeURL"] as? String)
-        
-        
-        return video
-    }
-    
     private func getCatalog() async {
         await self.getChannels()
         await self.getAuthors()
@@ -341,9 +305,10 @@ class CatalogViewModel: ObservableObject {
                 // Retrieve the key and value for the first dictionary in the array
                 var newVideos: [Video] = []
                 for unfilteredVideo in dataArray {
-                    let video = self.resultToVideo(
+                    let video = Video.resultToVideo(
                         id: unfilteredVideo.first?.key ?? UUID().uuidString,
-                        data: unfilteredVideo.first?.value)
+                        data: unfilteredVideo.first?.value,
+                        authors: self.authors)
                     if let video {
                         newVideos.append(video)
                     }

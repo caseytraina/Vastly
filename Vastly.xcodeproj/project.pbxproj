@@ -124,7 +124,7 @@
 		AAA20DFB2AE2804800061254 /* CatalogVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA20DFA2AE2804800061254 /* CatalogVideoView.swift */; };
 		AAA6B55D2B0BA07F00E6EF57 /* Catalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA6B55C2B0BA07F00E6EF57 /* Catalog.swift */; };
 		AAE1127C2AFE2F980049C3DB /* CatalogTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE1127B2AFE2F980049C3DB /* CatalogTest.swift */; };
-		AAFA462A2B0D40EC00FCA9ED /* SearchVideoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFA46292B0D40EC00FCA9ED /* SearchVideoListView.swift */; };
+		AAFA462A2B0D40EC00FCA9ED /* VideoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFA46292B0D40EC00FCA9ED /* VideoListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -220,7 +220,7 @@
 		AAA6B55C2B0BA07F00E6EF57 /* Catalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Catalog.swift; sourceTree = "<group>"; };
 		AAE1127B2AFE2F980049C3DB /* CatalogTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogTest.swift; sourceTree = "<group>"; };
 		AAE1127D2AFE32950049C3DB /* Vastly.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Vastly.xctestplan; sourceTree = "<group>"; };
-		AAFA46292B0D40EC00FCA9ED /* SearchVideoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchVideoListView.swift; sourceTree = "<group>"; };
+		AAFA46292B0D40EC00FCA9ED /* VideoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -371,7 +371,7 @@
 				02FC35372A72BE390075C2B6 /* AudioOverlay.swift */,
 				0220D63A2A905C5800A867FB /* AuthorProfileView.swift */,
 				029170212AB375CA00ADF426 /* SearchView.swift */,
-				AAFA46292B0D40EC00FCA9ED /* SearchVideoListView.swift */,
+				AAFA46292B0D40EC00FCA9ED /* VideoListView.swift */,
 				02781AA02AB8A56C0068E246 /* SearchVideoView.swift */,
 				02583E182A1B0F56008CDA59 /* ProfileView.swift */,
 				02CB38782A7839810065F626 /* LikesListView.swift */,
@@ -681,7 +681,7 @@
 				02583E172A1AFAE1008CDA59 /* AuthViewModel.swift in Sources */,
 				AAA6B55D2B0BA07F00E6EF57 /* Catalog.swift in Sources */,
 				02C5CCD32A4A25EC00C7280E /* TutorialView.swift in Sources */,
-				AAFA462A2B0D40EC00FCA9ED /* SearchVideoListView.swift in Sources */,
+				AAFA462A2B0D40EC00FCA9ED /* VideoListView.swift in Sources */,
 				028381762A98873200FE25C0 /* PhoneLogin.swift in Sources */,
 				02583E092A19E2BA008CDA59 /* GreetingView.swift in Sources */,
 				0220D63B2A905C5800A867FB /* AuthorProfileView.swift in Sources */,

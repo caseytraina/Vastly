@@ -14,7 +14,7 @@ struct LikesListView: View {
     @Binding var playing: Bool
     
     var body: some View {
-        SearchVideoListView(title: "Bookmarks",
+        VideoListView(title: "Bookmarks",
                             videos: $authModel.likedVideos,
                             playing: $playing)
         .environmentObject(viewModel)

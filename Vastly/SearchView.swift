@@ -101,7 +101,7 @@ struct SearchView: View {
                         }
 
                     } else {
-                        SearchVideoListView(title: "Clips",
+                        VideoListView(title: "Clips",
                                             videos: $controller.videos,
                                             playing: $playing)
                             .scrollDismissesKeyboard(.immediately)

@@ -1,12 +1,12 @@
 //
-//  SearchVideoListView.swift
+//  VideoListView.swift
 //  Vastly
 //
 //  Created by Michael Murray on 8/21/23
 //
 import SwiftUI
 
-struct SearchVideoListView: View {
+struct VideoListView: View {
     @EnvironmentObject var authModel: AuthViewModel
     @EnvironmentObject var viewModel: CatalogViewModel
 

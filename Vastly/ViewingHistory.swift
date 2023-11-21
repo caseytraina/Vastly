@@ -14,7 +14,7 @@ struct ViewingHistory: View {
     @Binding var playing: Bool
     
     var body: some View {
-        SearchVideoListView(title: "Viewing History", 
+        VideoListView(title: "Viewing History", 
                             videos: $authModel.viewedVideos,
                             playing: $playing)
         .environmentObject(viewModel)

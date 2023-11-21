@@ -66,7 +66,7 @@ struct ProfileView: View {
                         }
                         
                         NavigationLink(destination: {
-                            ViewingHistory()
+                            ViewingHistory(playing: $isPlaying)
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
                         }, label: {

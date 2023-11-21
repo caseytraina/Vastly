@@ -22,18 +22,8 @@ struct SearchVideoListView: View {
     @State var isLinkActive = false
 
     @Binding var videos: [Video]
-    @Binding var oldPlaying: Bool
+    @Binding var playing: Bool
     @State var text = ""
-
-//    init(title: String, videos: Binding<[Video]>, oldPlaying: Binding<Bool>) {
-//        self._oldPlaying = oldPlaying
-//        self.videos = videos
-//        let appearance = UINavigationBarAppearance()
-//        appearance.configureWithOpaqueBackground()
-//        appearance.backgroundColor = .black
-//        UINavigationBar.appearance().standardAppearance = appearance
-//        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-//    }
 
     var body: some View {
         GeometryReader { geo in
@@ -52,18 +42,26 @@ struct SearchVideoListView: View {
                     } else {
                         ScrollView(showsIndicators: false) {
                             ForEach(videos) { video in
-                                NavigationLink(destination: SearchVideoView(query: text, vids: $videos, current_playing: $current, isPlaying: $isPlaying, publisherIsTapped: $dummyPubTapped)
-                                    .environmentObject(authModel)
-                                    .environmentObject(viewModel)
-                                    .background(Color("BackgroundColor")),
-                                    isActive: $isLinkActive)
-                                {
+//                                NavigationLink(destination: SearchVideoView(query: text, vids: $videos, current_playing: $current, isPlaying: $isPlaying, publisherIsTapped: $dummyPubTapped)
+//                                    .environmentObject(authModel)
+//                                    .environmentObject(viewModel)
+//                                    .background(Color("BackgroundColor")),
+//                                    isActive: $isLinkActive)
+//                                {
+//                                    EmptyView()
+//                                }
+                                NavigationLink(destination:
+                                    SingleVideoView(video: videos[current])
+                                       .environmentObject(authModel)
+                                       .environmentObject(viewModel)
+                                    
+                                , isActive: $isLinkActive) {
                                     EmptyView()
                                 }
 
                                 Button(action: {
                                     current = videos.firstIndex(where: { $0.id == video.id }) ?? 0
-                                    oldPlaying = false
+                                    playing = false
                                     isLinkActive = true
                                 }, label: {
                                     HStack(alignment: .center) {
@@ -107,6 +105,13 @@ struct SearchVideoListView: View {
                     AuthorProfileView(author: author, publisherIsTapped: $publisherIsTapped)
                 }
             }
+        }
+        .onAppear {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = .black
+            UINavigationBar.appearance().standardAppearance = appearance
+            UINavigationBar.appearance().scrollEdgeAppearance = appearance
         }
     }
 }

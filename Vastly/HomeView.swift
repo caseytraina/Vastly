@@ -93,12 +93,12 @@ struct HomeView: View {
                                 .environmentObject(authModel)
                             
                         case .search:
-                            SearchView(all_authors: viewModel.authors,
-                                       oldPlaying: $isPlaying)
+                            SearchView(authors: viewModel.authors,
+                                       playing: $isPlaying)
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
                         case .bookmarks:
-                            LikesListView()
+                            LikesListView(playing: $isPlaying)
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
                         case .profile:

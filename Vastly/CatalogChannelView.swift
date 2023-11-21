@@ -137,7 +137,7 @@ struct CatalogChannelView: View {
                     }
                 }
                 if let openedVideo {
-                    NavigationLink("", destination: SingleVideoView(isActive: $isShareLinkActive, video: openedVideo))
+                    NavigationLink("", destination: SingleVideoView(video: openedVideo))
                         .environmentObject(viewModel)
                         .environmentObject(authModel)
                     .hidden()

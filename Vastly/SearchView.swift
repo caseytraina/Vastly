@@ -12,7 +12,7 @@ struct SearchView: View {
     @EnvironmentObject var authModel: AuthViewModel
     @EnvironmentObject var viewModel: CatalogViewModel
 
-    var all_authors: [Author]
+    var authors: [Author]
 
 //    @StateObject var controller: NewAlgoliaController
 //
@@ -33,15 +33,14 @@ struct SearchView: View {
     @StateObject var controller: NewAlgoliaController
     @State var text = ""
 
-    @Binding var oldPlaying: Bool
+    @Binding var playing: Bool
 
     @FocusState private var searchIsFocused: Bool
 
-    init(all_authors: [Author], oldPlaying: Binding<Bool>) {
-        self.all_authors = all_authors
-        _controller = StateObject(wrappedValue: NewAlgoliaController(all_authors: all_authors))
-        self._oldPlaying = oldPlaying
-//        _controller.wrappedValue.viewModel = viewModel
+    init(authors: [Author], playing: Binding<Bool>) {
+        self.authors = authors
+        _controller = StateObject(wrappedValue: NewAlgoliaController(all_authors: authors))
+        self._playing = playing
 
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -104,7 +103,7 @@ struct SearchView: View {
                     } else {
                         SearchVideoListView(title: "Clips",
                                             videos: $controller.videos,
-                                            oldPlaying: $oldPlaying)
+                                            playing: $playing)
                             .scrollDismissesKeyboard(.immediately)
                     }
                     Spacer()

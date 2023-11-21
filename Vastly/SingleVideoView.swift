@@ -16,8 +16,6 @@ struct SingleVideoView: View {
     
     @State var channel: Channel = FOR_YOU_CHANNEL
     
-    @Binding var isActive: Bool
-    
     var video: Video
     
     @State private var playerProgress: Double = 0
@@ -168,7 +166,6 @@ struct SingleVideoView: View {
                                 Button(action: {
                                     DispatchQueue.main.async {
                                         if videoIsLiked() {
-                                            isActive.toggle()
                                             viewModel.playerManager?.pause(for: video)
 
                                         }

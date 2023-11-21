@@ -119,7 +119,7 @@ class CatalogViewModel: ObservableObject {
                 videoRef.updateData([
                     "viewedCount": FieldValue.increment(Int64(1))
                 ])
-//                self.viewedVideos.insert(video, at: 0)
+                self.authModel.viewedVideos.insert(video, at: 0)
             }
         }
     }

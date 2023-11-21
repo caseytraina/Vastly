@@ -398,19 +398,10 @@ struct SearchVideoView: View {
     }
     
     private func getVideo(_ i: Int) -> Video {
-//        if let vids = viewModel.videos[channel] {
-//            if i < vids.count {
-//                return vids[i]
-//            }
-//        }
         if i < vids.count {
             return vids[i]
         }
         return EMPTY_VIDEO
-    }
-    
-    private func getNext() -> Video {
-        return getVideo(current_playing + 1)
     }
     
     private func toggleLike(_ i: Int) {

@@ -1,8 +1,8 @@
 //
-//  LikesListView.swift
+//  VideoListView.swift
 //  Vastly
 //
-//  Created by Casey Traina on 7/31/23.
+//  Created by Michael Murray on 8/10/23.
 //
 
 import SwiftUI

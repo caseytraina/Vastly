@@ -83,10 +83,18 @@ class CatalogPlayerManager: ObservableObject {
     
     func getPlayer(for video: Video) -> AVQueuePlayer {
         if let player = players[video.id] {
+            
+//            if isInBackground && player.items().count == 1 {
+//                if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
+//                    let intro = AVPlayerItem(url: url)
+//                    player.insert(intro, after: nil)
+//                }
+//            }
+            
             if player.currentItem == nil {
-
                 let vid = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
                 player.insert(vid, after: nil)
+//                player.replaceCurrentItem(with: vid)
 
                 if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
                     let intro = AVPlayerItem(url: url)
@@ -96,13 +104,7 @@ class CatalogPlayerManager: ObservableObject {
                 players[video.id] = player
             }
 
-            if isInBackground && player.items().count == 1 {
-                if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
-                    let intro = AVPlayerItem(url: url)
-                    player.insert(intro, after: nil)
-                }
-            }
-            
+
             return player
         } else {
             var items: [AVPlayerItem] = []
@@ -118,7 +120,6 @@ class CatalogPlayerManager: ObservableObject {
             let player = AVQueuePlayer(items: items)
             
             players[video.id] = player
-                
             return player
         }
             
@@ -141,26 +142,24 @@ class CatalogPlayerManager: ObservableObject {
         getPlayer(for: video).pause()
     }
     
-    func pauseAllOthers(except video: Video) {
-        DispatchQueue.main.async {
-            for player in self.players {
-                if player.key != video.id {
-                    player.value.pause()
-                }
-            }
-        }
-    }
-    
     func getDurationOfVideo(video: Video) -> CMTime {
         let player = self.getPlayer(for: video)
         return player.currentItem?.duration ?? CMTime(value: 0, timescale: 1000)
     }
     
     // plays the video.
+    // plays the video.
     func play(for video: Video) {
-        let player = getPlayer(for: video)
-        observePlayer(video: video, to: player)
-        player.play()
+        
+        let queuePlayer = getPlayer(for: video)
+        if !isInBackground {
+            if queuePlayer.currentItem != queuePlayer.items().last {
+                queuePlayer.advanceToNextItem()
+            }
+        }
+        self.observeStatus(video: video, player: queuePlayer)
+        self.observePlayer(video: video, to: queuePlayer)
+        queuePlayer.play()
     }
 
     // this function initializes the physical command center controls.
@@ -383,13 +382,13 @@ class CatalogPlayerManager: ObservableObject {
         }
     }
     
-    private func observeStatus(video: Video, player: AVPlayer) {
+    private func observeStatus(video: Video, player: AVQueuePlayer) {
         self.videoCancellables[video.id]?.cancel()
 
 //        if let player = viewModel.playerManager?.getPlayer(for: video) {
         
         self.videoCancellables[video.id] = AnyCancellable(
-                (player.currentItem?
+            (player.currentItem?
                     .publisher(for: \.status)
                     .sink { status in
                         switch status {
@@ -425,51 +424,52 @@ class CatalogPlayerManager: ObservableObject {
             )
     }
     
-    private func observePlayer(video: Video, to player: AVPlayer) {
-    
-        if let timeObserverToken = timeObserverToken {
-            NotificationCenter.default.removeObserver(timeObserverToken)
-            self.timeObserverToken = nil
-        }
-        
-    //        DispatchQueue.global(qos: .userInitiated).async {
+    private func observePlayer(video: Video, to player: AVQueuePlayer) {
+        if let item = player.currentItem {
+            if let timeObserverToken = timeObserverToken {
+                NotificationCenter.default.removeObserver(timeObserverToken)
+                self.timeObserverToken = nil
+            }
+            
+            //        DispatchQueue.global(qos: .userInitiated).async {
             print("Attached observer to \(player.currentItem)")
-    
+            
             player.currentItem?.asset.loadValuesAsynchronously(forKeys: ["duration"]) {
-                    DispatchQueue.main.async {
-                        let duration = player.currentItem?.asset.duration
-                        self.playerTimes[video.id] = duration ?? CMTime(value: 0, timescale: 1000)
-    
-                        self.timeObserverToken = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1000), queue: .main) { time in
-                            self.playerTimes[video.id] = time
-                            self.onChange?()
-//                            self.playerProgress = time.seconds / (duration?.seconds ?? 1.0)
-//                            self.timedPlayer = player
-                        }
+                DispatchQueue.main.async {
+                    let duration = item.asset.duration
+                    self.playerTimes[video.id] = duration ?? CMTime(value: 0, timescale: 1000)
+                    
+                    self.timeObserverToken = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1000), queue: .main) { time in
+                        self.playerTimes[video.id] = time
+                        self.onChange?()
+                        //                            self.playerProgress = time.seconds / (duration?.seconds ?? 1.0)
+                        //                            self.timedPlayer = player
                     }
                 }
-    
+            }
+            
             print("Started Observing Video")
-    
+            
             if let endObserverToken = endObserverToken {
                 NotificationCenter.default.removeObserver(endObserverToken)
                 self.endObserverToken = nil
             }
-    
+            
             endObserverToken = NotificationCenter.default.addObserver(
                 forName: .AVPlayerItemDidPlayToEndTime,
-                object: player.currentItem,
+                object: item,
                 queue: .main
             ) { _ in
-
-                self.playSound()
-                self.seekTo(time: CMTime(value: 0, timescale: 1000))
-                self.pauseCurrentVideo()
-                self.catalog.nextVideo()
-                self.playCurrentVideo()
-
+                if item == player.items().last {
+                    self.playSound()
+                    self.pauseCurrentVideo()
+                    self.seekTo(time: CMTime(value: 0, timescale: 1000))
+                    self.catalog.nextVideo()
+                    self.playCurrentVideo()
+                }
             }
         }
+    }
     
     private func playSound() {
 

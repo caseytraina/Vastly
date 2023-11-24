@@ -1080,8 +1080,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "79"
             endingLineNumber = "79"
-            landmarkName = "getPlayer(for:)"
-            landmarkType = "7">
+            landmarkName = "CatalogPlayerManager"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1094,8 +1094,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "399"
-            endingLineNumber = "399"
+            startingLineNumber = "443"
+            endingLineNumber = "443"
             landmarkName = "observePlayer(video:to:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1110,8 +1110,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "400"
-            endingLineNumber = "400"
+            startingLineNumber = "444"
+            endingLineNumber = "444"
             landmarkName = "observePlayer(video:to:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1190,8 +1190,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "421"
-            endingLineNumber = "421"
+            startingLineNumber = "465"
+            endingLineNumber = "465"
             landmarkName = "observePlayer(video:to:)"
             landmarkType = "7">
             <Locations>
@@ -1238,8 +1238,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "385"
-            endingLineNumber = "385"
+            startingLineNumber = "429"
+            endingLineNumber = "429"
             landmarkName = "observePlayer(video:to:)"
             landmarkType = "7">
             <Locations>
@@ -1286,8 +1286,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "409"
-            endingLineNumber = "409"
+            startingLineNumber = "453"
+            endingLineNumber = "453"
             landmarkName = "observePlayer(video:to:)"
             landmarkType = "7">
             <Locations>

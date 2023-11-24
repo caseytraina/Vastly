@@ -26,7 +26,7 @@ class CatalogPlayerManager: ObservableObject {
     
     var onChange: (() -> Void)?
     
-    @Published var players: [String: AVPlayer] = [:]
+    @Published var players: [String: AVQueuePlayer] = [:]
     
     var videoStatuses: [String : VideoStatus] = [:] {
         didSet {
@@ -62,24 +62,68 @@ class CatalogPlayerManager: ObservableObject {
     }
     
     // This function returns the AVPlayer for a video on the fly
-    func getPlayer(for video: Video) -> AVPlayer {
+//    func getPlayer(for video: Video) -> AVPlayer {
+//        if let player = players[video.id] {
+//            if player.currentItem == nil {
+//                let item = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
+//                item.preferredPeakBitRate = 4000000
+//                item.preferredPeakBitRateForExpensiveNetworks = 3000000       
+//                player.replaceCurrentItem(with: item)
+//                self.observeStatus(video: video, player: player)
+//            }
+//            return player
+//        } else {
+//            let player = AVPlayer(url: video.url ?? URL(string: "www.google.com")!)
+//
+//            players[video.id] = player
+//            self.observeStatus(video: video, player: player)
+//            return player
+//        }
+//    }
+    
+    func getPlayer(for video: Video) -> AVQueuePlayer {
         if let player = players[video.id] {
             if player.currentItem == nil {
-                let item = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
-                item.preferredPeakBitRate = 4000000
-                item.preferredPeakBitRateForExpensiveNetworks = 3000000       
-                player.replaceCurrentItem(with: item)
-                self.observeStatus(video: video, player: player)
+
+                let vid = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
+                player.insert(vid, after: nil)
+
+                if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
+                    let intro = AVPlayerItem(url: url)
+                    player.insert(intro, after: nil)
+                }
+
+                players[video.id] = player
             }
+
+            if isInBackground && player.items().count == 1 {
+                if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
+                    let intro = AVPlayerItem(url: url)
+                    player.insert(intro, after: nil)
+                }
+            }
+            
             return player
         } else {
-            let player = AVPlayer(url: video.url ?? URL(string: "www.google.com")!)
+            var items: [AVPlayerItem] = []
 
+            if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
+                let intro = AVPlayerItem(url: url)
+                items.append(intro)
+            }
+            
+            let vid = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
+            items.append(vid)
+            
+            let player = AVQueuePlayer(items: items)
+            
             players[video.id] = player
-            self.observeStatus(video: video, player: player)
+                
             return player
         }
+            
     }
+    
     
     func getStatus(for video: Video) -> VideoStatus {
         if let status = self.videoStatuses[video.id] {

@@ -33,7 +33,6 @@ enum Page: CaseIterable {
     
     var iconInactive: String {
         switch self {
-            
         case .home:
             return "home"
         case .search:
@@ -58,13 +57,6 @@ enum Page: CaseIterable {
             return "person-fill"
         }
     }
-    
-//    var image: UIImage {
-//        let symbol = MaterialDesignSymbol(icon: .home24px, size:25)
-//        symbol.addAttribute(attributeName: .foregroundColor, value: UIColor.red)
-//        let iconImage = symbol.image(size: CGSize(width:25, height:25))
-//    }
-//    
 }
 
 struct HomeView: View {
@@ -72,7 +64,6 @@ struct HomeView: View {
     @EnvironmentObject var authModel: AuthViewModel
 
     @Environment(\.scenePhase) private var scenePhase
-//    @State var activeChannel: Channel = FOR_YOU_CHANNEL
     @State var currentPage: Page = .home
     @State var isPlaying = true
     
@@ -112,14 +103,11 @@ struct HomeView: View {
                     .onChange(of: scenePhase) { newScenePhase in
                         switch newScenePhase {
                         case .active:
-//                            viewModel.updateBackgroundState(isInBackground: false)
                             viewModel.playerManager?.updateBackgroundState(isInBackground: false)
                             print("SCENE: ACTIVE")
                         case .background:
-//                            videoPlayerManager.updateBackgroundState(isInBackground: true)
                             viewModel.playerManager?.updateBackgroundState(isInBackground: true)
                             print("SCENE: BACKGROUND")
-
                         default:
                             break
                         }
@@ -129,7 +117,6 @@ struct HomeView: View {
                         Spacer()
                         NavBar(selected: $currentPage)
                             .frame(width: geo.size.width, height: geo.size.width / 5)
-                        //                        .ignoresSafeArea()
                     }
                     .ignoresSafeArea()
                 }

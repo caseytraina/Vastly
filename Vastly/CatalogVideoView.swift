@@ -128,7 +128,7 @@ struct CatalogVideoView: View {
             .padding(.horizontal, 10)
             
 
-            if abs(i - viewModel.currentChannel.currentVideoIndex) <= 1 {
+            if viewModel.videoIsNearCurrent(within: 1, i: i) && channel == currentChannel.channel {
                 
                 if viewModel.getVideoStatus(video) == .failed {
                     VideoFailedView()
@@ -203,7 +203,6 @@ struct CatalogVideoView: View {
                         
                         
                         HStack(alignment: .center) {
-//                            if channel == viewModel.currentChannel.channel{
                             AsyncImage(url: video.author.fileName) { image in
                                     image.resizable()
                                 } placeholder: {

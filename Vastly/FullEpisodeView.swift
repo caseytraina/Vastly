@@ -30,11 +30,7 @@ struct FullEpisodeView: View {
                     Color("BackgroundColor")
                         .ignoresSafeArea()
                     VStack {
-//                        if let text = title {
-//                        MyText(text: "Full Episode From:", size: geo.size.width * 0.05, bold: false, alignment: .leading, color: .white)
-//                        MyText(text: "\(video.title)", size: geo.size.width * 0.05, bold: true, alignment: .leading, color: .white)
 
-//                        }
                         
                         if let player = youtubePlayer {
                             YouTubePlayerView(
@@ -65,45 +61,7 @@ struct FullEpisodeView: View {
                             VideoLoadingView()
                                 .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)
                         }
-                        
-//                        HStack {
-//                            Button(action: {
-//                                withAnimation {
-//                                    publisherIsTapped = true
-//                                }
-//                            }, label: {
-//
-//
-//                                HStack(alignment: .center) {
-//                                    AsyncImage(url: video.author.fileName) { image in
-//                                        image.resizable()
-//                                    } placeholder: {
-//                                        ZStack {
-//                                            Color("BackgroundColor")
-//                                            MyText(text: "?", size: geo.size.width * 0.05, bold: true, alignment: .center, color: .white)
-//                                        }
-//                                    }
-//                                    .frame(width: geo.size.width * 0.125, height: geo.size.width * 0.125)
-//                                    .clipShape(RoundedRectangle(cornerRadius: 5)) // Clips the AsyncImage to a rounded
-//                                    .padding(.leading)
-//                                    //                                        .animation(.easeOut, value: activeChannel)
-//                                    //                                        .transition(.opacity)
-//
-//                                    MyText(text: video.author.name ?? "Unknown Author", size: geo.size.width * 0.04, bold: true, alignment: .leading, color: .white)
-//                                        .padding(0)
-//                                        .lineLimit(2)
-//                                    //                                            .animation(.easeOut, value: activeChannel)
-//                                    //                                            .transition(.opacity)
-//                                    Spacer()
-//                                }
-//                                .padding(.vertical)
-//
-//                            })
-//
-//                            Spacer()
-//
-//
-//                        }
+
                     }
                 }
                 .onAppear {
@@ -125,11 +83,3 @@ struct FullEpisodeView: View {
     } // body
 
 }
-
-//
-//
-//struct FullEpisodeView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        FullEpisodeView()
-//    }
-//}

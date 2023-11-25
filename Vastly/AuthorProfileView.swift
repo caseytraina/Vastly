@@ -213,14 +213,6 @@ struct AuthorProfileView: View {
     
 }
 
-//struct AuthorProfileView_Previews: PreviewProvider {
-//    
-//    
-//    
-//    static var previews: some View {
-//        AuthorProfileView(author: EXAMPLE_AUTHOR)
-//    }
-//}
 extension UIImage {
     var averageColor: Color? {
         guard let inputImage = CIImage(image: self) else { return nil }

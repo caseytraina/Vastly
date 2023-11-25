@@ -17,9 +17,7 @@ struct AudioOverlay: View {
     
     @State var time: CMTime?
     @State var duration: CMTime?
-//    @State var currentDuration: CMTime =
-//    @State var totalDuration: CMTime
-    
+
     @EnvironmentObject var viewModel: CatalogViewModel
     
     @Binding var playing: Bool
@@ -69,9 +67,6 @@ struct AudioOverlay: View {
                             }
                         }
 
-//                        MyText(text: author.name ?? "", size: geo.size.width * 0.04, bold: true, alignment: .center, color: .white)
-
-                        
                     }
                 }
             }
@@ -81,12 +76,10 @@ struct AudioOverlay: View {
             
             let player = viewModel.playerManager?.getPlayer(for: self.video)
             
-//            time = v.currentTime()
             duration = viewModel.playerManager?.getPlayer(for: self.video).currentItem?.duration
             player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.1, preferredTimescale: 600), queue: .main) { time in
                 self.time = time
-//                self.playerTime = time
-//                self.playerProgress = time.seconds / (duration?.seconds ?? 1.0)
+
             }
         }
 
@@ -103,8 +96,3 @@ extension CMTime {
     }
 }
 
-//struct AudioOverlay_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AudioOverlay(author: EXAMPLE_AUTHOR)
-//    }
-//}

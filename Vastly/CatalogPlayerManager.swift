@@ -76,14 +76,6 @@ class CatalogPlayerManager: ObservableObject {
         self.catalog = catalog
         self._isVideoMode = isVideoMode
         setupCommandCenter()
-//        do {
-//            try handleNowPlayableConfiguration(commands: self.defaultDisabledCommands,
-//                                               disabledCommands: self.defaultDisabledCommands,
-//                                               commandHandler: handleCommand(command:event:),
-//                                               interruptionHandler: handleInterrupt(with:))
-//        } catch {
-//            print("**** There was an issue configuring commands: \(error)")
-//        }
     }
     
     // This function returns the AVPlayer for a video on the fly
@@ -101,7 +93,6 @@ class CatalogPlayerManager: ObservableObject {
             if player.currentItem == nil {
                 let vid = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
                 player.insert(vid, after: nil)
-//                player.replaceCurrentItem(with: vid)
 
                 if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
                     let intro = AVPlayerItem(url: url)
@@ -165,121 +156,6 @@ class CatalogPlayerManager: ObservableObject {
         self.updateNowPlayingInfo(for: video)
         queuePlayer.play()
     }
-
-    func handleNowPlayableConfiguration(commands: [NowPlayableCommand],
-                                        disabledCommands: [NowPlayableCommand],
-                                        commandHandler: @escaping (NowPlayableCommand, MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus,
-                                        interruptionHandler: @escaping (NowPlayableInterruption) -> Void) throws {
-        
-        // Remember the interruption handler.
-//        self.interruptionHandler = interruptionHandler
-        
-        // Use the default behavior for registering commands.
-        try configureRemoteCommands(commands, disabledCommands: disabledCommands, commandHandler: commandHandler)
-    }
-    
-    func configureRemoteCommands(_ commands: [NowPlayableCommand],
-                                 disabledCommands: [NowPlayableCommand],
-                                 commandHandler: @escaping (NowPlayableCommand, MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus) throws {
-        
-        // Check that at least one command is being handled.
-        guard commands.count > 1 else { throw NowPlayableError.noRegisteredCommands }
-        
-        // Configure each command.
-        for command in NowPlayableCommand.allCases {
-            print("**** Init command: \(command)")
-            // Remove any existing handler.
-            command.removeHandler()
-            
-            // Add a handler if necessary.
-            if commands.contains(command) {
-                command.addHandler(commandHandler)
-            }
-            
-            // Disable the command if necessary.
-            command.setDisabled(disabledCommands.contains(command))
-        }
-    }
-    
-    // Handle a command registered with the Remote Command Center.
-    private func handleCommand(command: NowPlayableCommand, event: MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus {
-        
-        switch command {
-            
-        case .pause:
-            self.pauseCurrentVideo()
-            
-        case .play:
-            self.playCurrentVideo()
-            
-        case .stop:
-            self.pauseCurrentVideo()
-            
-        case .togglePausePlay:
-
-            self.pauseCurrentVideo()
-            
-        case .nextTrack:
-            self.pauseCurrentVideo()
-            self.catalog.nextVideo()
-            self.playCurrentVideo()
-            
-        case .previousTrack:
-            self.pauseCurrentVideo()
-            self.seekTo(time: CMTime(value: 0, timescale: 0))
-            self.catalog.previousVideo()
-            self.playCurrentVideo()
-            
-//        case .changePlaybackRate:
-//            guard let event = event as? MPChangePlaybackRateCommandEvent else { return .commandFailed }
-//            setPlaybackRate(event.playbackRate)
-            
-//        case .seekBackward:
-//            guard let event = event as? MPSeekCommandEvent else { return .commandFailed }
-//            setPlaybackRate(event.type == .beginSeeking ? -3.0 : 1.0)
-//            
-//        case .seekForward:
-//            guard let event = event as? MPSeekCommandEvent else { return .commandFailed }
-//            setPlaybackRate(event.type == .beginSeeking ? 3.0 : 1.0)
-            
-        case .skipBackward:
-            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
-            self.seekForward(by: 15)
-
-        case .skipForward:
-            guard let event = event as? MPSkipIntervalCommandEvent else { return .commandFailed }
-            self.seekForward(by: 15)
-            
-        case .changePlaybackPosition:
-            guard let event = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
-            self.seekTo(time: CMTime(seconds: event.positionTime, preferredTimescale: 1))
-            
-//        case .enableLanguageOption:
-//            guard let event = event as? MPChangeLanguageOptionCommandEvent else { return .commandFailed }
-//            guard didEnableLanguageOption(event.languageOption) else { return .noActionableNowPlayingItem }
-
-//        case .disableLanguageOption:
-//            guard let event = event as? MPChangeLanguageOptionCommandEvent else { return .commandFailed }
-//            guard didDisableLanguageOption(event.languageOption) else { return .noActionableNowPlayingItem }
-
-        default:
-            break
-        }
-        
-        return .success
-    }
-    
-    // Handle a session interruption.
-    
-    private func handleInterrupt(with interruption: NowPlayableInterruption) {
-        
-        
-    }
-    
-    enum NowPlayableInterruption {
-        case began, ended(Bool), failed(Error)
-    }
-
     
     // this function initializes the physical command center controls.
     func setupCommandCenter() {
@@ -337,7 +213,6 @@ class CatalogPlayerManager: ObservableObject {
         
         commandCenter.nextTrackCommand.addTarget { [self] _ in
             self.catalog.nextVideo()
-//            self?.updateStaticInfo(for: self?.getCurrentVideo() ?? EMPTY_VIDEO)
             self.updateNowPlayingInfo(for: self.getCurrentVideo() ?? EMPTY_VIDEO)
             print("**** Successful Lockscreen action: Next")
             return .success
@@ -345,7 +220,6 @@ class CatalogPlayerManager: ObservableObject {
         
         commandCenter.previousTrackCommand.addTarget { [self] _ in
             self.catalog.previousVideo()
-//            self?.updateStaticInfo(for: self?.getCurrentVideo() ?? EMPTY_VIDEO)
             self.updateNowPlayingInfo(for: self.getCurrentVideo() ?? EMPTY_VIDEO)
             print("**** Successful Lockscreen action: Previous")
             return .success
@@ -538,8 +412,6 @@ class CatalogPlayerManager: ObservableObject {
                     self.timeObserverToken = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1000), queue: .main) { time in
                         self.playerTimes[video.id] = time
                         self.onChange?()
-                        //                            self.playerProgress = time.seconds / (duration?.seconds ?? 1.0)
-                        //                            self.timedPlayer = player
                     }
                 }
             }

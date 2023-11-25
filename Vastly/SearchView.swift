@@ -14,11 +14,8 @@ struct SearchView: View {
 
     var authors: [Author]
 
-//    @StateObject var controller: NewAlgoliaController
-//
     let color = Color(red: 18.0 / 255, green: 18.0 / 255, blue: 18.0 / 255)
 
-//    @State var text = ""
 
     @State var author = EXAMPLE_AUTHOR
 

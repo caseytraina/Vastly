@@ -11,7 +11,7 @@ struct VideoListView: View {
     @EnvironmentObject var viewModel: CatalogViewModel
 
     var title: String
-    let color = Color(red: 18.0 / 255, green: 18.0 / 255, blue: 18.0 / 255)
+    let color = Color(red: 5 / 255, green: 5 / 255, blue: 5 / 255)
 
     @State var author = EXAMPLE_AUTHOR
     @State var current = 0
@@ -42,14 +42,6 @@ struct VideoListView: View {
                     } else {
                         ScrollView(showsIndicators: false) {
                             ForEach(videos) { video in
-//                                NavigationLink(destination: SearchVideoView(query: text, vids: $videos, current_playing: $current, isPlaying: $isPlaying, publisherIsTapped: $dummyPubTapped)
-//                                    .environmentObject(authModel)
-//                                    .environmentObject(viewModel)
-//                                    .background(Color("BackgroundColor")),
-//                                    isActive: $isLinkActive)
-//                                {
-//                                    EmptyView()
-//                                }
                                 NavigationLink(destination:
                                     SingleVideoView(video: videos[current])
                                        .environmentObject(authModel)
@@ -88,12 +80,11 @@ struct VideoListView: View {
                                         }
                                         Spacer()
                                     }
-                                    .frame(width: geo.size.width, height: geo.size.width * 0.25)
+                                    .frame(width: geo.size.width*0.9, height: geo.size.width * 0.25)
                                     .background(
                                         RoundedRectangle(cornerRadius: 10)
                                             .foregroundColor(color)
                                     )
-
                                 })
                                 .padding(.top)
                             }

@@ -28,10 +28,8 @@ struct VideoThumbnailView: View {
                 }
                 VStack {
                     MyText(text: "Vastly", size: geo.size.width * 0.05, bold: true, alignment: .center, color: .accentColor)
-                    //                    MyText(text: "We'll be right with you", size: geo.size.width * 0.03, bold: false, alignment: .center, color: Color("AccentGray"))
                     MyText(text: "Loading...", size: geo.size.width * 0.04, bold: true, alignment: .center, color: .white)
                         .padding()
-                    
                     
                 }
                 

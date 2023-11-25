@@ -29,8 +29,7 @@ struct MyText: View {
             Text(text)
                 .foregroundColor(color)
                 .font(Font.custom(bold ? "CircularStd-Bold" : "CircularStd-Book", size: size))
-            //            .padding(.horizontal, 15)
-//                .padding(.vertical, bold ? 5 : 0)
+
                 .multilineTextAlignment(alignment)
 
     }

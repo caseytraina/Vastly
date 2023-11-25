@@ -28,9 +28,6 @@ struct FullEpisodeButton: View {
                         .foregroundStyle(.white)
                     
                     MyText(text: "Full Episode", size: 16, bold: true, alignment: .leading, color: .white)
-                    //                    .brightness(-0.5)
-                    //                    .padding(./*vertical*/, 10)
-//                        .padding(10)
 
                         .sheet(isPresented: $clicked, onDismiss: {
                             isPlaying = true
@@ -49,16 +46,9 @@ struct FullEpisodeButton: View {
                 )
                 
             })
-//            .frame(width: geo.size.width, height: geo.size.height)
 
             
 //        }
     }
 }
 
-//struct FullEpisodeButton_Previews: PreviewProvider {
-//    static var previews: some View {
-//        FullEpisodeButton()
-////            .frame(width: screenSize.width * 0.5, height: screenSize.height * 0.1)
-//    }
-//}

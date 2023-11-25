@@ -136,6 +136,10 @@ class CatalogViewModel: ObservableObject {
             Analytics.videoClicked(video: video, user: authModel.user, profile: authModel.current_user, watchedIn: currentChannel.channel)
         }
     }
+    
+    func videoIsNearCurrent(within bound: Int, i: Int) -> Bool {
+        return abs(i - self.currentChannel.currentVideoIndex) <= bound
+    }
 
     func changeToVideoIndex(_ index: Int, shouldPlay: Bool) {
         self.pauseCurrentVideo()
@@ -286,9 +290,6 @@ class CatalogViewModel: ObservableObject {
 
     // This function turns a path to a URL of a thumbnail, connecting to our CDN imagekit which is a URL-based video and image delivery and transformation company.
     private func pathToURL(_ path: String) -> URL {
-//        let FIREBASE_ENDPOINT = "https://firebasestorage.googleapis.com/v0/b/rizeo-40249.appspot.com/o/"
-//        var fixedPath = path.replacingOccurrences(of: " ", with: "%20")
-//        fixedPath = fixedPath.replacingOccurrences(of: "/", with: "%2F")
 
         var allowedCharacters = CharacterSet.urlQueryAllowed
         allowedCharacters.insert("/")

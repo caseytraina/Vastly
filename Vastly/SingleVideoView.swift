@@ -39,20 +39,28 @@ struct SingleVideoView: View {
                 .ignoresSafeArea()
             GeometryReader { geo in
                 VStack(alignment: .leading) {
-
-                    HStack(alignment: .center) {
-                        MyText(text: video.title, size: 20, bold: true, alignment: .leading, color: .gray)
-                            .brightness(0.4)
-                            .lineLimit(2)
+                    Spacer()
+                    HStack {
                         Spacer()
                         Toggle(isOn: $videoMode) {
                             
                         }
                         .toggleStyle(AudioToggleStyle(color: channel.color))
                         .padding(10)
-                        .frame(width: screenSize.width * 0.1)
+                        
+                        Spacer()
                     }
-                    .padding(.horizontal)
+
+//                    .frame(width: screenSize.width * 0.1)
+//                    HStack(alignment: .center) {
+                        MyText(text: video.title, size: 20, bold: true, alignment: .leading, color: .gray)
+                            .brightness(0.4)
+                            .lineLimit(2)
+                            .padding(.horizontal)
+//                        Spacer()
+//
+//                    }
+//                    .padding(.horizontal)
                     
                     ZStack {
                         

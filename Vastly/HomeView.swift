@@ -33,7 +33,6 @@ enum Page: CaseIterable {
     
     var iconInactive: String {
         switch self {
-            
         case .home:
             return "home"
         case .search:
@@ -58,13 +57,6 @@ enum Page: CaseIterable {
             return "person-fill"
         }
     }
-    
-//    var image: UIImage {
-//        let symbol = MaterialDesignSymbol(icon: .home24px, size:25)
-//        symbol.addAttribute(attributeName: .foregroundColor, value: UIColor.red)
-//        let iconImage = symbol.image(size: CGSize(width:25, height:25))
-//    }
-//    
 }
 
 struct HomeView: View {
@@ -72,7 +64,6 @@ struct HomeView: View {
     @EnvironmentObject var authModel: AuthViewModel
 
     @Environment(\.scenePhase) private var scenePhase
-//    @State var activeChannel: Channel = FOR_YOU_CHANNEL
     @State var currentPage: Page = .home
     @State var isPlaying = true
     
@@ -85,12 +76,6 @@ struct HomeView: View {
                 if viewModel.isProcessing || authModel.current_user == nil {
                     LoadingView()
                 } else {
-//                    ForEach(Array(viewModel.catalog.channels().enumerated()), id: \.offset) { index, channel in
-//                        LinearGradient(gradient: Gradient(colors: myGradient(channel)), startPoint: .topLeading, endPoint: .bottom)
-//                            .ignoresSafeArea()
-//                            .opacity(channel == viewModel.catalog.activeChannel ? 1 : 0)
-//                            .animation(.easeInOut(duration: 0.75), value: viewModel.catalog.activeChannel)
-//                    }
                     VStack {
                         switch currentPage {
                         case .home:
@@ -99,11 +84,12 @@ struct HomeView: View {
                                 .environmentObject(authModel)
                             
                         case .search:
-                            NewSearchBar(all_authors: viewModel.authors, oldPlaying: $isPlaying)
+                            SearchView(authors: viewModel.authors,
+                                       playing: $isPlaying)
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
                         case .bookmarks:
-                            LikesListView()
+                            LikesListView(playing: $isPlaying)
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
                         case .profile:
@@ -117,14 +103,14 @@ struct HomeView: View {
                     .onChange(of: scenePhase) { newScenePhase in
                         switch newScenePhase {
                         case .active:
-//                            viewModel.updateBackgroundState(isInBackground: false)
                             viewModel.playerManager?.updateBackgroundState(isInBackground: false)
                             print("SCENE: ACTIVE")
                         case .background:
-//                            videoPlayerManager.updateBackgroundState(isInBackground: true)
                             viewModel.playerManager?.updateBackgroundState(isInBackground: true)
+                            if viewModel.isVideoMode {
+                                viewModel.pauseCurrentVideo()
+                            }
                             print("SCENE: BACKGROUND")
-
                         default:
                             break
                         }
@@ -134,7 +120,6 @@ struct HomeView: View {
                         Spacer()
                         NavBar(selected: $currentPage)
                             .frame(width: geo.size.width, height: geo.size.width / 5)
-                        //                        .ignoresSafeArea()
                     }
                     .ignoresSafeArea()
                 }

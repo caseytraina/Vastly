@@ -66,7 +66,7 @@ struct ProfileView: View {
                         }
                         
                         NavigationLink(destination: {
-                            ViewingHistory()
+                            ViewingHistory(playing: $isPlaying)
                                 .environmentObject(authModel)
                                 .environmentObject(viewModel)
                         }, label: {
@@ -89,9 +89,6 @@ struct ProfileView: View {
                             }
                             
                         })
-
-//                        .frame(width: geo.size.width*0.75)
-
                         Spacer()
                         Button(action: {
                             viewModel.pauseCurrentVideo()
@@ -118,8 +115,3 @@ struct ProfileView: View {
     }
 }
 
-//struct SignOutView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SignOutView()
-//    }
-//}

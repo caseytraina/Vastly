@@ -23,15 +23,17 @@ struct FullscreenVideoPlayer: UIViewControllerRepresentable {
         
         // Get player from view model here since @EnvironmentObject is available now
         controller.player = viewModel.playerManager?.getPlayer(for: video)
-        
+
 //        controller.player = player
         controller.allowsPictureInPicturePlayback = false
         controller.exitsFullScreenWhenPlaybackEnds = true
         controller.showsPlaybackControls = false
+        controller.player?.allowsExternalPlayback = true
         controller.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
         controller.player?.automaticallyWaitsToMinimizeStalling = false
         controller.player?.currentItem?.preferredPeakBitRate = 4000000
         controller.player?.currentItem?.preferredPeakBitRateForExpensiveNetworks = 3000000
+        controller.updatesNowPlayingInfoCenter = false
         
         return controller
     }

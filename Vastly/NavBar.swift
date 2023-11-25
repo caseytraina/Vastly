@@ -64,11 +64,4 @@ struct NavBar: View {
         
     }
 }
-//
-//#Preview {
-//    NavBar()
-//}
-
-
-
 

@@ -11,13 +11,19 @@ struct ViewingHistory: View {
     @EnvironmentObject var authModel: AuthViewModel
     @EnvironmentObject var viewModel: CatalogViewModel
     
+    @Binding var playing: Bool
+    
     var body: some View {
-        VideoListView(title: "Viewing History",
-                      icon: "clock.arrow.circlepath",
-                      videoList: $authModel.viewedVideos,
-                      loading: $authModel.viewedVideosProcessing,
-                      loadFunc: authModel.fetchViewedVideos)
+        VideoListView(title: "Viewing History", 
+                            videos: $authModel.viewedVideos,
+                            playing: $playing)
         .environmentObject(viewModel)
         .environmentObject(authModel)
+        .onAppear {
+            Task {
+                await authModel.fetchViewedVideos(authors: viewModel.authors)
+            }
+        }
+
     }
 }

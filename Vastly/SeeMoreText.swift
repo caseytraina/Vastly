@@ -48,9 +48,3 @@ struct SeeMoreText: View {
 
     }
 }
-
-//struct SeeMoreText_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SeeMoreText(text: "hello", size: 24, bold: true, alignment: .center, color: .black)
-//    }
-//}

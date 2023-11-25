@@ -40,12 +40,7 @@ struct Carousel: View {
                                                     .brightness(0.3),
                                                 alignment: .bottom
                                             )
-//                                            .background(Capsule()
-//                                                .fill(LinearGradient(gradient: Gradient(colors: [selected == viewModel.channels[i] ? selected.color.opacity(0.75) : .white.opacity(0.1), .white.opacity(0.1)]), startPoint: .topLeading, endPoint: .bottomTrailing))
-//                                                )
-//                                            .overlay(Capsule()
-//                                                .stroke(Color.black, lineWidth: 1)
-//                                                .shadow(color: Color.black.opacity(selected == viewModel.channels[i] ? 1.0 : 0.0), radius: 5, x: 0, y: 5))
+
                                             .animation(.easeOut, value: viewModel.catalog.activeChannel)
                                             .transition(.opacity)
                                         

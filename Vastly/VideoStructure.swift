@@ -9,6 +9,7 @@ import Foundation
 import AVKit
 import SwiftUI
 import Firebase
+import MediaPlayer
 
 // Videos are queried from Firebase as FirebaseData, then translated into UnprocessedVideos before being used as type Video.
 // Read more about video querying in CatalogViewModel
@@ -32,6 +33,35 @@ struct FirebaseData: Codable {
         case channels = "channels"
         case youtubeURL
     }
+}
+
+struct NowPlayableStaticMetadata {
+    
+    let assetURL: URL                   // MPNowPlayingInfoPropertyAssetURL
+    let mediaType: MPNowPlayingInfoMediaType
+                                        // MPNowPlayingInfoPropertyMediaType
+    let isLiveStream: Bool              // MPNowPlayingInfoPropertyIsLiveStream
+    
+    let title: String                   // MPMediaItemPropertyTitle
+    let artist: String?                 // MPMediaItemPropertyArtist
+    let artwork: MPMediaItemArtwork?    // MPMediaItemPropertyArtwork
+    
+    let albumArtist: String?            // MPMediaItemPropertyAlbumArtist
+    let albumTitle: String?             // MPMediaItemPropertyAlbumTitle
+    
+}
+
+struct NowPlayableDynamicMetadata {
+    
+    let rate: Float                     // MPNowPlayingInfoPropertyPlaybackRate
+    let position: Float                 // MPNowPlayingInfoPropertyElapsedPlaybackTime
+    let duration: Float                 // MPMediaItemPropertyPlaybackDuration
+    
+    let currentLanguageOptions: [MPNowPlayingInfoLanguageOption]
+                                        // MPNowPlayingInfoPropertyCurrentLanguageOptions
+    let availableLanguageOptionGroups: [MPNowPlayingInfoLanguageOptionGroup]
+                                        // MPNowPlayingInfoPropertyAvailableLanguageOptions
+    
 }
 
 struct UnprocessedVideo: Codable {

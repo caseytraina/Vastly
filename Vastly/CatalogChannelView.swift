@@ -104,24 +104,6 @@ struct CatalogChannelView: View {
                         viewModel.pauseCurrentVideo()
                     }
                 }
-                .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
-                    DispatchQueue.main.async {
-                        updateMetadata()
-                    }
-                    print("Available again")
-                }
-                .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataWillBecomeUnavailableNotification)) { _ in
-                    DispatchQueue.main.async {
-                        updateMetadata()
-                    }
-                    print("From Away")
-                }
-                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
-                    DispatchQueue.main.async {
-                        updateMetadata()
-                    }
-                    print("From Background")
-                }
                 .onChange(of: playing) { newPlaying in
                     if newPlaying {
                         viewModel.playCurrentVideo()
@@ -137,7 +119,7 @@ struct CatalogChannelView: View {
                     }
                 }
                 if let openedVideo {
-                    NavigationLink("", destination: SingleVideoView(isActive: $isShareLinkActive, video: openedVideo))
+                    NavigationLink("", destination: SingleVideoView(video: openedVideo))
                         .environmentObject(viewModel)
                         .environmentObject(authModel)
                     .hidden()
@@ -213,11 +195,6 @@ struct CatalogChannelView: View {
     private func channelChanged(newChannel: Channel) {
         let impact = UIImpactFeedbackGenerator(style: .medium)
         impact.impactOccurred()
-        
-        let catalog = viewModel.catalog
-        if let currentVideo = catalog.currentVideo {
-            updateMetadata()
-        }
     }
     
     private func updateMetadata() {

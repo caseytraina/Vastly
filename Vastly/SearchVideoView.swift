@@ -79,25 +79,16 @@ struct SearchVideoView: View {
                         } // end scrollview
                         .frame(width: geo.size.width, height: geo.size.height)
                         .scrollDisabled(true)
-        //                    .id(activeChannel)
                         .clipped()
                         .onAppear {
-//                            videoViewModel.playerManager?.updateQueue(with: vids)
                             isPlaying = true
 
                             withAnimation(.easeOut(duration: 0.125)) {
                                 proxy.scrollTo(current_playing, anchor: .top)
                             }
-                            
-//                            videoViewModel.playerManager?.changeToIndex(to: current_playing, shouldPlay: isPlaying)
                             tempChannel = viewModel.setTemporaryChannel(name: "Search", videos: vids)
                             viewModel.changeToVideoIndex(current_playing, shouldPlay: isPlaying)
-                            
-//                            previous = current_playing
-//                            trackAVStatus(for: getVideo(current_playing))
-//                            videoViewModel.playerManager?.pauseAllOthers(except: getVideo(current_playing))
                             shareURL = videoShareURL(getVideo(current_playing))
-//                            play(current_playing)
 
                         }
                         .onDisappear {
@@ -114,33 +105,15 @@ struct SearchVideoView: View {
                                 withAnimation(.easeOut(duration: 0.125)) {
                                     proxy.scrollTo(newIndex, anchor: .top)
                                 }
-                                
                                 recent_change = true
-    //                            videoListNum = min(vids.count, videoListNum)
-                                
-//                                trackAVStatus(for: getVideo(newIndex))
                                 viewModel.changeToVideoIndex(newIndex, shouldPlay: isPlaying)
-//                                videoViewModel.playerManager?.changeToIndex(to: newIndex, shouldPlay: isPlaying)
-//                                videoViewModel.playerManager?.updateNowPlayingInfo(for: getVideo(newIndex))
-
-//                                pause(previous)
-//                                play(newIndex)
-                                
                                 DispatchQueue.main.async {
                                     liked = false
                                     liked = videoIsLiked(current_playing)
                                 }
-                                
-//                                if newIndex >= videoListNum - 2 {
-//                                    videoListNum = min(videoListNum + 15, vids.count)
-//                                }
-                                
                                 previous = newIndex
                             }
-                            
 
-                            
-                            
                         }
                     .frame(width: geo.size.width, height: geo.size.height)
                     
@@ -191,13 +164,6 @@ struct SearchVideoView: View {
     }
     private func renderVStackVideo(geoWidth: CGFloat, geoHeight: CGFloat, video: Video, next: Video?, i: Int) -> some View {
         VStack(alignment: .leading) {
-//            HStack {
-//                if let title {
-//                    MyText(text: title, size: 24, bold: true, alignment: .leading, color: .white)
-//                        .padding(.horizontal)
-//                }
-//            }
-            
             HStack {
                 
                 if !videoMode {
@@ -219,10 +185,7 @@ struct SearchVideoView: View {
                 .padding(.bottom, 10)
                 .frame(width: screenSize.width * 0.15)
             } // end hstack
-            //                                }
-            
-            //                                if (abs(i - current_playing) <= 1 && channel == activeChannel) ||
-            //                                    (i == current_playing && abs((Channel.allCases.firstIndex(of: activeChannel) ?? 0) - (Channel.allCases.firstIndex(of: channel) ?? 0)) <= 1) {
+
             if (abs(i - current_playing) <= 1) {
                 if let manager = viewModel.playerManager {
 
@@ -265,8 +228,6 @@ struct SearchVideoView: View {
                         }  else {
                             VideoThumbnailView(video: video)
                                 .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT)// + PROGRESS_BAR_HEIGHT)
-//                                                        VideoLoadingView()
-//                                                            .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT + PROGRESS_BAR_HEIGHT)
                         }
                     } // end if
                 }
@@ -290,9 +251,7 @@ struct SearchVideoView: View {
                         .lineLimit(1)
                         .padding(.trailing)
                 } // end hstack
-//                .frame(width: geoWidth)
-                
-                
+
                 VStack {
                     
                     HStack {
@@ -318,7 +277,6 @@ struct SearchVideoView: View {
                             .transition(.opacity)
                             .animation(.easeOut, value: liked)
                     } // end hstack
-//                    .frame(width: geoWidth)
                     
                     HStack {
                         Button(action: {
@@ -337,9 +295,7 @@ struct SearchVideoView: View {
                     
                 }
                 .padding(.vertical, 5)
-//                .frame(width: geoWidth)
-                //            .padding(.horizontal, 15)
-                
+
                 VStack(alignment: .leading) {
                     
                     MyText(text: video.bio, size: 16, bold: false, alignment: .leading, color: Color("AccentGray"))
@@ -354,7 +310,6 @@ struct SearchVideoView: View {
                         if let _ = video.youtubeURL {
                             
                             FullEpisodeButton(video: video, isPlaying: $isPlaying)
-//                                .frame(maxWidth: geoWidth * 0.5, maxHeight: geoHeight * 0.075)
                                 .padding(.trailing, 5)
 
                         }
@@ -368,12 +323,9 @@ struct SearchVideoView: View {
                         Spacer()
                     }
                     .padding(.vertical, 10)
-                    //                    .padding(.horizontal, 15)
-                    
                     Spacer()
                     
                 } // end vstack
-//                .frame(width: geoWidth)
                 
             }
             .padding(.horizontal, 10)
@@ -382,11 +334,7 @@ struct SearchVideoView: View {
         .frame(width: geoWidth, height: geoHeight)
         .clipped()
         .offset(y: dragOffset)
-            
-            
     }
-    
-    
     private func videoIsLiked(_ i: Int) -> Bool {
         
         if let user = authModel.current_user {
@@ -398,19 +346,10 @@ struct SearchVideoView: View {
     }
     
     private func getVideo(_ i: Int) -> Video {
-//        if let vids = viewModel.videos[channel] {
-//            if i < vids.count {
-//                return vids[i]
-//            }
-//        }
         if i < vids.count {
             return vids[i]
         }
         return EMPTY_VIDEO
-    }
-    
-    private func getNext() -> Video {
-        return getVideo(current_playing + 1)
     }
     
     private func toggleLike(_ i: Int) {
@@ -448,49 +387,6 @@ struct SearchVideoView: View {
         return URL(string: string) ?? EMPTY_VIDEO.url!
     }
     
-//    private func trackAVStatus(for video: Video) {
-//        statusObserver?.cancel()
-//
-//        if let player = viewModel.playerManager?.getPlayer(for: video) {
-//            statusObserver = AnyCancellable(
-//                (player.currentItem?
-//                    .publisher(for: \.status)
-//                    .sink { status in
-//                        switch status {
-//                        case .unknown:
-//                            // Handle unknown status
-//                            print("UNKNOWN")
-//                            videoFailed = false
-//
-//                            isLoaded = false
-//                        case .readyToPlay:
-//                            isLoaded = true
-//                            videoFailed = false
-//                            play(current_playing)
-////                            viewModel.playerManager?.playCurrentVideo()
-//                            isPlaying = true
-//                        case .failed:
-//                            // Handle failed status
-//                            videoFailed = true
-////                            viewModel.videos[activeChannel]?.remove(at: current_playing)
-////                            videoListNum -= 1
-////                            print("DELETED")
-////                            nextVideo()
-//                            isLoaded = false
-//                        @unknown default:
-//                            // Handle other unknown cases
-//                            videoFailed = false
-//                            isLoaded = false
-//                        }
-//                    })!
-//            )
-//            
-//            switchedPlayer()
-//            observePlayer(to: player)
-//            
-//        }
-//    }
-//    
     private func switchedPlayer() {
         cancellables.forEach { $0.cancel() }
         cancellables.removeAll()
@@ -557,7 +453,6 @@ struct SearchVideoView: View {
 
             player.pause()
             current_playing += 1;
-//            recent_change = false
         }
     }
     

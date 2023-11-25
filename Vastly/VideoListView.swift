@@ -1,146 +1,108 @@
 //
-//  LikesListView.swift
+//  VideoListView.swift
 //  Vastly
 //
-//  Created by Casey Traina on 7/31/23.
+//  Created by Michael Murray on 8/21/23
 //
-
 import SwiftUI
 
 struct VideoListView: View {
     @EnvironmentObject var authModel: AuthViewModel
     @EnvironmentObject var viewModel: CatalogViewModel
-    
-    var title: String
-    var icon: String
-    @Binding var videoList: [Video]
-    @Binding var loading: Bool
-    var loadFunc: (([Author]) async -> Void)
-        
-    @State var isLinkActive = false
-    @State var isAnimating = false
-    @State var currentVideo = EMPTY_VIDEO
-    
-    var body: some View {
-        ZStack {
-            Color("BackgroundColor")
-                .ignoresSafeArea()
-            LinearGradient(gradient: Gradient(colors: myGradient(channel_index: 0)), startPoint: .topLeading, endPoint: .bottom)
-                .ignoresSafeArea()
-            VStack {
-                HStack {
-                    Image(systemName: icon)
-                        .font(.system(size: 24, weight: .light))
-                        .foregroundColor(.white)
-                        .padding(.leading)
-                    MyText(text: title, size: 24, bold: true, alignment: .leading, color: .white)
-                        .padding()
-                    Spacer()
-                }
-                Spacer()
 
-                if (loading) {
-                    ProgressView()
-                        .font(.system(size: 32))
-                        .brightness(0.5)
-                } else {
-                    NavigationLink(destination:
-                        SingleVideoView(isActive: $isLinkActive, video: currentVideo)
-                           .environmentObject(authModel)
-                           .environmentObject(viewModel)
-                        
-                    , isActive: $isLinkActive) {
-                        EmptyView()
+    var title: String
+    let color = Color(red: 5 / 255, green: 5 / 255, blue: 5 / 255)
+
+    @State var author = EXAMPLE_AUTHOR
+    @State var current = 0
+    @State var isPlaying = true
+    @State var publisherIsTapped = false
+    @State var dummyPubTapped = false // dummy variable
+
+    @State var isLinkActive = false
+
+    @Binding var videos: [Video]
+    @Binding var playing: Bool
+    @State var text = ""
+
+    var body: some View {
+        GeometryReader { geo in
+            ZStack {
+                Color("BackgroundColor")
+                    .ignoresSafeArea()
+                VStack {
+                    HStack {
+                        MyText(text: title, size: geo.size.width * 0.06, bold: true, alignment: .leading, color: .white)
+                            .padding()
+                        Spacer()
                     }
-                    
-                    ScrollView {
-                        ForEach(videoList) { video in
-                            Button(action: {
-                                currentVideo = video
-                                viewModel.pauseCurrentVideo()
-                                isLinkActive = true
-                            }, label: {
-                                HStack {
-                                    AsyncImage(url: getThumbnail(video: video)) { mainImage in
-                                        mainImage.resizable()
-                                            .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
-                                    } placeholder: {
-                                        
-                                        AsyncImage(url: video.author.fileName) { image in
-                                            image.resizable()
-                                                .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
-                                        } placeholder: {
-                                            ZStack {
-                                                Color("BackgroundColor")
-                                                ProgressView()
-                                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                                    .scaleEffect(2, anchor: .center)
-                                                    .rotationEffect(.degrees(isAnimating ? 360 : 0))
-                                                    .animation(Animation.linear(duration: 2).repeatForever(autoreverses: false))
-                                                    .onAppear {
-                                                        isAnimating = true
-                                                    }
-                                                    .frame(width: screenSize.width * 0.18, height: screenSize.width * 0.18)
-                                                
-                                            }
-                                        }
-                                    }
+                    if videos.isEmpty {
+                        MyText(text: "No results.", size: geo.size.width * 0.04, bold: true, alignment: .center, color: .white)
+                            .padding()
+                    } else {
+                        ScrollView(showsIndicators: false) {
+                            ForEach(videos) { video in
+                                NavigationLink(destination:
+                                    SingleVideoView(video: videos[current])
+                                       .environmentObject(authModel)
+                                       .environmentObject(viewModel)
                                     
-                                    VStack(alignment: .leading) {
-                                        MyText(text: "\(video.title)", size: screenSize.width * 0.035, bold: true, alignment: .leading, color: .white)
-                                            .lineLimit(2)
-                                        MyText(text: "\(video.author.name ?? "")", size: screenSize.width * 0.035, bold: false, alignment: .leading, color: Color("AccentGray"))
-                                            .lineLimit(1)
-                                    }
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(.white)
-                                        .font(.system(size: screenSize.width * 0.05, weight: .light))
-                                        .padding()
+                                , isActive: $isLinkActive) {
+                                    EmptyView()
                                 }
-                            })
+
+                                Button(action: {
+                                    current = videos.firstIndex(where: { $0.id == video.id }) ?? 0
+                                    playing = false
+                                    isLinkActive = true
+                                }, label: {
+                                    HStack(alignment: .center) {
+                                        AsyncImage(url: viewModel.getThumbnail(video: video), content: { image in
+                                            image
+                                                .resizable()
+                                                .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
+                                                .frame(height: geo.size.width * 0.15)
+                                                .scaledToFit()
+                                                .padding(.horizontal)
+                                        }, placeholder: {
+                                            Color("BackgroundColor")
+                                                .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
+                                                .frame(height: geo.size.width * 0.15)
+                                                .scaledToFit()
+                                                .padding(.horizontal)
+                                        })
+
+                                        VStack(alignment: .leading) {
+                                            MyText(text: video.title, size: geo.size.width * 0.04, bold: true, alignment: .leading, color: .white)
+                                                .lineLimit(2)
+                                            MyText(text: video.author.name ?? "", size: geo.size.width * 0.03, bold: false, alignment: .leading, color: .white)
+                                                .lineLimit(1)
+                                        }
+                                        Spacer()
+                                    }
+                                    .frame(width: geo.size.width*0.9, height: geo.size.width * 0.25)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .foregroundColor(color)
+                                    )
+                                })
+                                .padding(.top)
+                            }
                         }
                     }
-                    .frame(maxWidth: screenSize.width * 0.95, maxHeight: screenSize.height * 0.65)
-                    
+                    Spacer()
                 }
-                
-                Spacer()
-                
+                if publisherIsTapped {
+                    AuthorProfileView(author: author, publisherIsTapped: $publisherIsTapped)
+                }
             }
         }
         .onAppear {
-            if loading {
-                Task {
-                    await loadFunc(viewModel.authors)
-                    print("INIT: got videos.")
-                }
-            }
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = .black
+            UINavigationBar.appearance().standardAppearance = appearance
+            UINavigationBar.appearance().scrollEdgeAppearance = appearance
         }
-    }
-    
-    private func getThumbnail(video: Video) -> URL? {
-        
-        var urlString = video.url?.absoluteString
-        
-        urlString = urlString?.replacingOccurrences(of: "?tr=f-auto", with: "/tr:w-200,h-200,fo-center/ik-thumbnail.jpg")
-        
-        return URL(string: urlString ?? "")
-    }
-
-    private func myGradient(channel_index: Int) -> [Color] {
-        
-//        let background = Color(red: 18.0/255, green: 18.0/255, blue: 18.0/255)
-        let background = Color(red: 5/255, green: 5/255, blue: 5/255)
-        let channel_color = viewModel.catalog.channels()[channel_index].color.opacity(0.8)
-
-//        let purple = Color(red: 0.3803921568627451, green: 0.058823529411764705, blue: 0.4980392156862745)
-        var gradient: [Color] = [channel_color]
-        
-        for _ in 0..<5 {
-            gradient.append(background)
-        }
-        return gradient
     }
 }

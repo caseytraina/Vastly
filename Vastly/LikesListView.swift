@@ -10,14 +10,19 @@ import SwiftUI
 struct LikesListView: View {
     @EnvironmentObject var authModel: AuthViewModel
     @EnvironmentObject var viewModel: CatalogViewModel
-    
+
+    @Binding var playing: Bool
+
     var body: some View {
-        VideoListView(title: "Bookmarks", 
-                      icon: "book.pages",
-                      videoList: $authModel.likedVideos,
-                      loading: $authModel.likedVideosProcessing,
-                      loadFunc: authModel.fetchLikedVideos)
-        .environmentObject(viewModel)
-        .environmentObject(authModel)
+        VideoListView(title: "Bookmarks",
+                      videos: $authModel.likedVideos,
+                      playing: $playing)
+            .environmentObject(viewModel)
+            .environmentObject(authModel)
+            .onAppear {
+                Task {
+                    await authModel.fetchLikedVideos(authors: viewModel.authors)
+                }
+            }
     }
 }

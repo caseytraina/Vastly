@@ -17,7 +17,6 @@ struct VideoFailedView: View {
                 VStack {
                     MyText(text: "Vastly", size: geo.size.width * 0.05, bold: true, alignment: .center, color: .accentColor)
                     MyText(text: "This video can't be found!", size: geo.size.width * 0.03, bold: false, alignment: .center, color: .white)
-//                    MyText(text: "We'll be right with you", size: geo.size.width * 0.03, bold: false, alignment: .center, color: Color("AccentGray"))
                     Image(systemName: "x.square")
                         .foregroundColor(Color.red)
                         .font(.system(size: geo.size.width * 0.05, weight: .light))

@@ -26,7 +26,7 @@ class CatalogPlayerManager: ObservableObject {
     
     var onChange: (() -> Void)?
     
-    @Published var players: [String: AVPlayer] = [:]
+    @Published var players: [String: AVQueuePlayer] = [:]
     
     var videoStatuses: [String : VideoStatus] = [:] {
         didSet {
@@ -43,7 +43,7 @@ class CatalogPlayerManager: ObservableObject {
 
     
     var commandCenter: MPRemoteCommandCenter?
-    @Published var catalog: Catalog
+    @Published var catalog: Catalog 
     @Published var isInBackground = false {
         didSet {
             print("background value changed: \(self.isInBackground)")
@@ -51,32 +51,72 @@ class CatalogPlayerManager: ObservableObject {
     }
     
     @Published var isVideoMode: Bool
-//    @State private var statusObserver: AnyCancellable?
 
+    var defaultRegisteredCommands: [NowPlayableCommand] {
+        return [.togglePausePlay,
+                .play,
+                .pause,
+                .nextTrack,
+                .previousTrack,
+                .changePlaybackPosition
+                
+        ]
+    }
     
+    var defaultDisabledCommands: [NowPlayableCommand] {
+        return [.skipBackward,
+                .skipForward,
+                .changePlaybackRate,
+                .enableLanguageOption,
+                .disableLanguageOption]
+    }
+
     init(_ catalog: Catalog, isVideoMode: Published<Bool>) {
         print("INIT: Catalog Player Manager")
         self.catalog = catalog
         self._isVideoMode = isVideoMode
-//        setupCommandCenter()
+        setupCommandCenter()
     }
     
     // This function returns the AVPlayer for a video on the fly
-    func getPlayer(for video: Video) -> AVPlayer {
+
+    func getPlayer(for video: Video) -> AVQueuePlayer {
         if let player = players[video.id] {
+            
+//            if isInBackground && player.items().count == 1 {
+//                if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
+//                    let intro = AVPlayerItem(url: url)
+//                    player.insert(intro, after: nil)
+//                }
+//            }
+            
             if player.currentItem == nil {
-                let item = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
-                item.preferredPeakBitRate = 4000000
-                item.preferredPeakBitRateForExpensiveNetworks = 3000000       
-                player.replaceCurrentItem(with: item)
-                self.observeStatus(video: video, player: player)
+                let vid = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
+                player.insert(vid, after: nil)
+
+                if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
+                    let intro = AVPlayerItem(url: url)
+                    player.insert(intro, after: nil)
+                }
+
+                players[video.id] = player
             }
+
             return player
         } else {
-            let player = AVPlayer(url: video.url ?? URL(string: "www.google.com")!)
+            var items: [AVPlayerItem] = []
 
+            if let url = URL(string: TTS_IMAGEKIT_ENDPOINT + video.id + ".mp3") {
+                let intro = AVPlayerItem(url: url)
+                items.append(intro)
+            }
+            
+            let vid = AVPlayerItem(url: video.url ?? URL(string: "www.google.com")!)
+            items.append(vid)
+            
+            let player = AVQueuePlayer(items: items)
+            
             players[video.id] = player
-            self.observeStatus(video: video, player: player)
             return player
         }
     }
@@ -97,16 +137,6 @@ class CatalogPlayerManager: ObservableObject {
         getPlayer(for: video).pause()
     }
     
-    func pauseAllOthers(except video: Video) {
-        DispatchQueue.main.async {
-            for player in self.players {
-                if player.key != video.id {
-                    player.value.pause()
-                }
-            }
-        }
-    }
-    
     func getDurationOfVideo(video: Video) -> CMTime {
         let player = self.getPlayer(for: video)
         return player.currentItem?.duration ?? CMTime(value: 0, timescale: 1000)
@@ -114,15 +144,25 @@ class CatalogPlayerManager: ObservableObject {
     
     // plays the video.
     func play(for video: Video) {
-        let player = getPlayer(for: video)
-        observePlayer(video: video, to: player)
-        player.play()
+        
+        let queuePlayer = getPlayer(for: video)
+        if !isInBackground {
+            if queuePlayer.currentItem != queuePlayer.items().last {
+                queuePlayer.advanceToNextItem()
+            }
+        }
+        self.observeStatus(video: video, player: queuePlayer)
+        self.observePlayer(video: video, to: queuePlayer)
+        self.updateNowPlayingInfo(for: video)
+        queuePlayer.play()
     }
-
+    
     // this function initializes the physical command center controls.
     func setupCommandCenter() {
-        print("Setup Command Center")
-        UIApplication.shared.beginReceivingRemoteControlEvents()
+        print("**** Setup Command Center")
+//        DispatchQueue.main.async {
+            UIApplication.shared.beginReceivingRemoteControlEvents()
+//        }
 
         let commandCenter = MPRemoteCommandCenter.shared()
 
@@ -139,132 +179,105 @@ class CatalogPlayerManager: ObservableObject {
         commandCenter.changePlaybackPositionCommand.isEnabled = true
         commandCenter.playCommand.isEnabled = true
         commandCenter.pauseCommand.isEnabled = true
-        commandCenter.skipForwardCommand.isEnabled = true
-        commandCenter.skipBackwardCommand.isEnabled = true
+        commandCenter.skipForwardCommand.isEnabled = false
+        commandCenter.skipBackwardCommand.isEnabled = false
         commandCenter.nextTrackCommand.isEnabled = true
         commandCenter.previousTrackCommand.isEnabled = true
 
         // Set up command center targets
-        commandCenter.playCommand.addTarget { [weak self] _ in
-            self?.playCurrentVideo()
-            self?.updateNowPlayingInfo(for: self?.getCurrentVideo() ?? EMPTY_VIDEO)
-            print("Successful Lockscreen action: Play")
+        commandCenter.playCommand.addTarget { [self] _ in
+            self.playCurrentVideo()
+            self.updateNowPlayingInfo(for: self.getCurrentVideo() ?? EMPTY_VIDEO)
+            print("**** Successful Lockscreen action: Play")
+            return .success
+        }
+        
+        commandCenter.pauseCommand.addTarget { [self] _ in
+            self.pauseCurrentVideo()
+            self.updateNowPlayingInfo(for: self.getCurrentVideo() ?? EMPTY_VIDEO)
+            print("**** Successful Lockscreen action: Pause")
             return .success
         }
 
-        commandCenter.pauseCommand.addTarget { [weak self] _ in
-            self?.pauseCurrentVideo()
-            self?.updateNowPlayingInfo(for: self?.getCurrentVideo() ?? EMPTY_VIDEO)
-            print("Successful Lockscreen action: Pause")
-            return .success
-        }
-
-        commandCenter.skipForwardCommand.addTarget { [weak self] event -> MPRemoteCommandHandlerStatus in
-            if let player = self?.getPlayer(for: self?.getCurrentVideo() ?? EMPTY_VIDEO) {
-                let currentTime = player.currentTime().seconds
-                player.seek(to: CMTime(seconds: currentTime + 15, preferredTimescale: 1)) // skip forward by 15 seconds
-                self?.updateNowPlayingInfo(for: self?.getCurrentVideo() ?? EMPTY_VIDEO)
-                print("Successful Lockscreen action: Skip 15 Forward")
-                return .success
-            }
-            print("Unsuccessful Lockscreen action: Skip 15 Forward")
-            return .commandFailed
-        }
-
-        commandCenter.skipBackwardCommand.addTarget { [weak self] event -> MPRemoteCommandHandlerStatus in
-            if let player = self?.getPlayer(for: self?.getCurrentVideo() ?? EMPTY_VIDEO) {
-                let currentTime = player.currentTime().seconds
-                player.seek(to: CMTime(seconds: max(currentTime - 15, 0), preferredTimescale: 1)) // skip backward by 15 seconds, but don't go past the beginning of the track
-                self?.updateNowPlayingInfo(for: self?.getCurrentVideo() ?? EMPTY_VIDEO)
-                print("Successful Lockscreen action: Skip 15 Back")
-                return .success
-            }
-            print("Unsuccessful Lockscreen action: Skip 15 Back")
-            return .commandFailed
-        }
-
-        commandCenter.changePlaybackPositionCommand.addTarget { [weak self] (event) -> MPRemoteCommandHandlerStatus in
-            if let player = self?.getPlayer(for: self?.getCurrentVideo() ?? EMPTY_VIDEO),
-               let event = event as? MPChangePlaybackPositionCommandEvent {
+        commandCenter.changePlaybackPositionCommand.addTarget { [self] (event) -> MPRemoteCommandHandlerStatus in
+            let player = self.getPlayer(for: self.getCurrentVideo() ?? EMPTY_VIDEO)
+            if let event = event as? MPChangePlaybackPositionCommandEvent {
                 player.seek(to: CMTime(seconds: event.positionTime, preferredTimescale: 1))
-                self?.updateNowPlayingInfo(for: self?.getCurrentVideo() ?? EMPTY_VIDEO)
-                print("Successful Lockscreen action: Scrub")
+                self.updateNowPlayingInfo(for: self.getCurrentVideo() ?? EMPTY_VIDEO)
+                print("**** Successful Lockscreen action: Scrub")
                 return .success
             }
-            print("Unsuccessful Lockscreen action: Scrub")
+            print("**** Unsuccessful Lockscreen action: Scrub")
             return .commandFailed
         }
         
-        commandCenter.nextTrackCommand.addTarget { [weak self] (event) -> MPRemoteCommandHandlerStatus in
-            self?.nextVideo()
-            self?.updateStaticInfo(for: self?.getCurrentVideo() ?? EMPTY_VIDEO)
-            self?.updateNowPlayingInfo(for: self?.getCurrentVideo() ?? EMPTY_VIDEO)
-            print("Successful Lockscreen action: Next")
+        commandCenter.nextTrackCommand.addTarget { [self] _ in
+            self.catalog.nextVideo()
+            self.updateNowPlayingInfo(for: self.getCurrentVideo() ?? EMPTY_VIDEO)
+            print("**** Successful Lockscreen action: Next")
             return .success
         }
         
-        commandCenter.previousTrackCommand.addTarget { [weak self] (event) -> MPRemoteCommandHandlerStatus in
-            self?.previousVideo()
-            self?.updateStaticInfo(for: self?.getCurrentVideo() ?? EMPTY_VIDEO)
-            self?.updateNowPlayingInfo(for: self?.getCurrentVideo() ?? EMPTY_VIDEO)
-            print("Successful Lockscreen action: Previous")
+        commandCenter.previousTrackCommand.addTarget { [self] _ in
+            self.catalog.previousVideo()
+            self.updateNowPlayingInfo(for: self.getCurrentVideo() ?? EMPTY_VIDEO)
+            print("**** Successful Lockscreen action: Previous")
             return .success
         }
-
         self.commandCenter = commandCenter
-        if let video = self.getCurrentVideo() {
-            self.updateStaticInfo(for: video)
-            self.updateNowPlayingInfo(for: video)
-        }
     }
     
     // Function to update static metadata
-    private func updateStaticInfo(for video: Video) {
+    func updateStaticInfo(for video: Video) {
+        
         var staticInfo = [String: Any]()
         staticInfo[MPMediaItemPropertyTitle] = video.title
+        staticInfo[MPMediaItemPropertyAssetURL] = video.url!
+        staticInfo[MPMediaItemPropertyMediaType] = NSNumber(value: MPMediaType.anyVideo.rawValue)
+        staticInfo[MPMediaItemPropertyAlbumArtist] = video.author.name
         staticInfo[MPMediaItemPropertyArtist] = video.author.name
         staticInfo[MPMediaItemPropertyAlbumTitle] = "Vastly"
         MPNowPlayingInfoCenter.default().nowPlayingInfo = staticInfo
-
-        URLSession.shared.dataTask(with: video.author.fileName ?? EMPTY_AUTHOR.fileName!) { (data, response, error) in
+        getPlayer(for: video).items().last?.nowPlayingInfo = staticInfo
+        
+        URLSession.shared.dataTask(with: video.author.fileName ?? EMPTY_AUTHOR.fileName!) { [self] (data, response, error) in
             guard let data = data, error == nil else {
-                print("Error downloading image: \(error?.localizedDescription ?? "No error description available")")
+                print("**** Error downloading image: \(error?.localizedDescription ?? "No error description available")")
                 return
             }
             
             if let image = UIImage(data: data) {
                 staticInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
                 MPNowPlayingInfoCenter.default().nowPlayingInfo = staticInfo
-                
+                self.getPlayer(for: video).items().last?.nowPlayingInfo = staticInfo
+
                 // Update MPNowPlayingInfoCenter
-                print("Successfully updated Metadata")
+                print("**** Successfully updated Metadata")
             }
         }.resume()
     }
     
+    
     // this function updates the command center metadata that is displayed. It must be called any time a change is made to the video or its state.
     // TODO: This should be made private, SearchVideoView uses it currently
     func updateNowPlayingInfo(for video: Video) {
-        print("UPDATING INFO")
+        let nowPlayingInfoCenter = MPNowPlayingInfoCenter.default()
+        var nowPlayingInfo = nowPlayingInfoCenter.nowPlayingInfo ?? [String: Any]()
+        
         let player = self.getPlayer(for: video)
-        let dynamicInfo: [String: Any] = [
-            MPMediaItemPropertyPlaybackDuration : NSNumber(value: player.currentItem?.duration.seconds ?? 0.0),
-            MPNowPlayingInfoPropertyElapsedPlaybackTime: NSNumber(value: player.currentTime().seconds),
-            MPNowPlayingInfoPropertyPlaybackRate : player.rate
-        ]
+        
+        
+        if let item = player.currentItem {
+            NSLog("%@", "**** Set playback info: rate \(player.rate), position \(player.currentTime().asString), duration \(player.currentItem?.duration)")
 
-        // This assumes that the nowPlayingInfo has been previously set, so we're merging with existing data.
-        if var existingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo {
-            for (key, value) in dynamicInfo {
-                existingInfo[key] = value
-                print("Metadata: Updated values")
-            }
-            MPNowPlayingInfoCenter.default().nowPlayingInfo = existingInfo
-            print("Metadata: Keeping values")
+            nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = item.duration
+            nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = item.currentTime().seconds
+            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = player.rate
+            nowPlayingInfo[MPNowPlayingInfoPropertyDefaultPlaybackRate] = 1.0
 
-        } else {
-            MPNowPlayingInfoCenter.default().nowPlayingInfo = dynamicInfo
-            print("Metadata: Reseting values")
+            nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
+            self.getPlayer(for: video).items().last?.nowPlayingInfo = nowPlayingInfo
+
         }
     }
     
@@ -306,7 +319,7 @@ class CatalogPlayerManager: ObservableObject {
     
     // this function facilitates a change in channel
     func changeToChannel(_ channel: Channel, shouldPlay: Bool) {
-        self.updateStaticInfo(for: self.getCurrentVideo() ?? EMPTY_VIDEO)
+//        self.updateStaticInfo(for: self.getCurrentVideo() ?? EMPTY_VIDEO)
         if shouldPlay {
             playCurrentVideo()
         }
@@ -339,13 +352,13 @@ class CatalogPlayerManager: ObservableObject {
         }
     }
     
-    private func observeStatus(video: Video, player: AVPlayer) {
+    private func observeStatus(video: Video, player: AVQueuePlayer) {
         self.videoCancellables[video.id]?.cancel()
 
 //        if let player = viewModel.playerManager?.getPlayer(for: video) {
         
         self.videoCancellables[video.id] = AnyCancellable(
-                (player.currentItem?
+            (player.currentItem?
                     .publisher(for: \.status)
                     .sink { status in
                         switch status {
@@ -381,51 +394,53 @@ class CatalogPlayerManager: ObservableObject {
             )
     }
     
-    private func observePlayer(video: Video, to player: AVPlayer) {
-    
-        if let timeObserverToken = timeObserverToken {
-            NotificationCenter.default.removeObserver(timeObserverToken)
-            self.timeObserverToken = nil
-        }
-        
-    //        DispatchQueue.global(qos: .userInitiated).async {
+    private func observePlayer(video: Video, to player: AVQueuePlayer) {
+        if let item = player.currentItem {
+            if let timeObserverToken = timeObserverToken {
+                NotificationCenter.default.removeObserver(timeObserverToken)
+                self.timeObserverToken = nil
+            }
+            
+            //        DispatchQueue.global(qos: .userInitiated).async {
             print("Attached observer to \(player.currentItem)")
-    
+            
             player.currentItem?.asset.loadValuesAsynchronously(forKeys: ["duration"]) {
-                    DispatchQueue.main.async {
-                        let duration = player.currentItem?.asset.duration
-                        self.playerTimes[video.id] = duration ?? CMTime(value: 0, timescale: 1000)
-    
-                        self.timeObserverToken = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1000), queue: .main) { time in
-                            self.playerTimes[video.id] = time
-                            self.onChange?()
-//                            self.playerProgress = time.seconds / (duration?.seconds ?? 1.0)
-//                            self.timedPlayer = player
-                        }
+                DispatchQueue.main.async {
+                    let duration = item.asset.duration
+                    self.playerTimes[video.id] = duration ?? CMTime(value: 0, timescale: 1000)
+                    
+                    self.timeObserverToken = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1000), queue: .main) { time in
+                        self.playerTimes[video.id] = time
+                        self.onChange?()
                     }
                 }
-    
+            }
+            
             print("Started Observing Video")
-    
+            
             if let endObserverToken = endObserverToken {
                 NotificationCenter.default.removeObserver(endObserverToken)
                 self.endObserverToken = nil
             }
-    
+            
             endObserverToken = NotificationCenter.default.addObserver(
                 forName: .AVPlayerItemDidPlayToEndTime,
-                object: player.currentItem,
+                object: item,
                 queue: .main
             ) { _ in
-
-                self.playSound()
-                self.seekTo(time: CMTime(value: 0, timescale: 1000))
-                self.pauseCurrentVideo()
-                self.catalog.nextVideo()
-                self.playCurrentVideo()
-
+                if item == player.items().last {
+                    self.playSound()
+                    self.pauseCurrentVideo()
+                    self.seekTo(time: CMTime(value: 0, timescale: 1000))
+                    self.catalog.nextVideo()
+                    self.playCurrentVideo()
+                } else {
+                    self.observeStatus(video: video, player: player)
+                    self.observePlayer(video: video, to: player)
+                }
             }
         }
+    }
     
     private func playSound() {
 

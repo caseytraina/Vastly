@@ -273,7 +273,7 @@ class VideoPlayerManager: ObservableObject {
         staticInfo[MPMediaItemPropertyArtist] = video.author.name
         staticInfo[MPMediaItemPropertyAlbumTitle] = "Vastly"
         MPNowPlayingInfoCenter.default().nowPlayingInfo = staticInfo
-
+        print("Updated Static")
         URLSession.shared.dataTask(with: video.author.fileName ?? EMPTY_AUTHOR.fileName!) { (data, response, error) in
             guard let data = data, error == nil else {
                 print("Error downloading image: \(error?.localizedDescription ?? "No error description available")")

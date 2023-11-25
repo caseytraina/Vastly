@@ -491,8 +491,10 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "400"
-            endingLineNumber = "400">
+            startingLineNumber = "401"
+            endingLineNumber = "401"
+            landmarkName = "generateShapedForYou(max:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -859,8 +861,8 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "253"
-            endingLineNumber = "253"
+            startingLineNumber = "260"
+            endingLineNumber = "260"
             landmarkName = "getChannels()"
             landmarkType = "7">
          </BreakpointContent>
@@ -938,8 +940,8 @@
             filePath = "Vastly/CatalogViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "215"
-            endingLineNumber = "215"
+            startingLineNumber = "222"
+            endingLineNumber = "222"
             landmarkName = "leaveTemporaryChannel(channel:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1059,22 +1061,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "202CD7A6-C9A0-4ABE-BFD5-9D15973D3DC8"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vastly/CatalogPlayerManager.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
-            landmarkName = "CatalogPlayerManager"
-            landmarkType = "3">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "0C30C1BB-0DEE-4CA9-886E-DB5FA638FC03"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -1082,8 +1068,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "442"
-            endingLineNumber = "442"
+            startingLineNumber = "538"
+            endingLineNumber = "538"
             landmarkName = "observePlayer(video:to:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1098,8 +1084,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "443"
-            endingLineNumber = "443"
+            startingLineNumber = "539"
+            endingLineNumber = "539"
             landmarkName = "observePlayer(video:to:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1168,49 +1154,19 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "09FFE021-8AC4-4E17-A4BE-3B43869C2EBA"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "464"
-            endingLineNumber = "464"
+            startingLineNumber = "560"
+            endingLineNumber = "560"
             landmarkName = "observePlayer(video:to:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "09FFE021-8AC4-4E17-A4BE-3B43869C2EBA - 635c4a8ea63630b4"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 @Sendable (Foundation.Notification) -&gt; () in Vastly.CatalogPlayerManager.observePlayer(video: Vastly.Video, to: __C.AVPlayer) -&gt; ()"
-                  moduleName = "Vastly"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/caseytraina/Documents/Vastly/Vastly/CatalogPlayerManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "421"
-                  endingLineNumber = "421"
-                  offsetFromSymbolStart = "104">
-               </Location>
-               <Location
-                  uuid = "09FFE021-8AC4-4E17-A4BE-3B43869C2EBA - 635c4a8ea636316b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 @Sendable (Foundation.Notification) -&gt; () in Vastly.CatalogPlayerManager.observePlayer(video: Vastly.Video, to: __C.AVPlayer) -&gt; ()"
-                  moduleName = "Vastly"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/caseytraina/Documents/Vastly/Vastly/CatalogPlayerManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "422"
-                  endingLineNumber = "422"
-                  offsetFromSymbolStart = "104">
-               </Location>
-               <Location
-                  uuid = "09FFE021-8AC4-4E17-A4BE-3B43869C2EBA - 600bf8f77895534b"
+                  uuid = "09FFE021-8AC4-4E17-A4BE-3B43869C2EBA - 600bf8f77895549d"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -1220,8 +1176,53 @@
                   urlString = "file:///Users/caseytraina/Library/Mobile%20Documents/com~apple~CloudDocs/Documents/Vastly/Vastly/CatalogPlayerManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "464"
-                  endingLineNumber = "464"
+                  startingLineNumber = "486"
+                  endingLineNumber = "486"
+                  offsetFromSymbolStart = "656">
+               </Location>
+               <Location
+                  uuid = "09FFE021-8AC4-4E17-A4BE-3B43869C2EBA - 600bf8f77895549d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 @Sendable (Foundation.Notification) -&gt; () in Vastly.CatalogPlayerManager.observePlayer(video: Vastly.Video, to: __C.AVQueuePlayer) -&gt; ()"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/caseytraina/Library/Mobile%20Documents/com~apple~CloudDocs/Documents/Vastly/Vastly/CatalogPlayerManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "486"
+                  endingLineNumber = "486"
+                  offsetFromSymbolStart = "624">
+               </Location>
+               <Location
+                  uuid = "09FFE021-8AC4-4E17-A4BE-3B43869C2EBA - 600bf8f7789553b5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 @Sendable (Foundation.Notification) -&gt; () in Vastly.CatalogPlayerManager.observePlayer(video: Vastly.Video, to: __C.AVQueuePlayer) -&gt; ()"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/caseytraina/Library/Mobile%20Documents/com~apple~CloudDocs/Documents/Vastly/Vastly/CatalogPlayerManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "462"
+                  endingLineNumber = "462"
+                  offsetFromSymbolStart = "624">
+               </Location>
+               <Location
+                  uuid = "09FFE021-8AC4-4E17-A4BE-3B43869C2EBA - 600bf8f77895568c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 @Sendable (Foundation.Notification) -&gt; () in Vastly.CatalogPlayerManager.observePlayer(video: Vastly.Video, to: __C.AVQueuePlayer) -&gt; ()"
+                  moduleName = "Vastly"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/caseytraina/Library/Mobile%20Documents/com~apple~CloudDocs/Documents/Vastly/Vastly/CatalogPlayerManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "501"
+                  endingLineNumber = "501"
                   offsetFromSymbolStart = "624">
                </Location>
             </Locations>
@@ -1237,8 +1238,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "428"
-            endingLineNumber = "428"
+            startingLineNumber = "524"
+            endingLineNumber = "524"
             landmarkName = "observePlayer(video:to:)"
             landmarkType = "7">
             <Locations>
@@ -1300,8 +1301,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "452"
-            endingLineNumber = "452"
+            startingLineNumber = "548"
+            endingLineNumber = "548"
             landmarkName = "observePlayer(video:to:)"
             landmarkType = "7">
             <Locations>
@@ -1348,8 +1349,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "404"
-            endingLineNumber = "404"
+            startingLineNumber = "500"
+            endingLineNumber = "500"
             landmarkName = "observeStatus(video:player:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1364,8 +1365,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "389"
-            endingLineNumber = "389"
+            startingLineNumber = "485"
+            endingLineNumber = "485"
             landmarkName = "observeStatus(video:player:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1380,8 +1381,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "463"
-            endingLineNumber = "463"
+            startingLineNumber = "559"
+            endingLineNumber = "559"
             landmarkName = "observePlayer(video:to:)"
             landmarkType = "7">
             <Locations>
@@ -1428,8 +1429,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "466"
-            endingLineNumber = "466"
+            startingLineNumber = "562"
+            endingLineNumber = "562"
             landmarkName = "observePlayer(video:to:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1444,8 +1445,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
             landmarkName = "getPlayer(for:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1460,25 +1461,9 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "103"
-            endingLineNumber = "103"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
             landmarkName = "getPlayer(for:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "012EF51F-A440-41EE-A8A7-EABAC21F67C3"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Vastly/CatalogPlayerManager.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "301"
-            endingLineNumber = "301"
-            landmarkName = "updateNowPlayingInfo(for:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1492,8 +1477,8 @@
             filePath = "Vastly/CatalogPlayerManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "107"
-            endingLineNumber = "107"
+            startingLineNumber = "113"
+            endingLineNumber = "113"
             landmarkName = "getPlayer(for:)"
             landmarkType = "7">
          </BreakpointContent>

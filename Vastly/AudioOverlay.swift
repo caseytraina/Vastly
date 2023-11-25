@@ -29,7 +29,6 @@ struct AudioOverlay: View {
             ZStack {
                 Color("BackgroundColor")
                 VStack {
-                    MyText(text: "Now Listening:", size: geo.size.width * 0.03, bold: false, alignment: .center, color: Color("AccentGray"))
 
                     VStack {
 
@@ -54,7 +53,7 @@ struct AudioOverlay: View {
                                     
                                 }
                             }
-                            .frame(width: VIDEO_HEIGHT * 0.5, height: VIDEO_HEIGHT * 0.5)
+                            .frame(width: VIDEO_HEIGHT, height: VIDEO_HEIGHT)
                             .cornerRadius(10)
                             .onTapGesture {
                                 playing.toggle()
@@ -71,7 +70,6 @@ struct AudioOverlay: View {
                         }
 
 //                        MyText(text: author.name ?? "", size: geo.size.width * 0.04, bold: true, alignment: .center, color: .white)
-                        MyText(text: "\(time?.asString ?? "0:00") / \(duration?.asString ?? "0:00")", size: geo.size.width * 0.03, bold: false, alignment: .center, color: Color("AccentGray"))
 
                         
                     }

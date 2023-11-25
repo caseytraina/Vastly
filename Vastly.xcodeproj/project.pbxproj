@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		021655CD2B116ED90003E8EF /* NowPlayableCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021655CC2B116ED90003E8EF /* NowPlayableCommand.swift */; };
+		021655CE2B116ED90003E8EF /* NowPlayableCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021655CC2B116ED90003E8EF /* NowPlayableCommand.swift */; };
+		021655CF2B116ED90003E8EF /* NowPlayableCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021655CC2B116ED90003E8EF /* NowPlayableCommand.swift */; };
 		021BEB192AE8D61C00857910 /* SeeMoreText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021BEB182AE8D61C00857910 /* SeeMoreText.swift */; };
 		021BEB1A2AE8D61C00857910 /* SeeMoreText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021BEB182AE8D61C00857910 /* SeeMoreText.swift */; };
 		021BEB1B2AE8D61C00857910 /* SeeMoreText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021BEB182AE8D61C00857910 /* SeeMoreText.swift */; };
@@ -145,6 +148,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		021655CC2B116ED90003E8EF /* NowPlayableCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayableCommand.swift; sourceTree = "<group>"; };
 		021BEB182AE8D61C00857910 /* SeeMoreText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeMoreText.swift; sourceTree = "<group>"; };
 		021E5A912A69BB9D00B120CD /* PageIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageIndicator.swift; sourceTree = "<group>"; };
 		0220D63A2A905C5800A867FB /* AuthorProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorProfileView.swift; sourceTree = "<group>"; };
@@ -313,6 +317,7 @@
 				AAA6B55C2B0BA07F00E6EF57 /* Catalog.swift */,
 				AAA20DF42AE2617200061254 /* CatalogViewModel.swift */,
 				AAA20DF62AE268D500061254 /* CatalogPlayerManager.swift */,
+				021655CC2B116ED90003E8EF /* NowPlayableCommand.swift */,
 				02C5CCD02A4A04C900C7280E /* Analytics.swift */,
 				023EE7A92A0ADFDF004E09DD /* ScrollingStackModifier.swift */,
 				023EE7762A0ADF36004E09DD /* VastlyApp.swift */,
@@ -654,6 +659,7 @@
 				025649A42A11FF4700C442AE /* LoadingView.swift in Sources */,
 				02611E532AA7797D007029BB /* FullEpisodeButton.swift in Sources */,
 				02583E222A1D736C008CDA59 /* FullscreenVideoPlayer.swift in Sources */,
+				021655CD2B116ED90003E8EF /* NowPlayableCommand.swift in Sources */,
 				02583E0B2A19EA4B008CDA59 /* NamePromptView.swift in Sources */,
 				02583E152A1AF88B008CDA59 /* PasswordConfirmView.swift in Sources */,
 				021E5A922A69BB9D00B120CD /* PageIndicator.swift in Sources */,
@@ -695,6 +701,7 @@
 			files = (
 				0291700E2AB14D8000ADF426 /* ViewingHistory.swift in Sources */,
 				021BEB1A2AE8D61C00857910 /* SeeMoreText.swift in Sources */,
+				021655CE2B116ED90003E8EF /* NowPlayableCommand.swift in Sources */,
 				AAE1127C2AFE2F980049C3DB /* CatalogTest.swift in Sources */,
 				023EE78D2A0ADF37004E09DD /* VastlyTests.swift in Sources */,
 				023EE7EF2A0C5DC6004E09DD /* Constants.swift in Sources */,
@@ -711,6 +718,7 @@
 			files = (
 				023EE7972A0ADF37004E09DD /* VastlyUITests.swift in Sources */,
 				021BEB1B2AE8D61C00857910 /* SeeMoreText.swift in Sources */,
+				021655CF2B116ED90003E8EF /* NowPlayableCommand.swift in Sources */,
 				0291700F2AB14D8000ADF426 /* ViewingHistory.swift in Sources */,
 				029170242AB375CA00ADF426 /* SearchView.swift in Sources */,
 				023EE7992A0ADF37004E09DD /* VastlyUITestsLaunchTests.swift in Sources */,

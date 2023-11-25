@@ -42,6 +42,13 @@ class CatalogViewModel: ObservableObject {
             self.playerManager?.onChange = { [weak self] in
                 self?.objectWillChange.send()
             }
+            self.catalog.onChange = { [self] in
+                if let video = self.catalog.currentVideo {
+                    print("**** Updating static info")
+                    self.playerManager?.updateStaticInfo(for: video)
+                }
+            }
+
             DispatchQueue.main.async {
                 self.isProcessing = false
             }

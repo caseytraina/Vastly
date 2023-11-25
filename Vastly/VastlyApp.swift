@@ -25,8 +25,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
       do {
           try audioSession.setCategory(.playback, mode: AVAudioSession.Mode.default)
           try audioSession.setActive(true)
+          print("**** Setting category to AVAudioSessionCategoryPlayback success")
+
       } catch let error as NSError {
-          print("Setting category to AVAudioSessionCategoryPlayback failed: \(error)")
+          print("**** Setting category to AVAudioSessionCategoryPlayback failed: \(error)")
       }
       
       UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in

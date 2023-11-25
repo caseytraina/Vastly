@@ -107,6 +107,9 @@ struct HomeView: View {
                             print("SCENE: ACTIVE")
                         case .background:
                             viewModel.playerManager?.updateBackgroundState(isInBackground: true)
+                            if viewModel.isVideoMode {
+                                viewModel.pauseCurrentVideo()
+                            }
                             print("SCENE: BACKGROUND")
                         default:
                             break

@@ -133,6 +133,7 @@ struct CatalogVideoView: View {
                 if viewModel.getVideoStatus(video) == .failed {
                     VideoFailedView()
                         .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)// + PROGRESS_BAR_HEIGHT)
+                        .frame(width: VIDEO_WIDTH, height: VIDEO_HEIGHT+20)// + PROGRESS_BAR_HEIGHT)
                 } else {
                     if viewModel.getVideoStatus(video) == .ready {
                         

@@ -152,6 +152,9 @@ class ChannelVideos: Identifiable, Hashable {
 // This should not know anything about video players, that is handled in the
 // CatalogViewModel
 final class Catalog {
+    
+    var onChange: (() -> Void)?
+    
     // This should be kept private, we access the catalog via the public
     // funcs below
     private var catalog: [ChannelVideos] = []
@@ -163,7 +166,11 @@ final class Catalog {
     private(set) var videoHistory: [Video] = []
     private(set) var channelHistory: [ChannelVideos] = []
 
-    private(set) var currentVideo: Video?
+    private(set) var currentVideo: Video? {
+        didSet {
+            onChange?()
+        }
+    }
     private(set) var currentChannel: ChannelVideos = .init(channel: FOR_YOU_CHANNEL) {
         didSet {
             activeChannel = currentChannel.channel

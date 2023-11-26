@@ -136,7 +136,7 @@ class NewAlgoliaController: ObservableObject {
     @Published var authors: [Author] = []
 
     init(all_authors: [Author]) {
-        self.client = SearchClient(appID: "JDJU8ZVIM4", apiKey: "6eb916eda40c8a7b7f2c116b80e72a27")
+        self.client = SearchClient(appID: "", apiKey: "")
         self.index = client.index(withName: "ios_app_videos")
         self.all_authors = all_authors
     }
